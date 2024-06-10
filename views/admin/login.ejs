@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<!-- Mirrored from demo.bootstrapdash.com/purple-admin-free/pages/samples/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Dec 2023 06:57:50 GMT -->
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title> Admin</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="/static/adminImages/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/adminImages/vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="/static/adminImages/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="/static/adminImages/images/favicon.ico" />
+  </head>
+  <body>
+    <div class="container-scroller">
+      <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="content-wrapper d-flex align-items-center auth">
+          <div class="row flex-grow">
+            <div class="col-lg-4 mx-auto">
+              <div class="auth-form-light text-left p-5">
+                <div class="brand-logo">
+                  <!-- <img src="/static/adminImages/images/logo.svg"> -->
+                </div>
+                
+                <h3 class="font-weight-light">Admin Login.</h3>
+                <% if (typeof message !== 'undefined' && message) { %>
+                  <div class="alert alert-danger"><%= message %></div>
+              <% } %>
+                <div id="error" class="text-danger mb-3"></div>
+                <form id="form" class="pt-3" method="post" action="/admin/verifyLogin">
+                  <div class="form-group">
+                    <input name="email" type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Username">
+                  </div>
+                  <div class="form-group">
+                    <input name="password" type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password">
+                  </div>
+                  <div class="mt-3">
+                    <button class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">SIGN IN</button>
+                  </div>
+                  <!-- <div class="my-2 d-flex justify-content-between align-items-center">
+                    <div class="form-check">
+                      <label class="form-check-label text-muted">
+                        <input type="checkbox" class="form-check-input"> Keep me signed in </label>
+                    </div>
+                    <a href="#" class="auth-link text-black">Forgot password?</a>
+                  </div> -->
+                  <!-- <div class="mb-2">
+                    <button type="button" class="btn btn-block btn-facebook auth-form-btn">
+                      <i class="mdi mdi-facebook mr-2"></i>Connect using facebook </button>
+                  </div> -->
+                  <!-- <div class="text-center mt-4 font-weight-light"> Don't have an account? <a href="register.html" class="text-primary">Create</a>
+                  </div> -->
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script>
+      let form = document.getElementById("form");
+      let error = document.getElementById("error");
+      let message = [];
+    
+      form.addEventListener("submit", (e) => {
+        message = [];
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+    
+        email_validate(email);
+    
+        if (password.length < 3) {
+          message.push("Password should be at least 3 characters");
+        }
+    
+        if (message.length > 0) {
+          e.preventDefault();
+          error.innerText = message[0];
+        }
+      });
+    
+      function email_validate(email) {
+        let reg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        let result = reg.test(email);
+        if (!result) {
+          message.push("Invalid Email");
+        }
+      }
+    </script>
+    <script src="/static/adminImages/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="/static/adminImages/js/off-canvas.js"></script>
+    <script src="/static/adminImages/js/hoverable-collapse.js"></script>
+    <script src="/static/adminImages/js/misc.js"></script>
+    <!-- endinject -->
+  </body>
+
+
+
+<!-- Mirrored from demo.bootstrapdash.com/purple-admin-free/pages/samples/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Dec 2023 06:57:50 GMT -->
+</html>
