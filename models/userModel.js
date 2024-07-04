@@ -11,16 +11,13 @@ const userSchema=new mongoose.Schema({
     },
     mobile:{
         type:String,
-        required:true
     },
 
     password:{
         type:String,
-        required:true
     },
     is_admin:{
         type:Number,
-        required:true
     },
     is_blocked: {
         type: Boolean,
@@ -28,6 +25,10 @@ const userSchema=new mongoose.Schema({
         default: false
     },
     is_verified:{
+        type: Boolean,
+        default:false
+    },
+    is_googleAuthenticated:{
         type: Boolean,
         default:false
     }

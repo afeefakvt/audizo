@@ -89,18 +89,20 @@
 								<li><a href="/">Home</a></li>
 								<li class="has-dropdown">
 									<a href="/shop">Shop</a>
-									<!-- <ul class="dropdown">
-										<li><a href="product-detail.html">Product Detail</a></li>
-										<li><a href="cart.html">Shopping Cart</a></li>
-										<li><a href="checkout.html">Checkout</a></li>
-										<li><a href="order-complete.html">Order Complete</a></li>
-										<li><a href="add-to-wishlist.html">Wishlist</a></li>
-									</ul> -->
+									<ul class="dropdown">
+										<li><a href="/shop">Shop Products</a></li>
+										<li><a href="/cart">Shopping Cart</a></li>
+										<!-- <li><a href="checkout.html">Checkout</a></li>
+										<li><a href="order-complete.html">Order Complete</a></li> -->
+										<li><a href="/wishlist">Wishlist</a></li>
+									</ul>
 								</li>
 								<li><a href="/about">About</a></li>
 								<!-- <li><a href="/shop">Shop</a></li> -->
 								<!-- <li class="active"><a href="contact.html">Contact</a></li> -->
-								<!-- <li class="cart"><a href="cart.html"><i class="icon-shopping-cart"></i> Cart [0]</a></li> -->
+								<li class="cart"><a href="/cart"><i class="icon-shopping-cart"></i> </a></li>
+                                <li class="cart"><a href="/wishlist"><i class="icon-heart"></i></a></li>	
+								<li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
 							</ul>
 						</div>
 					</div>
@@ -113,14 +115,14 @@
 							<div class="row">
 								<div class="owl-carousel2">
 									<div class="item">
-										<!-- <div class="col">
+										<div class="col">
 											<h3><a href="#">25% off (Almost) Everything! Use Code: Summer Sale</a></h3>
-										</div> -->
+										</div>
 									</div>
 									<div class="item">
-										<!-- <div class="col">
-											<h3><a href="#">Our biggest sale yet 50% off all summer shoes</a></h3>
-										</div> -->
+										<div class="col">
+											<h3><a href="#">Our biggest sale yet 50% off on all headphones</a></h3>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -182,7 +184,7 @@
     <div class="container">
         <div class="row row-pb-md">
             <div class="col footer-col colorlib-widget">
-                <h4>About Headset</h4>
+                <h4>About AUDIZO</h4>
                 <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life</p>
                 <p>
                     <ul class="colorlib-social-icons">
@@ -287,7 +289,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
       document.getElementById("resendLink").addEventListener("click", (e) => {
           e.preventDefault();
 
-          // AJAX request to resend OTP
+          // fetch request to resend OTP
           fetch('/resendOtp', {
               method: 'POST',
               headers: {

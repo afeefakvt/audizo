@@ -7,6 +7,7 @@ const config=require("../config/config");
 const adminController=require("../controllers/adminController");
 const categoryController=require("../controllers/categoryController")
 const productController=require("../controllers/productController")
+const orderController=require("../controllers/orderController")
 
 
 admin_route.use(express.json());
@@ -37,7 +38,7 @@ admin_route.get('/logout',auth.isLogin,adminController.logout);
 
 //category management
 admin_route.get("/category",auth.isLogin,categoryController.loadCategory)
-admin_route.get("/category/addCategory", categoryController.loadAddCategory);
+admin_route.get("/category/addCategory",auth.isLogin, categoryController.loadAddCategory);
 admin_route.post('/category/addCategory',categoryController.addCategory)
 admin_route.get("/category/editCategory",auth.isLogin, categoryController.loadEditCategory);
 admin_route.post('/category/editCategory',categoryController.editCategory);
@@ -51,8 +52,7 @@ admin_route.get('/product',auth.isLogin,productController.loadProduct);
 admin_route.get('/product/addProduct',auth.isLogin,productController.loadAddProduct);
 admin_route.post('/product/addProduct',upload.array('photos',12),productController.addProduct);
 admin_route.get("/product/checkAlready",productController.checkAlready);
-admin_route.get('/product/productDetails',productController.getProduct);
-// admin_route.get('/product/editProduct',productController.editProduct)
+    // admin_route.get('/product/productDetails',productController.getProduct);
 admin_route.get("/product/editProduct",auth.isLogin,productController.loadEditProduct);
 admin_route.post( "/product/editProduct",upload.array("photos"),productController.editProduct);
 admin_route.post('/product/deleteProduct',productController.deleteProduct);
@@ -64,5 +64,10 @@ admin_route.get('/product/restoreProduct',productController.restoreProduct)
 admin_route.get('/userList',auth.isLogin,adminController.loadUser);
 admin_route.get("/userList/blockUser",auth.isLogin, adminController.blockUser);
 admin_route.get("/userList/unblockUser",auth.isLogin, adminController.unblockUser);
+
+//order management
+admin_route.get("/orders",auth.isLogin,orderController.listOrders);
+admin_route.get("/orders/changeStatus",auth.isLogin,orderController.changeStatus)
+
 
 module.exports=admin_route;

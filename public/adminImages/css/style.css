@@ -1797,7 +1797,7 @@ body {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #343a40;
+  color: #595959;
   text-align: left;
   background-color: #fff; }
 
@@ -1901,7 +1901,7 @@ pre {
   margin-top: 0;
   margin-bottom: 1rem;
   overflow: auto;
-  -ms-overflow-style: scrollbar; }
+  -ms-overflow-style: 'scrollbar'; }
 
 figure {
   margin: 0 0 1rem; }

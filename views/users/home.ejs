@@ -9,7 +9,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
 	
 	<!-- Animate.css -->
-	 <!-- <link rel="stylesheet" href="/static/userImages/css/animate.css"> -->
+	 <link rel="stylesheet" href="/static/userImages/css/animate.css">
 	<!-- Icomoon Icon Fonts-->
 	<link rel="stylesheet" href="/static/userImages/css/icomoon.css">
 	<!-- Ion Icon Fonts-->
@@ -37,62 +37,58 @@
 
 	</head>
 	<body>
-		
+
 	<div class="colorlib-loader"></div>
 
-	<div id="page">
-		<nav class="colorlib-nav" role="navigation">
-			<div class="top-menu">
-				<div class="container">
-					<div class="row">
-						<div class="col-sm-7 col-md-9">
-							<div id="colorlib-logo"><a href="/">AUDIZO.</a></div>
+		<div id="page">
+			<nav class="colorlib-nav" role="navigation">
+				<div class="top-menu">
+					<div class="container">
+						<div class="row">
+							<div class="col-sm-7 col-md-9">
+								<div id="colorlib-logo"><a href="/">AUDIZO.</a></div>
+							</div>
+							<div class="col-sm-5 col-md-3">
+							<form action="#" class="search-wrap">
+							<div class="form-group">
+								<input type="search" class="form-control search" placeholder="Search">
+								<button class="btn btn-primary submit-search text-center" type="submit"><i class="icon-search"></i></button>
+							</div>
+							</form>
 						</div>
-						<div class="col-sm-5 col-md-3">
-			            <form action="#" class="search-wrap">
-			               <div class="form-group">
-			                  <input type="search" class="form-control search" placeholder="Search">
-			                  <button class="btn btn-primary submit-search text-center" type="submit"><i class="icon-search"></i></button>
-			               </div>
-			            </form>
-			         </div>
-		         </div>
-					<div class="row">
-						<div class="col-sm-12 text-left menu-1">
-							<ul>
-								<li class="active"><a href="/">Home</a></li>
-								<li class="has-dropdown">
-									<a href="/shop">Shop</a>
-									<!-- <ul class="dropdown">
-										<li><a href="product-detail.html">Product Detail</a></li>
-										<li><a href="cart.html">Shopping Cart</a></li>
-										<li><a href="checkout.html">Checkout</a></li>
-										<li><a href="order-complete.html">Order Complete</a></li>
-										<li><a href="add-to-wishlist.html">Wishlist</a></li>
-									</ul> -->
-								</li>
-								<!-- <li><a href="women.html">Women</a></li> -->
-								<!-- <li><a href="women.html">Women</a></li> -->
-								<li><a href="/about">About</a></li>
-								<!-- <li><a href="contact.html">Contact</a></li> -->
-								<li class="cart"><a href="cart.html"><i class="icon-shopping-cart"></i> </a></li>
-								<% if (isAuthenticated) { %>
-									<li class="cart"><a href="/logout"><i class="icon-user"></i> Logout</a></li>
-								<% } else { %>
-									<li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
-								<% } %>
-						
-								<li class="cart"><a href="add-to-wishlist.html"><i class="icon-heart"></i></a></li>
+					</div>
+						<div class="row">
+							<div class="col-sm-12 text-left menu-1">
+								<ul>
+									<li class="active"><a href="/">Home</a></li>
+									<li class="has-dropdown">
+										<a href="/shop">Shop</a>
+										<ul class="dropdown">
+											<li><a href="/shop">Shop Products</a></li>
+											<li><a href="/cart">Shopping Cart</a></li>
+											<!-- <li><a href="checkout.html">Checkout</a></li>
+											<li><a href="order-complete.html">Order Complete</a></li> -->
+											<li><a href="/wishlist">Wishlist</a></li>
+										</ul>
+									</li>
+									<!-- <li><a href="women.html">Women</a></li> -->
+									<li><a href="/about">About</a></li>
+									<!-- <li><a href="contact.html">Contact</a></li> -->
+									<li class="cart"><a href="/cart"><i class="icon-shopping-cart"></i> </a></li>
+									<li class="cart"><a href="/wishlist"><i class="icon-heart"></i></a></li>		
 
-
-
-
-
-							</ul>
+									<% if (isAuthenticated) { %>
+										<li class="cart"><a href="/profile"><i class="icon-user"></i> <%= user.name %></a></li>
+								
+									<% } else { %>
+										<li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
+									<% } %>
+							
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 			<div class="sale">
 				<div class="container">
 					<div class="row">
@@ -119,8 +115,8 @@
 		<aside id="colorlib-hero">
 			<div class="flexslider">
 				<ul class="slides">
-			   	<li style="background-image: url(/static/userImages/images/output08.jpg);">
-			   		<div class="overlay"></div>
+			   	<li style="background-image: url(/static/userImages/images/audizo.jpg);">
+			   		<!-- <div class="overlay"></div>
 			   		<div class="container-fluid">
 			   			<div class="row">
 				   			<div class="col-sm-6 offset-sm-3 text-center slider-text">
@@ -135,10 +131,10 @@
 				   				</div>
 				   			</div>
 				   		</div>
-			   		</div>
+			   		</div> -->
 			   	</li>
 			   	<li style="background-image: url(/static/userImages/images/file.jpg);">
-			   		<div class="overlay"></div>
+			   		<!-- <div class="overlay"></div>
 			   		<div class="container-fluid">
 			   			<div class="row">
 				   			<div class="col-sm-6 offset-sm-3 text-center slider-text">
@@ -153,10 +149,10 @@
 				   				</div>
 				   			</div>
 				   		</div>
-			   		</div>
+			   		</div> -->
 			   	</li>
-			   	<li style="background-image: url(/static/userImages/images/output05.jpg);">
-			   		<div class="overlay"></div>
+			   	<li style="background-image: url(/static/userImages/images/IMG-20240625-WA0007.jpg);">
+			   		<!-- <div class="overlay"></div>
 			   		<div class="container-fluid">
 			   			<div class="row">
 				   			<div class="col-sm-6 offset-sm-3 text-center slider-text">
@@ -171,7 +167,7 @@
 				   				</div>
 				   			</div>
 				   		</div>
-			   		</div>
+			   		</div> -->
 			   	</li>
 			  	</ul>
 		  	</div>
@@ -191,15 +187,15 @@
 				<div class="row">
 					<div class="col-sm-6 text-center">
 						<div class="featured">
-							<a href="#" class="featured-img" style="background-image: url(/static/userImages/images/black-headphones-digital-device.jpg);"></a>
+							<a href="#" class="featured-img" style="background-image: url(/static/userImages/images/IMG-20240619-WA0064.jpg);"></a>
 							<div class="desc">
-								<h2><a href="#">Shop Gaming Collection</a></h2>
+								<h2><a href="#">Shop Wired Collection</a></h2>
 							</div>
 						</div>
 					</div>
 					<div class="col-sm-6 text-center">
 						<div class="featured">
-							<a href="#" class="featured-img" style="background-image: url(/static/userImages/images/file.jpg)"></a>
+							<a href="#" class="featured-img" style="background-image: url(/static/userImages/images/bannerr.jpg)"></a>
 							<div class="desc">
 								<h2><a href="#">Shop Wireless Collection</a></h2>
 							</div>
@@ -261,142 +257,7 @@
 							</div>
 						</div>
 					</div>
-					<!-- <div class="w-100"></div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-5.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-6.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-7.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-8.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div> -->
-					<!-- <div class="w-100"></div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-9.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-10.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-11.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-12.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div> -->
-					<!-- <div class="w-100"></div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-13.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-14.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-15.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="/static/userImages/images/item-16.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
-							</div>
-						</div>
-					</div>
-				</div> -->
+					
 				<div class="row">
 					<div class="col-md-12 text-center">
 						<p><a href="#" class="btn btn-primary btn-lg">Shop All Products</a></p>
@@ -404,39 +265,13 @@
 				</div>
 			</div>
 		</div>
-<!-- 
-		<div class="colorlib-partner">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-8 offset-sm-2 text-center colorlib-heading colorlib-heading-sm">
-						<h2>Trusted Partners</h2>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-1.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-2.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-3.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-4.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-5.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-				</div>
-			</div>
-		</div> -->
+
 
 		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">
 					<div class="col footer-col colorlib-widget">
-						<h4>About Headset</h4>
+						<h4>About audizo</h4>
 						<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life</p>
 						<p>
 							<ul class="colorlib-social-icons">

@@ -5,21 +5,12 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Facebook and Twitter integration -->
-	<meta property="og:title" content=""/>
-	<meta property="og:image" content=""/>
-	<meta property="og:url" content=""/>
-	<meta property="og:site_name" content=""/>
-	<meta property="og:description" content=""/>
-	<meta name="twitter:title" content="" />
-	<meta name="twitter:image" content="" />
-	<meta name="twitter:url" content="" />
-	<meta name="twitter:card" content="" />
 
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+		<!-- Add Font Awesome -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<!-- Animate.css -->
 	<link rel="stylesheet" href="/static/userImages/css/animate.css">
 	<!-- Icomoon Icon Fonts-->
@@ -57,16 +48,25 @@
 		  width: 100%;
 		  max-width: 500px;
 		}
+		 .form-group {
+            text-align: left; /* Center text within form-group */
+        }
+        .btn-primary, .btn-google {
+            display: block;
+            width: 100%; /* Full width buttons */
+            margin: 10px 0; /* Margin between buttons */	
+        }
+        .input-group {
+            display: flex;
+            justify-content: center; /* Center the input and button */
+        }
+        /* .input-group input {
+            flex-grow: 1;
+        } */
 	  </style>
 
 	</head>
-	
-	
-	<body>		
-		<script src="/static/userImages/js/fireBase.js" defer type="module"></script>
-
-		
-		
+	<body>			
 	<div class="colorlib-loader"></div>
 
 	<div id="page">
@@ -92,18 +92,23 @@
 								<li><a href="/">Home</a></li>
 								<li class="has-dropdown">
 									<a href="/shop">Shop</a>
-									<!-- <ul class="dropdown">
-										<li><a href="product-detail.html">Product Detail</a></li>
-										<li><a href="cart.html">Shopping Cart</a></li>
-										<li><a href="checkout.html">Checkout</a></li>
-										<li><a href="order-complete.html">Order Complete</a></li>
-										<li><a href="add-to-wishlist.html">Wishlist</a></li>
-									</ul> -->
+									<ul class="dropdown">
+										<li><a href="/shop">Shop Products</a></li>
+										<li><a href="/cart">Shopping Cart</a></li>
+										<!-- <li><a href="checkout.html">Checkout</a></li>
+										<li><a href="order-complete.html">Order Complete</a></li> -->
+										<li><a href="/wishlist">Wishlist</a></li>
+									</ul>
 								</li>
 								<li><a href="/about">About</a></li>
 								<!-- <li><a href="/shop">Shop</a></li> -->
 								<!-- <li class="active"><a href="contact.html">Contact</a></li> -->
-								<!-- <li class="cart"><a href="cart.html"><i class="icon-shopping-cart"></i> Cart [0]</a></li> -->
+								<li class="cart"><a href="/cart"><i class="icon-shopping-cart"></i> </a></li>
+								<li class="cart"><a href="/wishlist"><i class="icon-heart"></i></a></li>	
+								<li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
+								
+						
+
 							</ul>
 						</div>
 					</div>
@@ -116,14 +121,14 @@
 							<div class="row">
 								<div class="owl-carousel2">
 									<div class="item">
-										<!-- <div class="col">
+										<div class="col">
 											<h3><a href="#">25% off (Almost) Everything! Use Code: Summer Sale</a></h3>
-										</div> -->
+										</div>
 									</div>
 									<div class="item">
-										<!-- <div class="col">
-											<h3><a href="#">Our biggest sale yet 50% off all headsets</a></h3>
-										</div> -->
+										<div class="col">
+											<h3><a href="#">Our biggest sale yet 50% off on all headphones</a></h3>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -144,63 +149,67 @@
 		</div> -->
 
 
-<div id="colorlib-contact">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="contact-wrap">
-            <h3>Login</h3>
-			<% if (typeof message !== 'undefined' && message) { %>
-				<div class="alert alert-danger"><%= message %></div>
-			<% } %>
-			<!-- <% if (typeof error !== 'undefined' && error === 'blocked') { %>
-				<div class="alert alert-danger">Your account has been blocked. Please contact support.</div>
-			<% } %> -->
-            <div id="error" class="text-danger mb-3"></div>
-            <form id="form" action="/login" method="POST" class="contact-form">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Your email" required>
-                  </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Your password" required>
-                  </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="col-sm-12">
-                  <div class="form-group">
-                    <input type="submit" value="Login" class="btn btn-primary">
-                  </div>
-                </div>
-				<div class="btn-group btn-block" role="group" aria-label="Login buttons">
-					<!-- Gmail Login -->
-					<a href="/auth/google" class="btn btn-google"><i class="fab fa-google text-danger"></i> Login with Google</a>
+		<div id="colorlib-contact">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-md-6">
+						<div class="contact-wrap">
+							<h3>Login</h3>
+							<% if (typeof message !== 'undefined' && message) { %>
+								<div class="alert alert-danger"><%= message %></div>
+							<% } %>
+							
+							<div id="error" class="text-danger mb-3"></div>
+							<form id="form" action="/login" method="POST" class="contact-form">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="email">Email</label>
+											<input type="email" id="email" name="email" class="form-control" placeholder="Your email" required>
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="password">Password</label>
+											<div class="input-group">
+												<input type="password" id="password" name="password" class="form-control" placeholder="Your password" required>
+												<!-- <div class="input-group-append">
+													<button class="btn btn-outline-secondary" type="button" id="togglePassword">
+														<i class="fas fa-eye"></i>
+													</button>
+												</div> -->
+											</div>
+										</div>
+									</div>
+									<div class="w-100"></div>
+									<div class="col-sm-12">
+										<div class="form-group">
+											<input type="submit" value="Login" class="btn btn-primary">
+										</div>
+									</div>
+									<div class="btn-group btn-block" role="group" aria-label="Login buttons">
+										<!-- Gmail Login -->
+										<a href="/auth/google" class="btn btn-google">
+											<i class="fab fa-google text-danger"></i> Login with Google
+										</a>
+									</div>
+								</div>
+							</form>
+							<div class="additional-links">
+								<p>Don't have an account? <a href="/register" class="btn btn-secondary">Register</a></p>
+							</div>
+						</div>
+					</div>
 				</div>
-
-              </div>
-            </form>
-            <div class="additional-links">
-              <p>Don't have an account? <a href="/register" class="btn btn-secondary">Register</a></p>
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
- 
+			</div>
+		</div>
+		
 
 		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">
 					<div class="col footer-col colorlib-widget">
-						<h4>About Headset</h4>
+						<h4>About AUDIZO</h4>
 						<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life</p>
 						<p>
 							<ul class="colorlib-social-icons">
@@ -276,13 +285,15 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<div class="gototop js-top">
 		<a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
 	</div>
-
+	
 	<script>
+		
+	
 		let form = document.getElementById("form");
 		let error = document.getElementById("error");
 		let message = [];
 	  
-		form.addEventListener("submit", (e) => {
+		form.addEventListener("submit", (e) => {	
 		  message = [];
 		  let email = document.getElementById("email").value;
 		  let password = document.getElementById("password").value;

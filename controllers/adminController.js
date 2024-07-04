@@ -70,25 +70,6 @@ const loadUser = async (req, res) => {
         console.log(error.message)
     }
 }
-// const blockUser = async (req, res) => {
-//     try {
-//         const userId = req.body.userId;
-//         const user = await User.findById(userId);
-//         if (user) {
-//           const updatedUser = await User.findByIdAndUpdate(userId, {
-//                 is_varified: !user.is_varified
-//             },{ new: true});
-//             res.status(200).send(`User ${updatedUser.is_varified ? 'unblock' : 'block'}`);
-//         } else {
-//             res.status(404).send("user not found");
-//         }
-
-
-//     } catch (error) {
-//         console.log(error.message)
-//     }
-// }
-
 
 const blockUser = async (req,res) => {
     try{
@@ -97,7 +78,7 @@ const blockUser = async (req,res) => {
         if(userData){
             res.status(200).json({ message: 'User blocked successfully' });
         }else{
-            res.status(200).json({ message: "Couldn't block user" });
+            res.status(400).json({ message: "User not found" });
         }
     }catch(error){
         res.send(error);

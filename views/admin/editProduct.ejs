@@ -250,44 +250,44 @@
         <li class="nav-item">
           <a class="nav-link" href="/admin/category">
             <span class="menu-title">Category</span>
-            <i class="mdi mdi-crosshairs-gps menu-icon"></i>
+            <i class="mdi mdi-format-list-bulleted menu-icon"></i>
           </a>
         </li>
-
+       
         <li class="nav-item">
           <a class="nav-link" href="/admin/product">
             <span class="menu-title">products</span>
-            <i class="mdi mdi-contacts menu-icon"></i>
+            <i class="mdi mdi-cube-outline menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/userList">
             <span class="menu-title">users</span>
-            <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+            <i class="mdi mdi-contacts menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/coupons">
             <span class="menu-title">coupons</span>
-            <i class="mdi mdi-chart-bar menu-icon"></i>
+            <i class="mdi mdi-ticket-percent menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/banner">
             <span class="menu-title">banner</span>
-            <i class="mdi mdi-table-large menu-icon"></i>
+            <i class="mdi mdi-flag-outline menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/offers">
             <span class="menu-title">offers</span>
-            <i class="mdi mdi-table-large menu-icon"></i>
+            <i class="mdi mdi-tag menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/logout">
             <span class="menu-title">logout</span>
-            <i class="mdi mdi-table-large menu-icon"></i>
+            <i class="mdi mdi-logout menu-icon"></i>
           </a>
         </li>
 
@@ -322,8 +322,8 @@
                 action="/admin/product/editProduct?id=<%=product[0]._id%>">
                 <div class="form-group">
                   <label for="exampleInputName1">Product Name</label>
-                  <input type="text" class="form-control" id="productName" data-id="<%=product[0]._id%>" name="productName"
-                    placeholder="Enter the Product Name" value="<%=product[0].name%>">
+                  <input type="text" class="form-control" id="productName" data-id="<%=product[0]._id%>"
+                    name="productName" placeholder="Enter the Product Name" value="<%=product[0].name%>">
                   <small id="productNameError" class="text-danger"></small>
                 </div>
 
@@ -342,7 +342,7 @@
                   <input type="file" name="photos" class="file-upload-default" accept="image/*" multiple
                     onchange="handleFileSelect(event)" id="imageInput">
                   <div class="input-group col-xs-12">
-                    <input type="text" class="form-control file-upload-info"  disabled placeholder="Upload Image"
+                    <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
                       id="fileCount" value="">
                     <span class="input-group-append">
                       <button class="file-upload-browse btn btn-gradient-primary" type="button"
@@ -421,185 +421,188 @@
 
   <script>
     async function validateForm() {
-        // Collecting form elements
-        let productName = document.getElementById('productName');
-        let quantity = document.getElementById('quantity');
-        let price = document.getElementById('price');
-        let discountPrice = document.getElementById('discountprice');
-        let productDescription = document.getElementById('productDescription');
-        let images = document.querySelector(".file-upload-default");
+      // Collecting form elements
+      let productName = document.getElementById('productName');
+      let quantity = document.getElementById('quantity');
+      let price = document.getElementById('price');
+      let discountPrice = document.getElementById('discountprice');
+      let productDescription = document.getElementById('productDescription');
+      let images = document.querySelector(".file-upload-default");
       let id = productName.dataset.id;
-        // Checking if elements exist before accessing their value
-        productName = productName ? productName.value.trim() : '';
-        quantity = quantity ? quantity.value.trim() : '';
-        price = price ? price.value.trim() : '';
-        discountPrice = discountPrice ? discountPrice.value.trim() : '';
-        productDescription = productDescription ? productDescription.value.trim() : '';
+      // Checking if elements exist before accessing their value
+      productName = productName ? productName.value.trim() : '';
+      quantity = quantity ? quantity.value.trim() : '';
+      price = price ? price.value.trim() : '';
+      discountPrice = discountPrice ? discountPrice.value.trim() : '';
+      productDescription = productDescription ? productDescription.value.trim() : '';
 
-        let nameRegex = /^[a-zA-Z0-9\s]+$/;
-        let numberRegex = /^\d+$/;
-        let priceRegex = /^\d+(\.\d{1,2})?$/;
-        let isValid = true;
+       // Converting price and discountPrice to floats for comparison
+      let priceValue = parseFloat(price);
+      let discountPriceValue = parseFloat(discountPrice);
 
-        // Resetting error messages
-        document.getElementById('productNameError').innerText = '';
-        document.getElementById('quantityError').innerText = '';
-        document.getElementById('priceError').innerText = '';
-        document.getElementById('discountPriceError').innerText = '';
-        document.getElementById('productDescriptionError').innerText = '';
-        document.getElementById('imageError').innerText = '';
+      let nameRegex = /^[a-zA-Z0-9\s]+$/;
+      let numberRegex = /^\d+$/;
+      let priceRegex = /^\d+(\.\d{1,2})?$/;
+      let isValid = true;
 
-        // Validating form fields
-        try {
-              const response = await axios.get(`/admin/product/checkAlready?productName=${productName}&&id=${id}`);
-              if (!response.data.success) {
-                  document.getElementById('productNameError').innerText = 'Product Name already exists';
-                  isValid = false;
-              }
-          } catch (error) {
-              console.error('Error checking product name:', error);
-              document.getElementById('productNameError').innerText = 'Error checking product name';
-              isValid = false;
-          }
-  
+      // Resetting error messages
+      document.getElementById('productNameError').innerText = '';
+      document.getElementById('quantityError').innerText = '';
+      document.getElementById('priceError').innerText = '';
+      document.getElementById('discountPriceError').innerText = '';
+      document.getElementById('productDescriptionError').innerText = '';
+      document.getElementById('imageError').innerText = '';
 
-        if (!nameRegex.test(productName)) {
-            document.getElementById('productNameError').innerText = 'Product Name must be of only letters and numbers';
-            isValid = false;
+      // Validating form fields
+      try {
+        const response = await axios.get(`/admin/product/checkAlready?productName=${productName}&&id=${id}`);
+        if (!response.data.success) {
+          document.getElementById('productNameError').innerText = 'Product Name already exists';
+          isValid = false;
         }
+      } catch (error) {
+        console.error('Error checking product name:', error);
+        document.getElementById('productNameError').innerText = 'Error checking product name';
+        isValid = false;
+      }
 
-        if (!numberRegex.test(quantity) || quantity < 0) {
-            document.getElementById('quantityError').innerText = 'Quantity should be a non-negative number';
-            isValid = false;
+
+      if (!nameRegex.test(productName)) {
+        document.getElementById('productNameError').innerText = 'Product Name must be of only letters and numbers';
+        isValid = false;
+      }
+
+      if (!numberRegex.test(quantity) || quantity < 0) {
+        document.getElementById('quantityError').innerText = 'Quantity should be a non-negative number';
+        isValid = false;
+      }
+
+      if (!priceRegex.test(price) || priceValue <= 0) {
+        document.getElementById('priceError').innerText = 'Price must be a number greater than 0';
+        isValid = false;
+      }
+
+      if (!priceRegex.test(discountPrice) || discountPriceValue <= 0 || discountPriceValue>=priceValue) {
+        document.getElementById('discountPriceError').innerText = 'Discount Price must be a number greater than 0 and less than actual price';
+        isValid = false;
+      }
+
+      if (productDescription.length === 0) {
+        document.getElementById('productDescriptionError').innerText = 'Product Description is required';
+        isValid = false;
+      }
+
+      if (deletedIndices.length > images.files.length) {
+        document.getElementById('imageError').innerText = 'Select at least 3 images';
+        isValid = false;
+      }
+
+      for (let i = 0; i < images.files.length; i++) {
+        let fileName = images.files[i].name;
+        let extensions = /(\.jpg|\.jpeg|\.png)$/i;
+        if (!extensions.test(fileName)) {
+          document.getElementById('imageError').innerText = 'Select only valid Image files (jpg/jpeg/png)';
+          isValid = false;
         }
+      }
 
-        if (!priceRegex.test(price) || price <= 0) {
-            document.getElementById('priceError').innerText = 'Price must be a number greater than 0';
-            isValid = false;
-        }
+      if (isValid) {
+        editProduct();
+      }
 
-        if (!priceRegex.test(discountPrice) || discountPrice <= 0) {
-          console.log(discountPrice)
-            document.getElementById('discountPriceError').innerText = 'Discount Price must be a number greater than 0';
-            isValid = false;
-        }
-
-        if (productDescription.length === 0) {
-            document.getElementById('productDescriptionError').innerText = 'Product Description is required';
-            isValid = false;
-        }
-
-        if (deletedIndices.length > images.files.length) {
-            document.getElementById('imageError').innerText = 'Select at least 3 images';
-            isValid = false;
-        }
-
-        for (let i = 0; i < images.files.length; i++) {
-            let fileName = images.files[i].name;
-            let extensions = /(\.jpg|\.jpeg|\.png)$/i;
-            if (!extensions.test(fileName)) {
-                document.getElementById('imageError').innerText = 'Select only valid Image files (jpg/jpeg/png)';
-                isValid = false;
-            }
-        }
-
-        if (isValid) {
-            editProduct();
-        }
-
-        return false; // Prevent form from submitting normally
+      return false; // Prevent form from submitting normally
     }
 
     let deletedIndices = [];
 
     function removeImage(buttonElement, index) {
-        const imageWrapper = buttonElement.closest('.image-wrapper');
-        imageWrapper.remove();
-        deletedIndices.push(index);
+      const imageWrapper = buttonElement.closest('.image-wrapper');
+      imageWrapper.remove();
+      deletedIndices.push(index);
     }
 
     document.querySelector('.forms-sample').addEventListener('submit', (event) => {
       event.preventDefault();
-        if (!validateForm()) {
-            event.preventDefault();
-        }
+      if (!validateForm()) {
+        event.preventDefault();
+      }
     });
 
     function handleFileSelect(event) {
-        const preview = document.getElementById('imagePreview');
-        preview.innerHTML = '';
+      const preview = document.getElementById('imagePreview');
+      preview.innerHTML = '';
 
-        const files = event.target.files;
-        const filesAmount = files.length;
+      const files = event.target.files;
+      const filesAmount = files.length;
 
-        document.getElementById('fileCount').value = filesAmount + ' files selected';
+      document.getElementById('fileCount').value = filesAmount + ' files selected';
 
-        for (let i = 0; i < filesAmount; i++) {
-            const reader = new FileReader();
+      for (let i = 0; i < filesAmount; i++) {
+        const reader = new FileReader();
 
-            reader.onload = function (event) {
-                const imageWrapper = document.createElement('div');
-                imageWrapper.style.position = 'relative';
-                imageWrapper.style.display = 'inline-block';
-                imageWrapper.style.marginRight = '10px';
+        reader.onload = function (event) {
+          const imageWrapper = document.createElement('div');
+          imageWrapper.style.position = 'relative';
+          imageWrapper.style.display = 'inline-block';
+          imageWrapper.style.marginRight = '10px';
 
-                const imageElement = document.createElement('img');
-                imageElement.src = event.target.result;
-                imageElement.style.width = '100px';
-                imageElement.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
+          const imageElement = document.createElement('img');
+          imageElement.src = event.target.result;
+          imageElement.style.width = '100px';
+          imageElement.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
 
-                const removeButton = document.createElement('button');
-                removeButton.innerText = 'x';
-                removeButton.style.position = 'absolute';
-                removeButton.style.top = '0';
-                removeButton.style.right = '0';
-                removeButton.style.color = 'rgb(255, 255, 255)';
-                removeButton.style.backgroundColor = 'rgb(255, 0, 0)';
-                removeButton.style.border = 'none';
-                removeButton.style.borderRadius = '50%';
-                removeButton.style.cursor = 'pointer';
-                removeButton.onclick = function () {
-                    const newFiles = Array.from(files).filter((file, index) => index !== i);
-                    const fileList = new DataTransfer();
+          const removeButton = document.createElement('button');
+          removeButton.innerText = 'x';
+          removeButton.style.position = 'absolute';
+          removeButton.style.top = '0';
+          removeButton.style.right = '0';
+          removeButton.style.color = 'rgb(255, 255, 255)';
+          removeButton.style.backgroundColor = 'rgb(255, 0, 0)';
+          removeButton.style.border = 'none';
+          removeButton.style.borderRadius = '50%';
+          removeButton.style.cursor = 'pointer';
+          removeButton.onclick = function () {
+            const newFiles = Array.from(files).filter((file, index) => index !== i);
+            const fileList = new DataTransfer();
 
-                    newFiles.forEach(file => {
-                        fileList.items.add(file);
-                    });
+            newFiles.forEach(file => {
+              fileList.items.add(file);
+            });
 
-                    event.target.files = fileList.files;
-                    handleFileSelect(event);
+            event.target.files = fileList.files;
+            handleFileSelect(event);
 
-                    document.getElementById('imageInput').value = '';
-                };
+            document.getElementById('imageInput').value = '';
+          };
 
-                imageWrapper.appendChild(imageElement);
-                imageWrapper.appendChild(removeButton);
-                preview.appendChild(imageWrapper);
-            };
+          imageWrapper.appendChild(imageElement);
+          imageWrapper.appendChild(removeButton);
+          preview.appendChild(imageWrapper);
+        };
 
-            reader.readAsDataURL(files[i]);
-        }
+        reader.readAsDataURL(files[i]);
+      }
     }
 
     document.getElementById('imageInput').addEventListener('click', function () {
-        this.value = '';
+      this.value = '';
     });
 
     function editProduct() {
-        const form = document.querySelector('.forms-sample');
-        if (deletedIndices.length > 0) {
-            const deletedIndicesInput = document.createElement('input');
-            deletedIndicesInput.type = 'hidden';
-            deletedIndicesInput.name = 'deletedIndices';
-            deletedIndicesInput.value = JSON.stringify(deletedIndices);
-            form.appendChild(deletedIndicesInput);
-            deletedIndices = [];
-        }
-        form.method = 'POST';
-        form.action = "/admin/product/editProduct?id=<%= product[0]._id %>";
-        form.submit();
+      const form = document.querySelector('.forms-sample');
+      if (deletedIndices.length > 0) {
+        const deletedIndicesInput = document.createElement('input');
+        deletedIndicesInput.type = 'hidden';
+        deletedIndicesInput.name = 'deletedIndices';
+        deletedIndicesInput.value = JSON.stringify(deletedIndices);
+        form.appendChild(deletedIndicesInput);
+        deletedIndices = [];
+      }
+      form.method = 'POST';
+      form.action = "/admin/product/editProduct?id=<%= product[0]._id %>";
+      form.submit();
     }
-</script>
+  </script>
 
 
 

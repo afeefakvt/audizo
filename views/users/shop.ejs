@@ -71,24 +71,25 @@
 								<li><a href="/">Home</a></li>
 								<li class="has-dropdown active">
 									<a href="/shop">Shop</a>
-									<!-- <ul class="dropdown">
-										<li><a href="product-detail.html">Product Detail</a></li>
-										<li><a href="cart.html">Shopping Cart</a></li>
-										<li><a href="checkout.html">Checkout</a></li>
-										<li><a href="order-complete.html">Order Complete</a></li>
-										<li><a href="add-to-wishlist.html">Wishlist</a></li>
-									</ul> -->
+									<ul class="dropdown">
+										<li><a href="/shop">Shop Products</a></li>
+										<li><a href="/cart">Shopping Cart</a></li>
+										<!-- <li><a href="checkout.html">Checkout</a></li>
+										<li><a href="order-complete.html">Order Complete</a></li> -->
+										<li><a href="/wishlist">Wishlist</a></li>
+									</ul>
 								</li>
 								<!-- <li><a href="women.html">Women</a></li> -->
 								<li><a href="/about">About</a></li>
 								<!-- <li><a href="contact.html">Contact</a></li> -->
-								<li class="cart"><a href="cart.html"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
+								<li class="cart"><a href="/cart"><i class="icon-shopping-cart"></i> </a></li>
+								<li class="cart"><a href="/wishlist"><i class="icon-heart"></i></a></li>
+
 								<% if (isAuthenticated) { %>
-									<li class="cart"><a href="/logout"><i class="icon-user"></i> Logout</a></li>
+									<li class="cart"><a href="/profile"><i class="icon-user"></i> <%=user.name %></a></li>
 								<% } else { %>
 									<li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
 								<% } %>
-								<li class="cart"><a href="add-to-wishlist.html"><i class="icon-heart"></i></a></li>
 
 
 							</ul>
@@ -109,7 +110,7 @@
 									</div>
 									<div class="item">
 										<div class="col">
-											<h3><a href="#">Our biggest sale yet 50% off all headphones</a></h3>
+											<h3><a href="#">Our biggest sale yet 50% off on all headphones</a></h3>
 										</div>
 									</div>
 								</div>
@@ -175,19 +176,115 @@
 				</div>
 			</div>
 		</div>
-
-
+		
 		<div class="colorlib-product">
 			<div class="container">
-				<div class="row">
-					<div class="col-sm-8 offset-sm-2 text-center colorlib-heading colorlib-heading-sm">
-						<h2>View All Products</h2>
-					</div>
+				<div class="col-sm-8 offset-sm-2 text-center colorlib-heading colorlib-heading-sm">
+					<h2>View All Products</h2>
 				</div>
+				<div class="row">
+					<div class="col-lg-3 col-xl-3">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Brand</h3>
+									<ul>
+										<li><a href="#">Nike</a></li>
+										<li><a href="#">Adidas</a></li>
+										<li><a href="#">Merrel</a></li>
+										<li><a href="#">Gucci</a></li>
+										<li><a href="#">Skechers</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Size/Width</h3>
+									<div class="block-26 mb-2">
+										<h4>Size</h4>
+					               <ul>
+					                  <li><a href="#">7</a></li>
+					                  <li><a href="#">7.5</a></li>
+					                  <li><a href="#">8</a></li>
+					                  <li><a href="#">8.5</a></li>
+					                  <li><a href="#">9</a></li>
+					                  <li><a href="#">9.5</a></li>
+					                  <li><a href="#">10</a></li>
+					                  <li><a href="#">10.5</a></li>
+					                  <li><a href="#">11</a></li>
+					                  <li><a href="#">11.5</a></li>
+					                  <li><a href="#">12</a></li>
+					                  <li><a href="#">12.5</a></li>
+					                  <li><a href="#">13</a></li>
+					                  <li><a href="#">13.5</a></li>
+					                  <li><a href="#">14</a></li>
+					               </ul>
+					            </div>
+					            <div class="block-26">
+										<h4>Width</h4>
+					               <ul>
+					                  <li><a href="#">M</a></li>
+					                  <li><a href="#">W</a></li>
+					               </ul>
+					            </div>
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Style</h3>
+									<ul>
+										<li><a href="#">Slip Ons</a></li>
+										<li><a href="#">Boots</a></li>
+										<li><a href="#">Sandals</a></li>
+										<li><a href="#">Lace Ups</a></li>
+										<li><a href="#">Oxfords</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Colors</h3>
+									<ul>
+										<li><a href="#">Black</a></li>
+										<li><a href="#">White</a></li>
+										<li><a href="#">Blue</a></li>
+										<li><a href="#">Red</a></li>
+										<li><a href="#">Green</a></li>
+										<li><a href="#">Grey</a></li>
+										<li><a href="#">Orange</a></li>
+										<li><a href="#">Cream</a></li>
+										<li><a href="#">Brown</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Material</h3>
+									<ul>
+										<li><a href="#">Leather</a></li>
+										<li><a href="#">Suede</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Technologies</h3>
+									<ul>
+										<li><a href="#">BioBevel</a></li>
+										<li><a href="#">Groove</a></li>
+										<li><a href="#">FlexBevel</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+
+	
+			<div class="col-lg-9 col-xl-9">
 				<div class="row row-pb-md">
 					<% product.forEach((product) => { %>
-					<div class="col-md-3 col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
+						<div class="col-lg-4 mb-4 text-center">
+							<div class="product-entry border">
 							<a href="/productDetail/<%= product._id %>" class="prod-img">
 								<img src="/static/userImages/images/<%= product.images[0] %>" class="img-fluid" alt="product image">
 							</a>
@@ -256,7 +353,7 @@
 			<div class="container">
 				<div class="row row-pb-md">
 					<div class="col footer-col colorlib-widget">
-						<h4>About Headset</h4>
+						<h4>About AUDIZO</h4>
 						<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life</p>
 						<p>
 							<ul class="colorlib-social-icons">

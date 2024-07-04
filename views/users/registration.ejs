@@ -1,25 +1,16 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-	<title>audizo</title>
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Facebook and Twitter integration -->
-	<meta property="og:title" content=""/>
-	<meta property="og:image" content=""/>
-	<meta property="og:url" content=""/>
-	<meta property="og:site_name" content=""/>
-	<meta property="og:description" content=""/>
-	<meta name="twitter:title" content="" />
-	<meta name="twitter:image" content="" />
-	<meta name="twitter:url" content="" />
-	<meta name="twitter:card" content="" />
+<head>
+	<title>audizo</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+	<!-- Add Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<!-- Animate.css -->
 	<link rel="stylesheet" href="/static/userImages/css/animate.css">
 	<!-- Icomoon Icon Fonts-->
@@ -38,7 +29,7 @@
 	<!-- Owl Carousel -->
 	<link rel="stylesheet" href="/static/userImages/css/owl.carousel.min.css">
 	<link rel="stylesheet" href="/static/userImages/css/owl.theme.default.min.css">
-	
+
 	<!-- Date Picker -->
 	<link rel="stylesheet" href="/static/userImages/css/bootstrap-datepicker.css">
 	<!-- Flaticons  -->
@@ -48,20 +39,42 @@
 	<link rel="stylesheet" href="/static/userImages/css/style.css">
 	<style>
 		#colorlib-contact {
-		  display: flex;
-		  justify-content: center;
-		  align-items: center;
-		  height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
 		}
-		.contact-wrap {
-		  width: 100%;
-		  max-width: 500px;
-		}
-	  </style>
 
-	</head>
-	<body>
-		
+		.contact-wrap {
+			width: 100%;
+			max-width: 500px;
+		}
+
+		.form-group {
+			text-align: left;
+			/* Center text within form-group */
+		}
+
+		.btn-primary,
+		.btn-google {
+			display: block;
+			width: 100%;
+			/* Full width buttons */
+			margin: 10px 0;
+			/* Margin between buttons */
+		}
+
+		.input-group {
+			display: flex;
+			justify-content: center;
+			/* Center the input and button */
+		}
+	</style>
+
+</head>
+
+<body>
+
 	<div class="colorlib-loader"></div>
 
 	<div id="page">
@@ -70,35 +83,37 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-sm-7 col-md-9">
-							<div id="colorlib-logo"><a href="index.html">AUDIZO.</a></div>
+							<div id="colorlib-logo"><a href="/">AUDIZO.</a></div>
 						</div>
 						<div class="col-sm-5 col-md-3">
-			            <form action="#" class="search-wrap">
-			               <!-- <div class="form-group">
+							<form action="#" class="search-wrap">
+								<!-- <div class="form-group">
 			                  <input type="search" class="form-control search" placeholder="Search">
 			                  <button class="btn btn-primary submit-search text-center" type="submit"><i class="icon-search"></i></button>
 			               </div> -->
-			            </form>
-			         </div>
-		         </div>
+							</form>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-sm-12 text-left menu-1">
 							<ul>
 								<li><a href="/">Home</a></li>
 								<li class="has-dropdown">
 									<a href="/shop">Shop</a>
-									<!-- <ul class="dropdown">
-										<li><a href="product-detail.html">Product Detail</a></li>
-										<li><a href="cart.html">Shopping Cart</a></li>
-										<li><a href="checkout.html">Checkout</a></li>
-										<li><a href="order-complete.html">Order Complete</a></li>
-										<li><a href="add-to-wishlist.html">Wishlist</a></li>
-									</ul> -->
+									<ul class="dropdown">
+										<li><a href="/shop">Shop Products</a></li>
+										<li><a href="/cart">Shopping Cart</a></li>
+										<!-- <li><a href="checkout.html">Checkout</a></li>
+										<li><a href="order-complete.html">Order Complete</a></li> -->
+										<li><a href="/wishlist">Wishlist</a></li>
+									</ul>
 								</li>
 								<li><a href="/about">About</a></li>
 								<!-- <li><a href="/shop">Shop</a></li> -->
 								<!-- <li class="active"><a href="contact.html">Contact</a></li> -->
-								<!-- <li class="cart"><a href="cart.html"><i class="icon-shopping-cart"></i> Cart [0]</a></li> -->
+								<li class="cart"><a href="/cart"><i class="icon-shopping-cart"></i></a></li>
+								<li class="cart"><a href="/wishlist"><i class="icon-heart"></i></a></li>	
+								<li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
 							</ul>
 						</div>
 					</div>
@@ -111,14 +126,14 @@
 							<div class="row">
 								<div class="owl-carousel2">
 									<div class="item">
-										<!-- <div class="col">
+										<div class="col">
 											<h3><a href="#">25% off (Almost) Everything! Use Code: Summer Sale</a></h3>
-										</div> -->
+										</div>
 									</div>
 									<div class="item">
-										<!-- <div class="col">
-											<h3><a href="#">Our biggest sale yet 50% off all headsets</a></h3>
-										</div> -->
+										<div class="col">
+											<h3><a href="#">Our biggest sale yet 50% off on all headphones</a></h3>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -137,112 +152,122 @@
 				</div>
 			</div>
 		</div> -->
-<br><br>	
+		<br><br>
 
-        <div id="colorlib-contact">
-            <div class="container">
-              <div class="row justify-content-center">
-                <div class="col-md-6">
-                  <div class="contact-wrap">
-                    <h3>Register</h3>
-                    <% if (typeof message !== 'undefined' && message) { %>
-                        <div class="alert alert-danger"><%= message %></div>
-                    <% } %>
-                    <div id="error" class="text-danger mb-3"></div>
-                    <form id="form" action="/register" method="POST" class="contact-form">
-                      <div class="row">
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" placeholder="Your email" required>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            <label for="phone">Mobile Number</label>
-                            <input type="tel" id="mobile" name="mobile" class="form-control" placeholder="Your mobile number" required>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="Your password" required>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            <label for="confirm_password">Confirm Password</label>
-                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm your password" required>
-                          </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col-sm-12">
-                          <div class="form-group">
-                            <input type="submit" value="Register" class="btn btn-primary">
-                          </div>
-                        </div>
-                      </div>
-					  <div class="btn-group btn-block" role="group" aria-label="Login buttons">
-						<!-- Gmail Login -->
-						<a href="/auth/google" class="btn btn-google"><i class="fab fa-google text-danger"></i> Login with Google</a>
+		<div id="colorlib-contact">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-md-6">
+						<div class="contact-wrap">
+							<h3>Register</h3>
+							<% if (typeof message !=='undefined' && message) { %>
+								<div class="alert alert-danger">
+									<%= message %>
+								</div>
+								<% } %>
+									<div id="error" class="text-danger mb-3"></div>
+									<form id="form" action="/register" method="POST" class="contact-form">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="form-group">
+													<label for="name">Name</label>
+													<input type="text" id="name" name="name" class="form-control"
+														placeholder="Your name" required>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="form-group">
+													<label for="email">Email</label>
+													<input type="email" id="email" name="email" class="form-control"
+														placeholder="Your email" required>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="form-group">
+													<label for="phone">Mobile Number</label>
+													<input type="tel" id="mobile" name="mobile" class="form-control"
+														placeholder="Your mobile number" required>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="form-group">
+													<label for="password">Password</label>
+													<input type="password" id="password" name="password"
+														class="form-control" placeholder="Your password" required>
+												</div>
+											</div>
+											<div class="col-md-12">
+												<div class="form-group">
+													<label for="confirm_password">Confirm Password</label>
+													<input type="password" id="confirm_password" name="confirm_password"
+														class="form-control" placeholder="Confirm your password"
+														required>
+												</div>
+											</div>
+											<div class="w-100"></div>
+											<div class="col-sm-12">
+												<div class="form-group">
+													<input type="submit" value="Register" class="btn btn-primary">
+												</div>
+											</div>
+										</div>
+										<div class="btn-group btn-block" role="group" aria-label="Login buttons">
+											<!-- Gmail Login -->
+											<a href="/auth/google" class="btn btn-google"><i
+													class="fab fa-google text-danger"></i> Sign Up With Google</a>
+										</div>
+									</form>
+									<div class="additional-links">
+										<p>Already have an account? <a href="/login" class="btn btn-secondary">Login</a>
+										</p>
+								</div>
+						</div>
 					</div>
-	
-                    </form>
-                    <div class="additional-links">
-                      <p>Already have an account? <a href="/login" class="btn btn-secondary">Login</a></p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        
+				</div>
+			</div>
+		</div>
+
 
 		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">
 					<div class="col footer-col colorlib-widget">
-						<h4>About Headset</h4>
-						<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life</p>
+						<h4>About AUDIZO</h4>
+						<p>Even the all-powerful Pointing has no control about the blind texts it is an almost
+							unorthographic life</p>
 						<p>
-							<ul class="colorlib-social-icons">
-								<li><a href="#"><i class="icon-twitter"></i></a></li>
-								<li><a href="#"><i class="icon-facebook"></i></a></li>
-								<li><a href="#"><i class="icon-linkedin"></i></a></li>
-								<li><a href="#"><i class="icon-dribbble"></i></a></li>
-							</ul>
+						<ul class="colorlib-social-icons">
+							<li><a href="#"><i class="icon-twitter"></i></a></li>
+							<li><a href="#"><i class="icon-facebook"></i></a></li>
+							<li><a href="#"><i class="icon-linkedin"></i></a></li>
+							<li><a href="#"><i class="icon-dribbble"></i></a></li>
+						</ul>
 						</p>
 					</div>
 					<div class="col footer-col colorlib-widget">
 						<h4>Customer Care</h4>
 						<p>
-							<ul class="colorlib-footer-links">
-								<li><a href="#">Contact</a></li>
-								<li><a href="#">Returns/Exchange</a></li>
-								<li><a href="#">Gift Voucher</a></li>
-								<li><a href="#">Wishlist</a></li>
-								<li><a href="#">Special</a></li>
-								<li><a href="#">Customer Services</a></li>
-								<li><a href="#">Site maps</a></li>
-							</ul>
+						<ul class="colorlib-footer-links">
+							<li><a href="#">Contact</a></li>
+							<li><a href="#">Returns/Exchange</a></li>
+							<li><a href="#">Gift Voucher</a></li>
+							<li><a href="#">Wishlist</a></li>
+							<li><a href="#">Special</a></li>
+							<li><a href="#">Customer Services</a></li>
+							<li><a href="#">Site maps</a></li>
+						</ul>
 						</p>
 					</div>
 					<div class="col footer-col colorlib-widget">
 						<h4>Information</h4>
 						<p>
-							<ul class="colorlib-footer-links">
-								<li><a href="#">About us</a></li>
-								<li><a href="#">Delivery Information</a></li>
-								<li><a href="#">Privacy Policy</a></li>
-								<li><a href="#">Support</a></li>
-								<li><a href="#">Order Tracking</a></li>
-							</ul>
+						<ul class="colorlib-footer-links">
+							<li><a href="#">About us</a></li>
+							<li><a href="#">Delivery Information</a></li>
+							<li><a href="#">Privacy Policy</a></li>
+							<li><a href="#">Support</a></li>
+							<li><a href="#">Order Tracking</a></li>
+						</ul>
 						</p>
 					</div>
 
@@ -271,9 +296,14 @@
 					<div class="col-sm-12 text-center">
 						<p>
 							<span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span> 
-							<span class="block">Demo Images: <a href="http://unsplash.co/" target="_blank">Unsplash</a> , <a href="http://pexels.com/" target="_blank">Pexels.com</a></span>
+								Copyright &copy;
+								<script>document.write(new Date().getFullYear());</script> All rights reserved | This
+								template is made with <i class="icon-heart" aria-hidden="true"></i> by <a
+									href="https://colorlib.com" target="_blank">Colorlib</a>
+								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+							</span>
+							<span class="block">Demo Images: <a href="http://unsplash.co/" target="_blank">Unsplash</a>
+								, <a href="http://pexels.com/" target="_blank">Pexels.com</a></span>
 						</p>
 					</div>
 				</div>
@@ -284,82 +314,95 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<div class="gototop js-top">
 		<a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
 	</div>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            let form = document.getElementById("form");
-            let error = document.getElementById("error");
-            let message = [];
-    
-            form.addEventListener("submit", (e) => {
-                message = [];
-                let email = document.getElementById("email").value;
-                let password = document.getElementById("password").value;
-                let confirmPassword = document.getElementById("confirm_password").value;
-                let mobile = document.getElementById("mobile").value;
-    
-                emailValidate(email);
-                mobileValidate(mobile);
-                passwordValidate(password, confirmPassword);
-    
-                if (message.length > 0) {
-                    e.preventDefault();
-                    error.innerText = message.join(", ");
-                }
-            });
-    
-            function emailValidate(email) {
-                let reg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-                if (!reg.test(email)) {
-                    message.push("Invalid Email");
-                }
-            }
-    
-            function mobileValidate(mobile) {
-                let reg = /^[0-9]{10}$/;
-                if (!reg.test(mobile)) {
-                    message.push("Invalid Mobile Number");
-                }
-            }
-    
-            function passwordValidate(password, confirmPassword) {
-                if (password.length < 3) {
-                    message.push("Password should be at least 3 characters");
-                }
-                if (password !== confirmPassword) {
-                    message.push("Passwords do not match");
-                }
-            }
-        });
-    </script>
-    
-    <!-- jQuery -->
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			let form = document.getElementById("form");
+			let error = document.getElementById("error");
+			let message = [];
+
+			form.addEventListener("submit", (e) => {
+				message = [];
+				let email = document.getElementById("email").value;
+				let password = document.getElementById("password").value;
+				let confirmPassword = document.getElementById("confirm_password").value;
+				let mobile = document.getElementById("mobile").value;
+
+				emailValidate(email);
+				mobileValidate(mobile);
+				passwordValidate(password, confirmPassword);
+
+				if (message.length > 0) {
+					e.preventDefault();
+					error.innerText = message.join(", ");
+				}
+			});
+
+			function emailValidate(email) {
+				let reg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+				if (!reg.test(email)) {
+					message.push("Invalid Email");
+				}
+			}
+			function mobileValidate(mobile) {
+				// Check if mobile number consists of all zeros
+				if (/^0+$/.test(mobile)) {
+					message.push("Mobile number should not consist of all zeros");
+					return false; // Invalid mobile number
+				}
+
+				// Check if mobile number starts with zero
+				if (mobile.startsWith('0')) {
+					message.push("Mobile number should not start with zero");
+					return false; // Invalid mobile number
+				}
+
+				// Check if mobile number follows the standard format of 10 digits
+				let reg = /^[0-9]{10}$/;
+				if (!reg.test(mobile)) {
+					message.push("Invalid Mobile Number");
+					return false; // Invalid mobile number
+				}
+
+				return true; // Valid mobile number
+			}
+
+			function passwordValidate(password, confirmPassword) {
+				if (password.length < 3) {
+					message.push("Password should be at least 3 characters");
+				}
+				if (password !== confirmPassword) {
+					message.push("Passwords do not match");
+				}
+			}
+		});
+	</script>
+
+	<!-- jQuery -->
 	<script src="/static/userImages/js/jquery.min.js"></script>
-    <!-- popper -->
-    <script src="/static/userImages/js/popper.min.js"></script>
-    <!-- bootstrap 4.1 -->
-    <script src="/static/userImages/js/bootstrap.min.js"></script>
-    <!-- jQuery easing -->
-    <script src="/static/userImages/js/jquery.easing.1.3.js"></script>
-     <!-- Waypoints -->
-     <script src="/static/userImages/js/jquery.waypoints.min.js"></script>
-     <!-- Flexslider -->
-     <script src="/static/userImages/js/jquery.flexslider-min.js"></script>
-     <!-- Owl carousel -->
-     <script src="/static/userImages/js/owl.carousel.min.js"></script>
-     <!-- Magnific Popup -->
-     <script src="/static/userImages/js/jquery.magnific-popup.min.js"></script>
-     <script src="/static/userImages/js/magnific-popup-options.js"></script>
-     <!-- Date Picker -->
-     <script src="/static/userImages/js/bootstrap-datepicker.js"></script>
-     <!-- Stellar Parallax -->
-     <script src="/static/userImages/js/jquery.stellar.min.js"></script>
-     <!-- Google Map -->
-     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCefOgb1ZWqYtj7raVSmN4PL2WkTrc-KyA&sensor=false"></script>
-     <script src="/static/userImages/js/google_map.js"></script>
-     <!-- Main -->
-     <script src="/static/userImages/js/main.js"></script>
- 
-     </body>
- </html>
- 
- 
+	<!-- popper -->
+	<script src="/static/userImages/js/popper.min.js"></script>
+	<!-- bootstrap 4.1 -->
+	<script src="/static/userImages/js/bootstrap.min.js"></script>
+	<!-- jQuery easing -->
+	<script src="/static/userImages/js/jquery.easing.1.3.js"></script>
+	<!-- Waypoints -->
+	<script src="/static/userImages/js/jquery.waypoints.min.js"></script>
+	<!-- Flexslider -->
+	<script src="/static/userImages/js/jquery.flexslider-min.js"></script>
+	<!-- Owl carousel -->
+	<script src="/static/userImages/js/owl.carousel.min.js"></script>
+	<!-- Magnific Popup -->
+	<script src="/static/userImages/js/jquery.magnific-popup.min.js"></script>
+	<script src="/static/userImages/js/magnific-popup-options.js"></script>
+	<!-- Date Picker -->
+	<script src="/static/userImages/js/bootstrap-datepicker.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="/static/userImages/js/jquery.stellar.min.js"></script>
+	
+	<script src="/static/userImages/js/google_map.js"></script>
+	<!-- Main -->
+	<script src="/static/userImages/js/main.js"></script>
+
+</body>
+
+</html>

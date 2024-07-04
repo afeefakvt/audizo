@@ -175,11 +175,7 @@
                 <h6 class="p-3 mb-0 text-center">See all notifications</h6>
               </div>
             </li> -->
-            <li class="nav-item nav-logout d-none d-lg-block">
-              <a class="nav-link" href="#">
-                <i class="mdi mdi-power"></i>
-              </a>
-            </li>
+           
             <li class="nav-item nav-settings d-none d-lg-block">
               <a class="nav-link" href="#">
                 <i class="mdi mdi-format-line-spacing"></i>
@@ -221,44 +217,44 @@
             <li class="nav-item">
               <a class="nav-link" href="/admin/category">
                 <span class="menu-title">Category</span>
-                <i class="mdi mdi-crosshairs-gps menu-icon"></i>
+                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
               </a>
             </li>
            
             <li class="nav-item">
               <a class="nav-link" href="/admin/product">
                 <span class="menu-title">products</span>
-                <i class="mdi mdi-contacts menu-icon"></i>
+                <i class="mdi mdi-cube-outline menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/userList">
                 <span class="menu-title">users</span>
-                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                <i class="mdi mdi-contacts menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/coupons">
                 <span class="menu-title">coupons</span>
-                <i class="mdi mdi-chart-bar menu-icon"></i>
+                <i class="mdi mdi-ticket-percent menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/banner">
                 <span class="menu-title">banner</span>
-                <i class="mdi mdi-table-large menu-icon"></i>
+                <i class="mdi mdi-flag-outline menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/offers">
                 <span class="menu-title">offers</span>
-                <i class="mdi mdi-table-large menu-icon"></i>
+                <i class="mdi mdi-tag menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/logout">
                 <span class="menu-title">logout</span>
-                <i class="mdi mdi-table-large menu-icon"></i>
+                <i class="mdi mdi-logout menu-icon"></i>
               </a>
             </li>
            
@@ -287,11 +283,12 @@
                 <div class="card-body">
                   <h4 class="card-title">Add Product</h4>
                   <br><br>
-                  <form class="forms-sample" method="post" enctype="multipart/form-data" onsubmit="return validateForm(event)">
+                  <form class="forms-sample" method="post" enctype="multipart/form-data" onsubmit="return validateForm(event)" >
                     <div class="form-group">
                       <label for="exampleInputName1">Product Name</label>
                       <input type="text" class="form-control" id="productName" name="productName" placeholder="Enter the Product Name">
                       <small id="productNameError" class="text-danger"></small>
+                        
                     </div>
                     <div class="form-group">
                       <label for="exampleSelectGender">Category</label>
@@ -525,10 +522,11 @@
       document.getElementById('imageInput').addEventListener('click', function() {
           this.value = '';
       });
-  
+
+    
       async function validateForm(event) {
           event.preventDefault();
-  
+        
           let productName = document.getElementById('productName').value.trim();
           let category = document.getElementById('category').value;
           let quantity = document.getElementById('quantity').value.trim();
@@ -536,10 +534,14 @@
           let discountPrice = document.getElementById('discountprice').value.trim();
           let productDescription = document.getElementById('productDescription').value.trim();
           let images = document.querySelector(".file-upload-default");
+      
+          // Converting price and discountPrice to floats for comparison
+          let priceValue = parseFloat(price);
+          let discountPriceValue = parseFloat(discountPrice);
   
           let nameRegex = /^[a-zA-Z0-9\s]+$/;
           let numberRegex = /^\d+$/;
-          let priceRegex = /^\d+(\.\d{1,2})?$/;
+          let priceRegex = /^\d+(\.\d{1,2})?$/; 
           let isValid = true;
   
           document.getElementById('productNameError').innerText = '';
@@ -549,8 +551,21 @@
           document.getElementById('discountPriceError').innerText = '';
           document.getElementById('productDescriptionError').innerText = '';
           document.getElementById('imageError').innerText = '';
+          
+          try {
+            const response = await axios.get(`/admin/product/checkAlready?productName=${productName}`);
+            if (!response.data.success) {
+              document.getElementById('productNameError').innerText = 'Product Name already exists';
+              isValid = false;
+            }
+          } catch (error) {
+            console.error('Error checking product name:', error);
+            document.getElementById('productNameError').innerText = 'Error checking product name';
+            isValid = false;
+          }
+
   
-    
+
           if (!nameRegex.test(productName)) {
               document.getElementById('productNameError').innerText = 'Product Name must be of only letters and numbers';
               isValid = false;
@@ -566,13 +581,12 @@
               isValid = false;
           }
   
-          if (!priceRegex.test(price) || price <= 0) {
+          if (!priceRegex.test(price) || priceValue <= 0) {
               document.getElementById('priceError').innerText = 'Price must be a number greater than 0';
               isValid = false;
           }
-  
-          if (!priceRegex.test(discountPrice) || discountPrice <= 0) {
-              document.getElementById('discountPriceError').innerText = 'Discount price must be a number greater than 0';
+          if (!priceRegex.test(discountPrice) || discountPriceValue <= 0 || discountPriceValue>=priceValue) {
+             document.getElementById('discountPriceError').innerText = 'Discount Price must be a number greater than 0 and less than actual price';
               isValid = false;
           }
   
@@ -585,6 +599,8 @@
               document.getElementById('imageError').innerText = 'Select at least three images';
               isValid = false;
           }
+
+
   
           for (let i = 0; i < images.files.length; i++) {
               let fileName = images.files[i].name;
@@ -596,11 +612,14 @@
           }
   
           if (isValid) {
-              event.target.submit();
+
+            event.target.submit();
           } else {
-              return false;
-          }
-      }
+            return false;
+          
+    } 
+}
+
   </script>
   
 

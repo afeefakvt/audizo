@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
 const fs = require('fs');
 const path = require('path');
-const { is_blocked } = require('../middleware/auth');
 
 // const fs = require('fs');
 // const session=require('session');
@@ -17,7 +16,7 @@ const loadProduct = async (req, res) => {
     let productData = await Product.aggregate([
       {
         $match: {
-          isListed: false
+          isListed: false,
         }
       },
       {
@@ -40,11 +39,30 @@ const loadProduct = async (req, res) => {
 const loadAddProduct = async (req, res, next) => {
   try {
     const category = await Category.find({ isBlocked: false });
+
     res.render("addProduct", { category: category });
   } catch (error) {
     next(error);
   }
 };
+
+// const checkAlready = async (req, res, next) => {
+//   try {
+//     const productName = req.query.productName.trim(); 
+//     const already = await Product.find({
+//       name: { $regex: `^${productName}$`, $options: "i" },
+//     });
+//     if (already.length > 0) {
+//       return res.json({ success: false });
+//     } else {
+//       return res.json({ success: true });
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+
 const checkAlready = async (req, res, next) => {
   try {
     const productName = req.query.productName.trim();
@@ -70,12 +88,9 @@ const checkAlready = async (req, res, next) => {
 };
 
 
-
 const addProduct = async (req, res, next) => {
   try {
     const { productName, category, price, discountPrice, quantity, productDescription } = req.body;
-
-    console.log('Form data:', req.body);
     console.log('Category:', category);
 
     const categoryId = category.trim();
@@ -98,46 +113,10 @@ const addProduct = async (req, res, next) => {
   }
 };
 
-
-// const addProduct= async(req,res,next)=>{
-//     try{
-//         const{name,description,price,stock,isListed}=req.body;
-//         const files=req.files;
-//         const images=files.map(item=>item.filename)
-
-//         const products=new Product({
-//             name,
-//             description,
-//             images,
-//             price,
-//             stock,
-//             isListed
-//         })
-//         await products.save()
-//         res.status(201).json({message:"success"})
-
-
-//     }catch(error){
-//         console.log(error.message)
-//     }
-// }
-
-const getProduct = async (req, res) => {
-  try {
-    const product = await Product.find();
-    console.log('product', product)
-
-    return res.render('shop', { data: product });
-
-  } catch (error) {
-    console.log(error.message)
-  }
-
-}
 const loadEditProduct = async (req, res) => {
   try {
     const id = req.query.id;
-    const category = await Category.find({isBlocked:false});
+    const category = await Category.find({ isBlocked: false });
     const prod = await Product.findOne({ _id: id });
     if (!prod) {
       return res.status(404).send('Product not found');
@@ -282,8 +261,7 @@ module.exports = {
   loadProduct,
   loadAddProduct,
   checkAlready,
-  addProduct,
-  getProduct,
+  addProduct, 
   loadEditProduct,
   editProduct,
   deleteProduct,
