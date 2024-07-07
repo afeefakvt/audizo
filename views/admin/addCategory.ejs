@@ -45,10 +45,8 @@
       </div> -->
       <!-- partial:partials/_navbar.html -->
        <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <!-- <a class="navbar-brand brand-logo" href="index.html"><img src="/static/adminImages/images/logo.svg" alt="logo" /></a>
-          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="/static/adminImages/images/logo-mini.svg" alt="logo" /></a> -->
-        </div>
+        <h1 style="padding: 20px 35px; color: rgb(138, 138, 138); font-size: 34px; font-weight: 700px;" >AUDIZO.</h1>
+
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="mdi mdi-menu"></span>
@@ -105,20 +103,6 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
-            <li class="nav-item nav-profile">
-              <a href="#" class="nav-link">
-                <!-- <div class="nav-profile-image">
-                  <img src="/static/adminImages/images/faces/face1.jpg" alt="profile">
-                  <span class="login-status online"></span> -->
-                  <!--change to offline or busy as needed-->
-                <!-- </div> -->
-                <!-- <div class="nav-profile-text d-flex flex-column">
-                  <span class="font-weight-bold mb-2">David Grey. H</span>
-                  <span class="text-secondary text-small">Project Manager</span>
-                </div> -->
-                <!-- <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i> -->
-              </a>
-            </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/home">
                 <span class="menu-title">Dashboard</span>
@@ -142,6 +126,12 @@
               <a class="nav-link" href="/admin/userList">
                 <span class="menu-title">users</span>
                 <i class="mdi mdi-contacts menu-icon"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/orders">
+                <span class="menu-title">orders</span>
+                <i class="mdi mdi-cart menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
@@ -192,26 +182,23 @@
         
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Add Category</h4>
-                    <br /><br />
-                    <form class="forms-sample"  onsubmit="handleSubmit()">
-                      <div class="form-group">
-                        <label for="exampleInputName1">Category Name</label>
-                        <p style="display: none;" id="errorMsg">category already exists</p>
-                        <input type="text" class="form-control" id="exampleInputName1" name="name" placeholder="Enter the Category Name" />
-                        <% if(locals.message){%>
-                        <small class="text-danger"><%=message%></small>
-                        <%}%>
-                      </div>
-                      <button class="btn btn-gradient-primary mr-2">
-                        Add
-                      </button>
-                      <a href="/admin/category" class="btn btn-light">Cancel</a>
-                    </form>
-                  </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Add Category</h4>
+                        <br /><br />
+                        <form class="forms-sample" id="addCategoryForm" >
+                            <div class="form-group">
+                                <label for="categoryName">Category Name</label>
+                                <p style="display: none;" id="existsMsg" class="text-danger">Category already exists</p>
+
+                                <p style="display: none;" id="errorMsg" class="text-danger">Category name cannot be empty</p>
+                                <input type="text" class="form-control" id="categoryName" name="name" placeholder="Enter the Category Name" />
+                            </div>
+                            <button type="submit" class="btn btn-gradient-primary mr-2">Add</button>
+                            <a href="/admin/category" class="btn btn-light">Cancel</a>
+                        </form>
+                    </div>
                 </div>
-              </div>
+            </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
@@ -230,22 +217,36 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        const handleSubmit =async ()=>{
-            try {
-                event.preventDefault()
-                const name = document.getElementById('exampleInputName1').value
-                const res = await axios.post(`/admin/category/addCategory?name=${name}`);
-                console.log(res);
-                if(!res.data.success){
-                    document.getElementById('errorMsg').style = 'display:block'
-                    document.getElementById('errorMsg').style = 'color:red'
-                }else{
-                    window.location.href = '/admin/category'
-                }
-            } catch (error) {
-                console.log("dfajskdf",error)
-            }
+        document.getElementById('addCategoryForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const categoryName = document.getElementById('categoryName').value.trim();
+
+        // Hide all error messages initially
+        document.getElementById('errorMsg').style.display = 'none';
+        document.getElementById('existsMsg').style.display = 'none';
+
+        if (categoryName === '') {
+            document.getElementById('errorMsg').style.display = 'block';
+            return; // Prevent the form from being submitted
         }
+
+        try {
+            const response = await axios.post('/admin/category/addCategory', { name: categoryName });
+
+            if (!response.data.success) {
+                if (response.data.message === 'Category already exists') {
+                    document.getElementById('existsMsg').style.display = 'block';
+                } else if (response.data.message === 'Category name cannot be empty') {
+                    document.getElementById('errorMsg').style.display = 'block';
+                }
+            } else {
+                window.location.href = '/admin/category';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
     </script>
     <!-- container-scroller -->
     <!-- plugins:js -->

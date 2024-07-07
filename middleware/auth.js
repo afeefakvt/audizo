@@ -1,23 +1,5 @@
 const User = require('../models/userModel')
 
-const is_blocked = async(req,res,next)=>{
-    try{
-        const userData =req.session.isLogin?await User.findOne({_id:req.session.user_id}):null
-        console.log(req.session.user_id)
-        if(userData){
-            if(userData.is_blocked){
-                req.session.isLogin=false
-                return res.redirect('/login');
-            }else{
-                next()
-            }
-        }else{
-            next()
-        }
-    }catch(error){
-        res.send(error.message)
-    }
-}
 
 const isLogin = async (req,res,next) => {
     try{
@@ -62,6 +44,24 @@ const authMiddleware = async (req, res, next) => {
         res.send(error.message);
     }
 };
+const is_blocked = async(req,res,next)=>{
+    try{
+        const userData =req.session.isLogin?await User.findOne({_id:req.session.user_id}):null
+        console.log(req.session.user_id)
+        if(userData){
+            if(userData.is_blocked){
+                req.session.isLogin=false
+                return res.redirect('/login');
+            }else{
+                next()
+            }
+        }else{
+            next()
+        }
+    }catch(error){
+        res.send(error.message)
+    }
+}
 
 
 

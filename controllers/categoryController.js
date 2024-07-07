@@ -13,7 +13,7 @@ const loadCategory = async (req, res) => {
 
   }
 }
-const loadAddCategory = async (req, res, next) => {
+const loadAddCategory = async (req, res) => {
   try {
     res.render("addCategory");
   } catch (error) {
@@ -22,14 +22,20 @@ const loadAddCategory = async (req, res, next) => {
 };
 
 const addCategory = async (req, res) => {
+  console.log("jkjkjkj");
   try {
-    const { name } = req.query;
+    const { name } = req.body;
+
+    if (!name || name.trim() === '') {
+      return res.status.json({ success: false, message: 'Category name cannot be empty' });
+    }
     const existingCategory = await Category.findOne({ name });
+    console.log("llllllll");
     if (existingCategory) {
-      return res.json({ success: false });
+      return res.json({ success: false, message: 'Category already exists' });
     }
     const category = new Category({
-      name
+      name: name.trim()
     });
     await category.save();
     res.json({ success: true })
@@ -38,7 +44,7 @@ const addCategory = async (req, res) => {
   }
 }
 
-const loadEditCategory = async (req, res, next) => {
+const loadEditCategory = async (req, res) => {
 
   try {
     const id = req.query.id;
@@ -51,21 +57,23 @@ const loadEditCategory = async (req, res, next) => {
   }
 };
 
-const editCategory = async (req, res, next) => {
+
+const editCategory = async (req, res) => {
   try {
-    const already = await Category.findOne({ name: req.body.name });
-    if (already) {
+    const already = await Category.findOne({name:req.body.categoryName});
+    if(already){
       return res.redirect("/admin/category");
     }
     await Category.findByIdAndUpdate(
       { _id: req.query.id },
-      { $set: { name: req.body.name } }
+      { $set: { name: req.body.categoryName } }
     );
     res.redirect("/admin/category");
   } catch (error) {
-    console.log(error.message);
+    console.logt(error.message);
   }
 };
+
 const deleteCategory = async (req, res, next) => {
   console.log("hhhh")
   try {

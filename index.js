@@ -8,7 +8,8 @@ const nocache = require("nocache");
 const path = require("path");
 const passport = require("passport")
 
-
+app.set('view engine','ejs');
+app.set('views','./views');
 
 app.use(session({
     secret:process.env.sessionSecret,
@@ -31,7 +32,9 @@ app.use('/',userRoute);
  const adminRoute=require('./routes/adminRoute');
  app.use('/admin',adminRoute);
 
-
+app.get("*",(req,res)=>{
+    res.status(404).render("error")
+})
  
 app.listen(1000,()=>{
     console.log("server is running at http://localhost:1000")

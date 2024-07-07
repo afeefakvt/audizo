@@ -58,12 +58,12 @@ const createOrder = async (req, res) => {
             })
             await Product.findByIdAndUpdate(
                 item.productId._id,
-                { $inc: { quantity: -item.stock } }
+                { $inc: { stock: -item.quantity } }
             )
         }
         if (orderData.paymentMethod === "cod") {
             if (req.body.totalprice > 10000) {
-                return res.json({ success: TRUE, message: "Cannot place order in COD" })
+                return res.json({ success: false, message: "Cannot place order in COD" })
             }
             orderData.paymentStatus = "Pending";
         }
@@ -102,7 +102,7 @@ const myOrders = async (req, res) => {
 
         const orderData = await Order.find({ userId: req.session.user_id }).sort({ date: -1 });
 
-        const totalOrders = await Order.countDocuments({ userId: req.session.user_id });
+        // const totalOrders = await Order.countDocuments({ userId: req.session.user_id });
         res.render("myOrders", { user: userData, orders: orderData })
 
 
@@ -126,20 +126,7 @@ const listOrders = async (req, res) => {
           
         ]);
 
-        const totalOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "userId",
-                    foreignField: "_id",
-                    as: "user"
-                }
-
-            },
-            { $unwind: "$user" },
-            { $count: "totalOrders" },
-        ])
-
+     
         res.render("orders", { orders: orderData })
 
     } catch (error) {
@@ -158,7 +145,7 @@ const orderDetails = async (req, res) => {
 
         res.render("orderDetails", {
             user: userData,
-            order: order
+            order: order    
         });
     } catch (error) {
         console.log(error.message);
@@ -216,12 +203,81 @@ const orderDetails = async (req, res) => {
 
 const changeStatus = async(req,res)=>{
     try {
+        console.log('Received request:', req.query);
         const order = await Order.findOne({_id:req.query.orderId})
+        let status=true
+        order.items.forEach((item)=>{
+            if(item._id==req.query.itemId){
+                item.itemStatus = req.query.currentStatus;
+            }
+            if(item.itemStatus!=="Delivered"){
+                status=false
+            }
+        })
+        if(status==true){
+            order.status="Completed"
+            order.paymentStatus="Success"
+
+        }else{
+            order.status="Pending"
+            order.paymentStatus="Pending"
+        }
+        await order.save();
+        console.log('Order after save:', order);
+        res.json({success:true,status:order.status,paymentStatus:order.paymentStatus})
+
     } catch (error) {
         console.log(error.message)
     }
 }
 
+const cancelOrder = async(req,res)=>{
+    try {
+        
+        const { orderId, productId } = req.query;
+        const order = await Order.findOne({_id:req.query.orderId});
+        console.log("orderrrrrrrrr")
+        let completed = true;
+        console.log("pppppppppp");
+        for(let item of order.items){
+            if(item.productId==req.query.productId){
+                if(item.itemStatus!=="Delivered"){
+                    item.itemStatus="Cancelled";
+                console.log("lllllllllll");
+                     await Product.findByIdAndUpdate(
+                        {_id:item.productId},
+                        {$inc:{stock:item.quantity}}
+
+                     )
+                     console.log(`Item status updated to Cancelled for productId: ${productId}`);
+                   
+
+                }else{
+                    console.log(`Cannot cancel delivered item with productId: ${productId}`);
+
+                }
+            }
+            console.log("ooooooooo");                                           
+            if(item.itemStatus!=="Cancelled"){
+                completed=false
+            }
+        }
+        if(completed==true){
+            order.status="Completed"
+            order.paymentStatus=""
+        }else{
+            order.status="Pending"
+        }
+
+        
+        await order.save(
+            res.json({success:true})
+        )
+    } catch (error) {
+        console.log(error.message)
+        
+    }
+}
 
 module.exports = {
     createOrder,
@@ -229,7 +285,8 @@ module.exports = {
     myOrders,
     listOrders,
     orderDetails,
-    changeStatus
+    changeStatus,
+    cancelOrder
 
 
 

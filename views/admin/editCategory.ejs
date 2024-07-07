@@ -45,10 +45,8 @@
       </div> -->
       <!-- partial:partials/_navbar.html -->
        <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <!-- <a class="navbar-brand brand-logo" href="index.html"><img src="/static/adminImages/images/logo.svg" alt="logo" /></a>
-          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="/static/adminImages/images/logo-mini.svg" alt="logo" /></a> -->
-        </div>
+        <h1 style="padding: 20px 35px; color: rgb(138, 138, 138); font-size: 34px; font-weight: 700px;" >AUDIZO.</h1>
+
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="mdi mdi-menu"></span>
@@ -105,20 +103,7 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
-            <li class="nav-item nav-profile">
-              <a href="#" class="nav-link">
-                <!-- <div class="nav-profile-image">
-                  <img src="/static/adminImages/images/faces/face1.jpg" alt="profile">
-                  <span class="login-status online"></span> -->
-                  <!--change to offline or busy as needed-->
-                <!-- </div> -->
-                <!-- <div class="nav-profile-text d-flex flex-column">
-                  <span class="font-weight-bold mb-2">David Grey. H</span>
-                  <span class="text-secondary text-small">Project Manager</span>
-                </div> -->
-                <!-- <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i> -->
-              </a>
-            </li>
+           
             <li class="nav-item">
               <a class="nav-link" href="/admin/home">
                 <span class="menu-title">Dashboard</span>
@@ -142,6 +127,12 @@
               <a class="nav-link" href="/admin/userList">
                 <span class="menu-title">users</span>
                 <i class="mdi mdi-contacts menu-icon"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/orders">
+                <span class="menu-title">orders</span>
+                <i class="mdi mdi-cart menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
@@ -182,33 +173,31 @@
                   Edit Category
                 </h3>
               </div>
-        
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <!-- <h4 class="card-title">Edit Category</h4> -->
+                    <h4 class="card-title">Edit Category</h4>
                     <br /><br />
-                    <form class="forms-sample" method="post">
+                    <form class="forms-sample" method="post" onsubmit="return validateForm()">
                       <div class="form-group">
                         <label for="exampleInputName1">Category Name</label>
                         <input
                           type="text"
                           class="form-control"
                           id="exampleInputName1"
-                          name="name"
-                          value="<%=category.name %>"
+                          name="categoryName"
+                          value="<%= category.name %>"
                         />
+                        <small id="error-message" style="color:red; display:none;">Invalid category name.</small>
                       </div>
-                      <input type="hidden" name="id" value="<%= category._id %>">
-                      <button type="submit" class="btn btn-gradient-primary mr-2">
-                        Submit
-                      </button>
-                      <a href="/admin/category" class="btn btn-gradient-light">Cancel</a>
+                      <button type="submit" class="btn btn-gradient-primary mr-2">Submit</button>
+                      <a href="/admin/category" class="btn btn-light">Cancel</a>
                     </form>
                   </div>
                 </div>
               </div>
-       
+            </div>
+          </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
@@ -244,6 +233,22 @@
     <script src="/static/adminImages/js/dashboard.js"></script>
     <script src="/static/adminImages/js/todolist.js"></script>
     <!-- End custom js for this page -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+    <script>
+      function validateForm() {
+    const categoryName = document.getElementById('exampleInputName1').value.trim();
+    const regex = /^[a-zA-Z0-9\s]+$/;
+    const errorMessage = document.getElementById('error-message');
+    
+    if (!regex.test(categoryName)) {
+      errorMessage.style.display = 'block';
+      return false;
+    } else {
+      errorMessage.style.display = 'none';
+      return true;
+    }
+  }
+      </script>
   </body>
 
 <!-- Mirrored from demo.bootstrapdash.com/purple-admin-free/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 28 Dec 2023 06:57:42 GMT -->

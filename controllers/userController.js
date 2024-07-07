@@ -255,8 +255,9 @@ const googleSuccess = async (req, res, next) => {
 const loadShop = async (req, res) => {
     try {
         const product = await Product.find({ isListed: false });
-    
-        return res.render('shop', { product });
+        const category = await Category.find({ isBlocked: false })
+
+        return res.render('shop', { product: product, category: category,sortOption:"" });
 
 
     } catch (error) {
@@ -359,10 +360,10 @@ const loadMyAddress = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id });
         const address = await Address.findOne({ userId: userData._id });
-     
+
         res.render("myAddress", { user: userData, addresses: address })
-        console.log(userData,"aaaaaaaaaaa")
-        console.log(address,"sssssss")
+        console.log(userData, "aaaaaaaaaaa")
+        console.log(address, "sssssss")
     } catch (error) {
         console.log(error.message)
     }
@@ -374,7 +375,7 @@ const loadAddAddress = async (req, res) => {
 
 
         res.render("addAddress", { user: userData })
-    
+
 
     } catch (error) {
         console.log(error.message)
@@ -401,7 +402,7 @@ const addAddress = async (req, res, next) => {
             state: state
         })
         await address.save();
-        
+
         res.redirect("/profile/myAddress")
 
     } catch (error) {
@@ -422,18 +423,18 @@ const loadEditAddress = async (req, res) => {
 }
 const editAddress = async (req, res) => {
     try {
-        const userData = await User.findOne({_id:req.session.user_id})
-        const index=req.query.index
-        const addressData = await Address.findOne({userId:userData._id})
-        const {name,mobile,pincode,house,locality,city,state} = req.body
-        addressData.address[index]={
-            name:name,
-            mobile:mobile,
-            pincode:pincode,
-            house:house,
-            locality:locality,
-            city:city,
-            state:state
+        const userData = await User.findOne({ _id: req.session.user_id })
+        const index = req.query.index
+        const addressData = await Address.findOne({ userId: userData._id })
+        const { name, mobile, pincode, house, locality, city, state } = req.body
+        addressData.address[index] = {
+            name: name,
+            mobile: mobile,
+            pincode: pincode,
+            house: house,
+            locality: locality,
+            city: city,
+            state: state
         }
         await addressData.save();
         res.redirect("/profile/myAddress")
@@ -443,16 +444,16 @@ const editAddress = async (req, res) => {
     }
 
 }
-const deleteAddress = async(req,res,next)=>{
-    try{
-        const address = await Address.findOne({userId:req.session.user_id});
+const deleteAddress = async (req, res, next) => {
+    try {
+        const address = await Address.findOne({ userId: req.session.user_id });
         const index = req.query.index;
-        await address.address.splice(index,1);
+        await address.address.splice(index, 1);
         await address.save()
         res.json({ success: true });
-    
 
-    }catch(error){
+
+    } catch (error) {
         next(error);
     }
 }
@@ -468,6 +469,9 @@ const logoutLoad = async (req, res) => {
 
     }
 };
+
+
+
 
 
 
@@ -496,5 +500,6 @@ module.exports = {
     loadEditAddress,
     editAddress,
     deleteAddress,
+    
 
 }

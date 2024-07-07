@@ -74,7 +74,7 @@ user_route.post("/checkout",auth.isLogin,cartController.addNewAddress)
 //order management
 user_route.post("/createOrder",auth.isLogin,orderController.createOrder);
 user_route.get("/orderSuccess",auth.isLogin,orderController.orderSuccess);
-
+user_route.get("/cancelOrder",auth.isLogin,orderController.cancelOrder);
 
 
 module.exports=user_route

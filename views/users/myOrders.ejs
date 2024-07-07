@@ -182,7 +182,11 @@
 							<div class="one-eight text-center">
 							  <div class="display-tc">
 								<span class="price" style="color: orange;">
-								  <%= order.status=="delivered" ?"completed":"pending" %>
+									<% if(order.items.every(item => item.itemStatus === "Delivered" || item.itemStatus === "Cancelled")) { %>
+										<%= order.status = "Completed" %>
+									  <% } else { %>
+										<%= order.status = "Pending" %>
+									  <% } %>		
 								</span>
 							  </div>
 							</div>

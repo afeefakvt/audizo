@@ -122,174 +122,242 @@
 				</div>
 			</div>
 		</div>
-	<!-- Order Details Page Begin -->
-<div class="colorlib-product">
-    <div class="container">
-        <div class="row row-pb-lg">
-            <div class="col-md-12">
-                <% order.items.forEach(item => { %>
-                <div class="product-cart d-flex">
-                    <!-- Product Image -->
-                    <div class="one-forth">
-                        <div class="product-img" style="background-image: url('/static/userImages/images/<%=item.image%>');">
-                        </div>
-                        <div class="display-tc">
-                            <h3 style="font-size: 16px;"><%= item.productName %></h3>
-                        </div>
-                    </div>
-                    <!-- Product Price -->
-                    <div class="one-eight text-center">
-                        <div class="display-tc">
-                            <span class="quantity">Quantity: <%= item.quantity %></span>
-                            <br>
-                            <span class="price">₹ <%= item.finalPrice %></span>
-                        </div>
-                    </div>
-                    <!-- Order Status -->
-                    <div class="one-forth text-center">
-                        <div class="display-tc">
-                            <p class="mb-1"><strong>Status:</strong> 
-                                <span class="<%= item.itemStatus === 'Ordered' ? 'text-warning' : 
+		<!-- Order Details Page Begin -->
+		<div class="colorlib-product">
+			<div class="container">
+				<div class="row row-pb-lg">
+					<div class="col-md-12">
+						<% order.items.forEach(item=> { %>
+							<div class="product-cart d-flex">
+								<!-- Product Image -->
+								<div class="one-forth">
+									<div class="product-img"
+										style="background-image: url('/static/userImages/images/<%=item.image%>');">
+									</div>
+									<div class="display-tc">
+										<h3 style="font-size: 16px;">
+											<%= item.productName %>
+										</h3>
+									</div>
+								</div>
+								<!-- Product Price -->
+								<div class="one-eight text-center">
+									<div class="display-tc">
+										<span class="quantity">Quantity: <%= item.quantity %></span>
+										<br>
+										<span class="price">₹ <%= item.finalPrice %></span>
+									</div>
+								</div>
+								<!--  Status -->
+								<div class="one-forth text-center">
+									<div class="display-tc">
+										<p class="mb-1"><strong>Status:</strong>
+											<span class="<%= item.itemStatus === 'Ordered' ? 'text-warning' : 
+								                     item.itemStatus === 'Shipped' ? 'text-warning' : 
                                                      item.itemStatus === 'Delivered' ? 'text-success' : 
                                                      item.itemStatus === 'Cancelled' ? 'text-danger' : 'text-dark' %>">
-                                <%= item.itemStatus %></span>
-                            </p>
-                            <% if (item.itemStatus === 'Delivered') { %>
-                            <p>Your item has been delivered on <%= order.date.toDateString() %></p>
-                            <% } %>
-                        </div>
-                    </div>
-                </div>
-                <% }) %>
-                <!-- Delivery Address -->
-                <div class="display-tc mt-4">
-                    <h6 style="font-size: 14px;">DELIVERY ADDRESS:</h6>
-                    <div class="mt-2">
-                        <span><strong><%= order.address.name %></strong></span><br>
-                        <span><%= order.address.house %>, 
-                              <%= order.address.locality %>, <%= order.address.city %>, 
-                              <%= order.address.state %>, <%= order.address.pincode %></span><br>
-                        <span><%= order.address.mobile %></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-		
-
-						<footer id="colorlib-footer" role="contentinfo">
-							<div class="container">
-								<div class="row row-pb-md">
-									<div class="col footer-col colorlib-widget">
-										<h4>About Audizo</h4>
-										<p>Even the all-powerful Pointing has no control about the blind texts it is an
-											almost unorthographic life</p>
-										<p>
-										<ul class="colorlib-social-icons">
-											<li><a href="#"><i class="icon-twitter"></i></a></li>
-											<li><a href="#"><i class="icon-facebook"></i></a></li>
-											<li><a href="#"><i class="icon-linkedin"></i></a></li>
-											<li><a href="#"><i class="icon-dribbble"></i></a></li>
-										</ul>
-										</p>
-									</div>
-									<div class="col footer-col colorlib-widget">
-										<h4>Customer Care</h4>
-										<p>
-										<ul class="colorlib-footer-links">
-											<li><a href="#">Contact</a></li>
-											<li><a href="#">Returns/Exchange</a></li>
-											<li><a href="#">Gift Voucher</a></li>
-											<li><a href="#">Wishlist</a></li>
-											<li><a href="#">Special</a></li>
-											<li><a href="#">Customer Services</a></li>
-											<li><a href="#">Site maps</a></li>
-										</ul>
-										</p>
-									</div>
-									<div class="col footer-col colorlib-widget">
-										<h4>Information</h4>
-										<p>
-										<ul class="colorlib-footer-links">
-											<li><a href="#">About us</a></li>
-											<li><a href="#">Delivery Information</a></li>
-											<li><a href="#">Privacy Policy</a></li>
-											<li><a href="#">Support</a></li>
-											<li><a href="#">Order Tracking</a></li>
-										</ul>
-										</p>
-									</div>
-
-									<div class="col footer-col">
-										<h4>News</h4>
-										<ul class="colorlib-footer-links">
-											<li><a href="blog.html">Blog</a></li>
-											<li><a href="#">Press</a></li>
-											<li><a href="#">Exhibitions</a></li>
-										</ul>
-									</div>
-
-									<div class="col footer-col">
-										<h4>Contact Information</h4>
-										<ul class="colorlib-footer-links">
-											<li>291 South 21th Street, <br> Suite 721 New York NY 10016</li>
-											<li><a href="tel://1234567920">+ 1235 2355 98</a></li>
-											<li><a href="mailto:info@yoursite.com">info@yoursite.com</a></li>
-											<li><a href="#">yoursite.com</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>
-							<div class="copy">
-								<div class="row">
-									<div class="col-sm-12 text-center">
-										<p>
-											<span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-												Copyright &copy;
-												<script>document.write(new Date().getFullYear());</script> All rights
-												reserved | This template is made with <i class="icon-heart"
-													aria-hidden="true"></i> by <a href="https://colorlib.com"
-													target="_blank">Colorlib</a>
-												<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+												<%= item.itemStatus %>
 											</span>
-											<span class="block">Demo Images: <a href="http://unsplash.co/"
-													target="_blank">Unsplash</a> , <a href="http://pexels.com/"
-													target="_blank">Pexels.com</a></span>
 										</p>
+										<% if (item.itemStatus==='Delivered' ) { %>
+											<p>Your item has been delivered on <%= order.date.toDateString() %>
+											</p>	
+											<% } %>
+
+												<%if(item.itemStatus=='Ordered'||item.itemStatus=='Shipped'){%>
+													<button onclick="cancelOrder('<%= order._id %>', '<%= item.productId %>')">Cancel</button>
+													<%}else if(item.itemStatus==='Delivered' ){%>
+														<button>Return</button>
+
+														<%}%>
+									</div>
+
+								</div>
+
+							</div>
+							<% }) %>
+								<!-- Delivery Address -->
+								<div class="display-tc mt-4">
+									<h6 style="font-size: 14px;">DELIVERY ADDRESS:</h6>
+									<div class="mt-2">
+										<span><strong>
+												<%= order.address.name %>
+											</strong></span><br>
+										<span>
+											<%= order.address.house %>,
+												<%= order.address.locality %>, <%= order.address.city %>,
+														<%= order.address.state %>, <%= order.address.pincode %>
+										</span><br>
+										<span>
+											<%= order.address.mobile %>
+										</span>
 									</div>
 								</div>
-							</div>
-						</footer>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer id="colorlib-footer" role="contentinfo">
+			<div class="container">
+				<div class="row row-pb-md">
+					<div class="col footer-col colorlib-widget">
+						<h4>About Audizo</h4>
+						<p>Even the all-powerful Pointing has no control about the blind texts it is an
+							almost unorthographic life</p>
+						<p>
+						<ul class="colorlib-social-icons">
+							<li><a href="#"><i class="icon-twitter"></i></a></li>
+							<li><a href="#"><i class="icon-facebook"></i></a></li>
+							<li><a href="#"><i class="icon-linkedin"></i></a></li>
+							<li><a href="#"><i class="icon-dribbble"></i></a></li>
+						</ul>
+						</p>
+					</div>
+					<div class="col footer-col colorlib-widget">
+						<h4>Customer Care</h4>
+						<p>
+						<ul class="colorlib-footer-links">
+							<li><a href="#">Contact</a></li>
+							<li><a href="#">Returns/Exchange</a></li>
+							<li><a href="#">Gift Voucher</a></li>
+							<li><a href="#">Wishlist</a></li>
+							<li><a href="#">Special</a></li>
+							<li><a href="#">Customer Services</a></li>
+							<li><a href="#">Site maps</a></li>
+						</ul>
+						</p>
+					</div>
+					<div class="col footer-col colorlib-widget">
+						<h4>Information</h4>
+						<p>
+						<ul class="colorlib-footer-links">
+							<li><a href="#">About us</a></li>
+							<li><a href="#">Delivery Information</a></li>
+							<li><a href="#">Privacy Policy</a></li>
+							<li><a href="#">Support</a></li>
+							<li><a href="#">Order Tracking</a></li>
+						</ul>
+						</p>
 					</div>
 
-					<div class="gototop js-top">
-						<a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
+					<div class="col footer-col">
+						<h4>News</h4>
+						<ul class="colorlib-footer-links">
+							<li><a href="blog.html">Blog</a></li>
+							<li><a href="#">Press</a></li>
+							<li><a href="#">Exhibitions</a></li>
+						</ul>
 					</div>
 
-					<!-- jQuery -->
-					<script src="/static/userImages/js/jquery.min.js"></script>
-					<!-- popper -->
-					<script src="/static/userImages/js/popper.min.js"></script>
-					<!-- bootstrap 4.1 -->
-					<script src="/static/userImages/js/bootstrap.min.js"></script>
-					<!-- jQuery easing -->
-					<script src="/static/userImages/js/jquery.easing.1.3.js"></script>
-					<!-- Waypoints -->
-					<script src="/static/userImages/js/jquery.waypoints.min.js"></script>
-					<!-- Flexslider -->
-					<script src="/static/userImages/js/jquery.flexslider-min.js"></script>
-					<!-- Owl carousel -->
-					<script src="/static/userImages/js/owl.carousel.min.js"></script>
-					<!-- Magnific Popup -->
-					<script src="/static/userImages/js/jquery.magnific-popup.min.js"></script>
-					<script src="/static/userImages/js/magnific-popup-options.js"></script>
-					<!-- Date Picker -->
-					<script src="/static/userImages/js/bootstrap-datepicker.js"></script>
-					<!-- Stellar Parallax -->
-					<script src="/static/userImages/js/jquery.stellar.min.js"></script>
-					<!-- Main -->
-					<script src="/static/userImages/js/main.js"></script>
+					<div class="col footer-col">
+						<h4>Contact Information</h4>
+						<ul class="colorlib-footer-links">
+							<li>291 South 21th Street, <br> Suite 721 New York NY 10016</li>
+							<li><a href="tel://1234567920">+ 1235 2355 98</a></li>
+							<li><a href="mailto:info@yoursite.com">info@yoursite.com</a></li>
+							<li><a href="#">yoursite.com</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="copy">
+				<div class="row">
+					<div class="col-sm-12 text-center">
+						<p>
+							<span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+								Copyright &copy;
+								<script>document.write(new Date().getFullYear());</script> All rights
+								reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by
+								<a href="https://colorlib.com" target="_blank">Colorlib</a>
+								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+							</span>
+							<span class="block">Demo Images: <a href="http://unsplash.co/" target="_blank">Unsplash</a>
+								, <a href="http://pexels.com/" target="_blank">Pexels.com</a></span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
+	</div>
+
+	<!-- jQuery -->
+	<script src="/static/userImages/js/jquery.min.js"></script>
+	<!-- popper -->
+	<script src="/static/userImages/js/popper.min.js"></script>
+	<!-- bootstrap 4.1 -->
+	<script src="/static/userImages/js/bootstrap.min.js"></script>
+	<!-- jQuery easing -->
+	<script src="/static/userImages/js/jquery.easing.1.3.js"></script>
+	<!-- Waypoints -->
+	<script src="/static/userImages/js/jquery.waypoints.min.js"></script>
+	<!-- Flexslider -->
+	<script src="/static/userImages/js/jquery.flexslider-min.js"></script>
+	<!-- Owl carousel -->
+	<script src="/static/userImages/js/owl.carousel.min.js"></script>
+	<!-- Magnific Popup -->
+	<script src="/static/userImages/js/jquery.magnific-popup.min.js"></script>
+	<script src="/static/userImages/js/magnific-popup-options.js"></script>
+	<!-- Date Picker -->
+	<script src="/static/userImages/js/bootstrap-datepicker.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="/static/userImages/js/jquery.stellar.min.js"></script>
+	<!-- Main -->
+	<script src="/static/userImages/js/main.js"></script>
+	<!-- SweetAlert2 -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
+	<script>
+		const cancelOrder = (orderId, productId) => {
+			console.log("Initiating order cancellation", orderId, productId);
+			Swal.fire({
+				title: 'Are you sure?',
+				text: '',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes',
+				cancelButtonText: 'Cancel',
+				reverseButtons: true
+			}).then((result) => {
+				console.log(result, "resulttttt")
+				if (result.isConfirmed) {
+					axios.get(`/cancelOrder?orderId=${orderId}&productId=${productId}`)
+						.then((response) => {
+							console.log(response, "hhjhhuhuhuhuhuh")
+							if (response.data.success) {
+								Swal.fire(
+									'Cancelled!',
+									'Your order has been cancelled',
+									'success'
+								).then(() => {
+									window.location.reload();
+								});
+							} else {
+								Swal.fire(
+									'Error!',
+									'Failed to cancel the order.',
+									'error'
+								);
+							}
+						})
+						.catch((error) => {
+							console.error('Error cancelling the order:', error);
+							Swal.fire(
+								'Error!',
+								'An error occurred while cancelling the order.',
+								'error'
+							);
+						});
+				}
+			});
+		}
+	</script>
 
 </body>
 
