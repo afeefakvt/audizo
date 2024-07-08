@@ -51,8 +51,7 @@ admin_route.get('/category/restoreCategory',auth.isLogin,categoryController.rest
 admin_route.get('/product',auth.isLogin,productController.loadProduct);
 admin_route.get('/product/addProduct',auth.isLogin,productController.loadAddProduct);
 admin_route.post('/product/addProduct',upload.array('photos',12),productController.addProduct);
-admin_route.get("/product/checkAlready",productController.checkAlready);
-    // admin_route.get('/product/productDetails',productController.getProduct);
+admin_route.get("/product/checkAlready",productController.checkAlready)
 admin_route.get("/product/editProduct",auth.isLogin,productController.loadEditProduct);
 admin_route.post( "/product/editProduct",upload.array("photos"),productController.editProduct);
 admin_route.post('/product/deleteProduct',productController.deleteProduct);

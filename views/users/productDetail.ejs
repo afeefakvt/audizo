@@ -35,6 +35,8 @@
 
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="/static/userImages/css/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 
 
 
@@ -61,6 +63,35 @@
 			object-fit: cover;
 			height: 100px;
 			width: 100px;
+		}
+
+		.btn-addtowishlist {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: #555;
+			color: white;
+			/* Change the text color to white */
+			text-decoration: none;
+			/* Remove underline from link */
+			border: none;
+			padding: 15px 30px;
+			/* Increase padding to increase size */
+			border-radius: 5px;
+			font-size: 16px;
+			width: 120px;
+			/* Set a specific width */
+			height: 50px;
+			/* Set a specific height */
+			cursor: pointer;
+		}
+
+		.btn-addtowishlist i {
+			margin-right: 10px;
+		}
+
+		.btn-addtowishlist:hover {
+			background-color: #444;
 		}
 	</style>
 
@@ -228,8 +259,7 @@
 														<p class="addtocart">
 															<%if(details.stock>0){%>
 																<% if (isAuthenticated) { %>
-																	<a href="#"
-																		class="btn btn-primary btn-addtocart"
+																	<a href="#" class="btn btn-primary btn-addtocart"
 																		id="add-to-cart-button"
 																		data-product-id="<%= details._id %>">
 																		<i class="icon-shopping-cart"></i> Add to Cart
@@ -244,14 +274,23 @@
 																			<%} %>
 
 														</p>
-														<!-- <p class="addtowishlist">
-														<a href="#" class="btn btn-primary btn-addtowishlist" id="add-to-wishlist-button" data-product-id="<%=details._id%>">
-															<i class="icon-heart">Add to wishlist</i>
-														</a>
-													</p> -->
+														<p class="addtowishlist">
+															<% if (isAuthenticated) { %>
+																<a href="#" class="btn btn-primary btn-addtowishlist"
+																	onclick="addToWishlist('<%= details._id%>')">
+																	<i class="fas fa-heart"></i> Add to Wishlist
+																</a>
+																<% } else { %>
+																	<a href="/login"
+																		class="btn btn-primary btn-addtowishlist">
+																		<i class="fas fa-heart"></i>
+																		Add to Wishlist
+																	</a>
+																	<% } %>
+														</p>
 													</div>
 												</div>
-					 	</div>
+						</div>
 					</div>
 				</div>
 
@@ -596,6 +635,8 @@
 	<script src="/static/userImages/js/jquery.stellar.min.js"></script>
 	<!-- Main -->
 	<script src="/static/userImages/js/main.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 	<script>
@@ -654,8 +695,7 @@
 				img.style.transform = "scale(1)";
 			});
 		});
-	</script>
-	<script>
+	
 		document.addEventListener('DOMContentLoaded', function () {
 			const addToCartButton = document.getElementById('add-to-cart-button');
 			if (addToCartButton) {
@@ -667,27 +707,70 @@
 				});
 			}
 		});
-
 		function add(productId) {
-			console.log(productId, "product");
-			fetch(`/addToCart?id=${productId}`, {
-				method: 'POST',
-				credentials: "same-origin",
-			})
-				.then(response => response.json())
-				.then(data => {
-					if (data.success) {
-						alert('Product added to cart successfully');
-						// Optionally, update the cart UI here without refreshing the page
-					} else {
-						alert(data.message || "An error occurred");
-					}
-				}).catch(error => {
-					console.error('Error:', error);
-				});
-		}
-	</script>
-
+    console.log(productId, "product");
+    fetch(`/addToCart?id=${productId}`, {
+        method: 'POST',
+        credentials: "same-origin",
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Product added to cart successfully',
+            }).then(() => {
+                // Optionally, update the cart UI here without refreshing the page
+            });
+        } else {
+            Swal.fire({
+                icon: 'info',
+                title: 'info',
+                text: data.message || 'Product is already in the cart',
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while adding the product to the cart',
+        });
+    });
+}
+</script>
+<script>
+		const addToWishlist = (productId) => {
+        axios.post(`/addToWishlist?productId=${productId}`)
+            .then(response => {
+                if (response.data.success) {	
+                    Swal.fire(
+                        "Success",
+                        "Product added to wishlist",
+                        "success"
+                    ).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire(
+                        "info",
+                        response.data.message || "Product is already in the wishlist",
+                        "info"
+                    );
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                Swal.fire(
+                    "Error!",
+                    "An error occurred while adding the product to the wishlist",
+                    "error"
+                );
+            });
+    }
+</script>
 </body>
 
 </html>

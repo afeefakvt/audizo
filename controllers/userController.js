@@ -6,11 +6,9 @@ const Otp = require('../models/otpModel');
 const Product = require('../models/productModel');
 const Category = require("../models/categoryModel");
 const Address = require("../models/addressModel");
-const Cart = require("../models/cartModel");
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const passport = require("passport");
-const { is_blocked } = require('../middleware/auth');
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require('dotenv').config();
 
@@ -457,6 +455,113 @@ const deleteAddress = async (req, res, next) => {
         next(error);
     }
 }
+const loadForgotPassword = async (req, res) => {
+    try {
+        const userData = await User.findOne({ _id: req.session.user_id });
+        res.render('forgotPassword', { user: userData });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const resetPassword = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+
+        if (user) {
+            if (user.isGoogleAuthenticated) {
+                return res.status(400).json({ message: 'Unable to change password. Your account is linked with Google.' });
+            }
+
+            const token = crypto.randomBytes(20).toString('hex');
+            req.session.token = token;
+            req.session.email = req.body.email;
+
+            const mailOptions = {
+                from: process.env.NODE_MAILER_EMAIL,
+                to: req.body.email,
+                subject: 'Your Password Reset Link',
+                html: `
+                <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f9f9f9;">
+                    <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                        <h3>Reset Your Password</h3>
+                        <p>Click the link below to reset your password:</p>
+                        <a href="http://localhost:1000/newPassword?token=${token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                        <p>Thanks for using our service!</p>
+                        <p>Best regards,<br>The AUDIZO. Team</p>
+                    </div>
+                </div>`
+            };
+
+            const transporter = nodemailer.createTransport({
+                service: 'Gmail',
+                port: 587,
+                secure: true,
+                auth: {
+                    user: process.env.NODE_MAILER_EMAIL,
+                    pass: process.env.NODE_MAILER_PASS
+                }
+            });
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    res.status(500).json({ message: 'Error sending email' });
+                } else {
+                    res.status(200).json({ message: 'Password reset link has been sent to your email' });
+                }
+            });
+
+        } else {
+            res.status(400).json({ message: 'No such email exists. Please create an account.' });
+        }
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const newPasswordForm = async (req, res) => {
+    try {
+        const token = req.query.token;
+
+        if (!token) {
+            return res.redirect('/login');
+        }
+
+        const userData = await User.findOne({ email: req.session.email });
+        res.render('newPassword', { token, user: userData });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Server error');
+    }
+};
+
+const newPassword = async (req, res) => {
+    try {
+        const token = req.body.token;
+        const newPassword = req.body.password;
+
+        if (token === req.session.token) {
+            const hashedPassword = await hashPassword(newPassword);
+
+            await User.findOneAndUpdate(
+                { email: req.session.email },
+                { password: hashedPassword }
+            );
+
+            delete req.session.token;
+
+            res.status(200).json({ message: 'Password reset successful' });
+        } else {
+            res.status(400).send('Invalid token');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Server error');
+    }
+};
+
+
 
 //logout
 const logoutLoad = async (req, res) => {
@@ -489,7 +594,6 @@ module.exports = {
     googleSuccess,
     loadShop,
     productDetail,
-    logoutLoad,
     loadProfile,
     editProfile,
     loadChangePassword,
@@ -500,6 +604,11 @@ module.exports = {
     loadEditAddress,
     editAddress,
     deleteAddress,
+    loadForgotPassword,
+    resetPassword,
+    newPasswordForm,
+    newPassword,
+    logoutLoad,
     
 
 }

@@ -3,6 +3,7 @@ const user_route=express();
 const userController=require("../controllers/userController");
 const cartController=require("../controllers/cartController");
 const orderController=require("../controllers/orderController")
+const wishlistController=require("../controllers/wishlistController")
 const passport = require("passport");
 const multer=require("multer");
 const config=require("../config/config");
@@ -57,7 +58,11 @@ user_route.get("/profile/myAddress/editAddress",auth.isLogin,userController.load
 user_route.post("/profile/myAddress/editAddress",auth.isLogin,userController.editAddress);
 user_route.delete("/profile/myAddress",auth.isLogin,userController.deleteAddress);
 user_route.get("/myOrders",auth.isLogin,orderController.myOrders);
-user_route.get("/myOrders/orderDetails",auth.isLogin,orderController.orderDetails)
+user_route.get("/myOrders/orderDetails",auth.isLogin,orderController.orderDetails);
+user_route.get("/forgotPassword",auth.isLogout,userController.loadForgotPassword);
+user_route.post("/resetPassword",auth.isLogout,userController.resetPassword);
+user_route.get("/newPassword",auth.isLogout,userController.newPasswordForm);
+user_route.post("/newPassword",auth.isLogout,userController.newPassword);
 
 //cart management
 user_route.post("/addToCart",auth.isLogin,cartController.addToCart);
@@ -75,6 +80,11 @@ user_route.post("/checkout",auth.isLogin,cartController.addNewAddress)
 user_route.post("/createOrder",auth.isLogin,orderController.createOrder);
 user_route.get("/orderSuccess",auth.isLogin,orderController.orderSuccess);
 user_route.get("/cancelOrder",auth.isLogin,orderController.cancelOrder);
+
+//wishlist management
+user_route.post("/addToWishlist",auth.isLogin,wishlistController.addToWishlist);
+user_route.get('/wishlist',auth.isLogin,wishlistController.loadWishlist);
+user_route.get("/removeFromWishlist",auth.isLogin,wishlistController.removeFromWishlist);
 
 
 module.exports=user_route

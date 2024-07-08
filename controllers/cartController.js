@@ -2,7 +2,7 @@ const Cart = require("../models/cartModel");
 const User = require("../models/userModel");
 const Address = require("../models/addressModel");
 const { ObjectId } = require('mongodb');
-const { session } = require("passport");
+
 
 
 const addToCart = async (req, res) => {
@@ -34,7 +34,7 @@ const addToCart = async (req, res) => {
                 )
                 console.log("product pushed to cart");
 
-                res.json({ success: true })
+                res.json({ success: true,message:'Product added to cart successfully' })
             } else {
                 console.log("Product is already in the cart");
                 res.json({ success: false,message:'product is already in the cart' })
@@ -234,7 +234,6 @@ module.exports = {
     checkStock,
     loadCheckout,
     addNewAddress,
-
 
 
 }
