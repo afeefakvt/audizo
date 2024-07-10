@@ -160,74 +160,70 @@
 					<div class="col-md-6">
 						<div class="contact-wrap">
 							<h3>Register</h3>
-							<% if (typeof message !=='undefined' && message) { %>
+							<% if (typeof message !== 'undefined' && message) { %>
 								<div class="alert alert-danger">
 									<%= message %>
 								</div>
-								<% } %>
-									<div id="error" class="text-danger mb-3"></div>
-									<form id="form" action="/register" method="POST" class="contact-form">
-										<div class="row">
-											<div class="col-md-12">
-												<div class="form-group">
-													<label for="name">Name</label>
-													<input type="text" id="name" name="name" class="form-control"
-														placeholder="Your name" required>
-												</div>
-											</div>
-											<div class="col-md-12">
-												<div class="form-group">
-													<label for="email">Email</label>
-													<input type="email" id="email" name="email" class="form-control"
-														placeholder="Your email" required>
-												</div>
-											</div>
-											<div class="col-md-12">
-												<div class="form-group">
-													<label for="phone">Mobile Number</label>
-													<input type="tel" id="mobile" name="mobile" class="form-control"
-														placeholder="Your mobile number" required>
-												</div>
-											</div>
-											<div class="col-md-12">
-												<div class="form-group">
-													<label for="password">Password</label>
-													<input type="password" id="password" name="password"
-														class="form-control" placeholder="Your password" required>
-												</div>
-											</div>
-											<div class="col-md-12">
-												<div class="form-group">
-													<label for="confirm_password">Confirm Password</label>
-													<input type="password" id="confirm_password" name="confirm_password"
-														class="form-control" placeholder="Confirm your password"
-														required>
-												</div>
-											</div>
-											<div class="w-100"></div>
-											<div class="col-sm-12">
-												<div class="form-group">
-													<input type="submit" value="Register" class="btn btn-primary">
-												</div>
-											</div>
+							<% } %>
+							<form id="form" action="/register" method="POST" class="contact-form">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="name">Name</label>
+											<input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
+											<div id="name-error" class="text-danger"></div>
 										</div>
-										<div class="btn-group btn-block" role="group" aria-label="Login buttons">
-											<!-- Gmail Login -->
-											<a href="/auth/google" class="btn btn-google"><i
-													class="fab fa-google text-danger"></i> Sign Up With Google</a>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="email">Email</label>
+											<input type="email" id="email" name="email" class="form-control" placeholder="Your email" required>
+											<div id="email-error" class="text-danger"></div>
 										</div>
-									</form>
-									<div class="additional-links">
-										<p>Already have an account? <a href="/login" class="btn btn-secondary">Login</a>
-										</p>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="phone">Mobile Number</label>
+											<input type="tel" id="mobile" name="mobile" class="form-control" placeholder="Your mobile number" required>
+											<div id="mobile-error" class="text-danger"></div>
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="password">Password</label>
+											<input type="password" id="password" name="password" class="form-control" placeholder="Your password" required>
+											<div id="password-error" class="text-danger"></div>
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label for="confirm_password">Confirm Password</label>
+											<input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm your password" required>
+											<div id="confirm-password-error" class="text-danger"></div>
+										</div>
+									</div>
+									<div class="w-100"></div>
+									<div class="col-sm-12">
+										<div class="form-group">
+											<input type="submit" value="Register" class="btn btn-primary">
+										</div>
+									</div>
 								</div>
+								<div class="btn-group btn-block" role="group" aria-label="Login buttons">
+									<!-- Gmail Login -->
+									<a href="/auth/google" class="btn btn-google">
+										<i class="fab fa-google text-danger"></i> Sign Up With Google
+									</a>
+								</div>
+							</form>
+							<div class="additional-links">
+								<p>Already have an account? <a href="/login" class="btn btn-secondary">Login</a></p>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-
 		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">
@@ -314,69 +310,86 @@
 	<div class="gototop js-top">
 		<a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
 	</div>
+
 	<script>
-		document.addEventListener("DOMContentLoaded", () => {
-			let form = document.getElementById("form");
-			let error = document.getElementById("error");
-			let message = [];
+        document.addEventListener("DOMContentLoaded", () => {
+            let form = document.getElementById("form");
 
-			form.addEventListener("submit", (e) => {
-				message = [];
-				let email = document.getElementById("email").value;
-				let password = document.getElementById("password").value;
-				let confirmPassword = document.getElementById("confirm_password").value;
-				let mobile = document.getElementById("mobile").value;
+            form.addEventListener("submit", (e) => {
+                let message = [];
+                let name = document.getElementById("name").value.trim();
+                let email = document.getElementById("email").value.trim();
+                let password = document.getElementById("password").value.trim();
+                let confirmPassword = document.getElementById("confirm_password").value.trim();
+                let mobile = document.getElementById("mobile").value.trim();
 
-				emailValidate(email);
-				mobileValidate(mobile);
-				passwordValidate(password, confirmPassword);
+                let nameError = document.getElementById("name-error");
+                let emailError = document.getElementById("email-error");
+                let mobileError = document.getElementById("mobile-error");
+                let passwordError = document.getElementById("password-error");
+                let confirmPasswordError = document.getElementById("confirm-password-error");
 
-				if (message.length > 0) {
-					e.preventDefault();
-					error.innerText = message.join(", ");
-				}
-			});
+                nameError.innerText = "";
+                emailError.innerText = "";
+                mobileError.innerText = "";
+                passwordError.innerText = "";
+                confirmPasswordError.innerText = "";
 
-			function emailValidate(email) {
-				let reg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-				if (!reg.test(email)) {
-					message.push("Invalid Email");
-				}
-			}
-			function mobileValidate(mobile) {
-				// Check if mobile number consists of all zeros
-				if (/^0+$/.test(mobile)) {
-					message.push("Mobile number should not consist of all zeros");
-					return false; // Invalid mobile number
-				}
+                if (!nameValidate(name)) {
+                    nameError.innerText = "Name cannot be empty or consist of only spaces";
+                    message.push("Invalid Name");
+                }
 
-				// Check if mobile number starts with zero
-				if (mobile.startsWith('0')) {
-					message.push("Mobile number should not start with zero");
-					return false; // Invalid mobile number
-				}
+                if (!emailValidate(email)) {
+                    emailError.innerText = "Invalid Email";
+                    message.push("Invalid Email");
+                }
 
-				// Check if mobile number follows the standard format of 10 digits
-				let reg = /^[0-9]{10}$/;
-				if (!reg.test(mobile)) {
-					message.push("Invalid Mobile Number");
-					return false; // Invalid mobile number
-				}
+                if (!mobileValidate(mobile)) {
+                    mobileError.innerText = "Invalid Mobile Number";
+                    message.push("Invalid Mobile Number");
+                }
 
-				return true; // Valid mobile number
-			}
+                if (!passwordValidate(password)) {
+                    passwordError.innerText = "Password should be at least 5 characters and should not start with dots or spaces";
+                    message.push("Invalid Password");
+                }
 
-			function passwordValidate(password, confirmPassword) {
-				if (password.length < 3) {
-					message.push("Password should be at least 3 characters");
-				}
-				if (password !== confirmPassword) {
-					message.push("Passwords do not match");
-				}
-			}
-		});
-	</script>
+                if (!confirmPasswordValidate(password, confirmPassword)) {
+                    confirmPasswordError.innerText = "Passwords do not match";
+                    message.push("Passwords do not match");
+                }
 
+                if (message.length > 0) {
+                    e.preventDefault();
+                }
+            });
+
+            function nameValidate(name) {
+                return name.length > 0;
+            }
+
+            function emailValidate(email) {
+                let reg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                return reg.test(email);
+            }
+
+            function mobileValidate(mobile) {
+                if (/^0+$/.test(mobile) || mobile.startsWith('0')) return false;
+                let reg = /^[0-9]{10}$/;
+                return reg.test(mobile);
+            }
+
+            function passwordValidate(password) {
+                let reg = /^(?!\s|\.)[a-zA-Z0-9._%+-]{5,}$/;
+                return reg.test(password);
+            }
+
+            function confirmPasswordValidate(password, confirmPassword) {
+                return password === confirmPassword;
+            }
+        });
+    </script>
 	<!-- jQuery -->
 	<script src="/static/userImages/js/jquery.min.js"></script>
 	<!-- popper -->

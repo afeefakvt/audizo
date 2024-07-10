@@ -6,7 +6,12 @@ const User = require("../models/userModel");
 const mongoose = require("mongoose");
 const user_route = require("../routes/userRoute");
 const ObjectId = mongoose.Types.ObjectId;
+const Razorpay = require("razorpay");
 
+const razorpay = new Razorpay({
+    key_id:process.env.RAZORPAY_ID,
+    key_secret:process.env.RAZORPAY_SECRET
+})
 
 const createOrder = async (req, res) => {
     try {
@@ -61,6 +66,28 @@ const createOrder = async (req, res) => {
                 { $inc: { stock: -item.quantity } }
             )
         }
+
+        if (orderData.paymentMethod === "razorpay") {
+            const amount = req.body.totalPrice * 100;
+            const options = {
+              amount: amount,
+              currency: "INR",
+              receipt:  orderData.orderId.toString(),
+            };
+      
+            req.session.orderData= orderData;
+      
+            const order = await razorpay.orders.create(options);
+            return res.json({
+              success: true,
+              message: "Order Created",
+              order_id: order.id,
+              amount: amount,
+              key_id: razorpay.key_id,
+            });
+        }
+
+
         if (orderData.paymentMethod === "cod") {
             if (req.body.totalprice > 10000) {
                 return res.json({ success: false, message: "Cannot place order in COD" })
@@ -87,6 +114,9 @@ const orderSuccess = async (req, res) => {
         const orderData = new Order(req.session.orderData)
         delete req.session.orderData;
         delete req.session.totalPrice
+        if (orderData.paymentMethod === "razorpay") {
+            orderData.paymentStatus = "Success";
+          }
 
         await orderData.save()
         await Cart.deleteOne({ userId: req.session.user_id })
@@ -278,6 +308,45 @@ const cancelOrder = async(req,res)=>{
         
     }
 }
+const payNow = async(req,res,next)=>{
+    try {
+      const amount = req.query.amount * 100;
+      const orderId = req.query.orderId;
+      const options = {
+        amount: amount,
+        currency: "INR",
+        receipt:  orderData.orderId.toString(),
+      };
+  
+      const order = await razorpay.orders.create(options);
+      return res.json({
+        success: true,
+        message: "Order Created",
+        order_id: order.id,
+        amount: amount,
+        key_id: razorpay.key_id,
+        orderId:orderId
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  
+  const orderPlacing = async(req,res,next)=>{
+    try {
+      console.log(req.query.orderId);
+      const orderData = await Order.findOne({_id:req.query.orderId});
+      orderData.paymentStatus = "Success";
+      orderData.status = "Ordered";
+      for (let item of orderData.items) {
+        item.itemStatus = "Ordered";
+      }
+      await orderData.save();
+      res.redirect("/myOrders")
+    } catch (error) {
+      next(error);
+    }
+  }
 
 module.exports = {
     createOrder,
@@ -286,8 +355,9 @@ module.exports = {
     listOrders,
     orderDetails,
     changeStatus,
-    cancelOrder
-
+    cancelOrder,
+    payNow,
+    orderPlacing
 
 
 }

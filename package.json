@@ -16,6 +16,7 @@
     "connect-flash": "^0.1.1",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
@@ -29,6 +30,7 @@
     "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "razorpay": "^2.9.4",
     "session": "^0.1.0",
     "sharp": "^0.33.4"
   }

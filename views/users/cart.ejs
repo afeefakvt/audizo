@@ -343,7 +343,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 <script>
 const decrease = (price, stock, index, pId) => {
-    let quantity = Number(document.getElementById(`qty${index}`).value);
+    let quantity = Number(document.getElementById(`qty${index}`)).value;
     quantity--;
     if (quantity < 1) {
         quantity = 1;
@@ -375,7 +375,8 @@ const decrease = (price, stock, index, pId) => {
                
             });
     }
-};
+}
+
 
 const increase = (price, stock, index, pId) => {
     let quantity = Number(document.getElementById(`qty${index}`).value);

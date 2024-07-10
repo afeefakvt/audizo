@@ -80,6 +80,8 @@ user_route.post("/checkout",auth.isLogin,cartController.addNewAddress)
 user_route.post("/createOrder",auth.isLogin,orderController.createOrder);
 user_route.get("/orderSuccess",auth.isLogin,orderController.orderSuccess);
 user_route.get("/cancelOrder",auth.isLogin,orderController.cancelOrder);
+user_route.get("/payNow",auth.isLogin,orderController.payNow);
+user_route.get("/orderPlacing",auth.isLogin,orderController.orderPlacing);
 
 //wishlist management
 user_route.post("/addToWishlist",auth.isLogin,wishlistController.addToWishlist);

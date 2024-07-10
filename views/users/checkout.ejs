@@ -243,26 +243,30 @@
 							<div class="col-md-12">
 								<div class="cart-detail">
 									<h2>Payment Method</h2>
-									
+
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-												<label for="payment"><input type="radio" id="payment" name="paymentMethod" value="cod"> Cash on
-													Delivery</label><span class="text-danger" style="display: none;" id="codError"> cannot place cod over Rs:10000</span>
+												<label for="payment"><input type="radio" id="payment"
+														name="paymentMethod" value="cod"> Cash on
+													Delivery</label><span class="text-danger" style="display: none;"
+													id="codError"> cannot place cod over Rs:10000</span>
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-												<label for="payment"><input type="radio" id="razorpay" name="paymentMethod" value="razorpay"> Razorpay</label>
+												<label for="payment"><input type="radio" id="razorpay"
+														name="paymentMethod" value="razorpay"> Razorpay</label>
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-											   <label for="payment"><input type="radio" id="wallet" name="paymentMethod" value="wallet"> Wallet</label>
+												<label for="payment"><input type="radio" id="wallet"
+														name="paymentMethod" value="wallet"> Wallet</label>
 											</div>
 										</div>
 									</div>
@@ -472,6 +476,7 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 	<script>
@@ -602,37 +607,68 @@
 					cancelButtonText: 'Cancel',
 					reverseButtons: true
 				}).then((result) => {
-					if (result.isConfirmed) {	
-					const formData = {
-                    selectedAddress: selectedAddress.value,
-                    paymentMethod: selectedPaymentMethod.value,
-                    totalprice: document.querySelector("input[name='totalprice']").value
-                }
-                axios.post("/createOrder", formData).then((response) => {
-                    if (response.data.success&&selectedPaymentMethod.value==='cod') {
-						if(response.data.message==="cannot place order in cod"){
-							document.getElementById("codError").style.display = "block";
-						    return false;
-						}
+					if (result.isConfirmed) {
+						const formData = {
+							selectedAddress: selectedAddress.value,
+							paymentMethod: selectedPaymentMethod.value,
+							totalprice: document.querySelector("input[name='totalprice']").value
+						};
+						axios.post("/createOrder", formData).then((response) => {
+							if (response.data.success && selectedPaymentMethod.value === 'razorpay') {
+								let options = {
+									"key": response.data.key_id,
+									"amount": response.data.amount,
+									"currency": "INR",
+									"name": "AUDIZO.",
+									"description": "Test Transaction",
+									"order_id": response.data.order_id,
+									"handler": function (response) {
+										if (response.error) {
+											window.location.href = "/cart";
+										} else if (response.razorpay_payment_id) {
+											window.location.href = "/orderSuccess";
+										}
+									},
+									"notes": {
+										"address": "Razorpay Corporate Office"
+									},
+									"theme": {
+										"color": "#F37254"
+									}
+								};
+								let rzp1 = new Razorpay(options);
+								rzp1.open();
+								rzp1.on('cart', (response) => {
+									setTimeout(() => {
+										rzp1.close();
+										window.location.href = "/cart";
+									}, 3000);
+								});
 
-						window.location.href = "/orderSuccess";
+							} else if (response.data.success && selectedPaymentMethod.value === 'cod') {
+								if (response.data.message === "cannot place order in cod") {
+									document.getElementById("codError").style.display = "block";
+									return false;
+								}
 
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            'An error occurred while placing the order.',
-                            'error'
-                        );
-                    }
-                }).catch((error) => {
-                    console.error('Error placing the order:', error);
-                    Swal.fire(
-                        'Error!',
-                        'An error occurred while placing the order.',
-                        'error'
-                    );
-                })
-			}
+								window.location.href = "/orderSuccess";
+
+							} else {
+								Swal.fire(
+									'Error!',
+									'An error occurred while placing the order.',
+									'error'
+								);
+							}
+						}).catch((error) => {
+							console.error('Error placing the order:', error);
+							Swal.fire(
+								'Error!',
+								'An error occurred while placing the order.',
+								'error'
+							);
+						})
+					}
 				})
 			})
 

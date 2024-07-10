@@ -301,14 +301,14 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	  
 		form.addEventListener("submit", (e) => {	
 		  message = [];
-		  let email = document.getElementById("email").value;
-		  let password = document.getElementById("password").value;
+		  let email = document.getElementById("email").value.trim();
+		  let password = document.getElementById("password").value.trim();
 	  
 		  email_validate(email);
 	  
-		  if (password.length < 3) {
-			message.push("Password should be at least 3 characters");
-		  }
+		//   if (password.length < 5) {
+		// 	message.push("Password should be at least 5 characters");
+		//   }
 	  
 		  if (message.length > 0) {
 			e.preventDefault();

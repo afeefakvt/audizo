@@ -8,6 +8,8 @@ const adminController=require("../controllers/adminController");
 const categoryController=require("../controllers/categoryController")
 const productController=require("../controllers/productController")
 const orderController=require("../controllers/orderController")
+const couponController=require("../controllers/couponController");
+const user_route = require("./userRoute");
 
 
 admin_route.use(express.json());
@@ -67,6 +69,13 @@ admin_route.get("/userList/unblockUser",auth.isLogin, adminController.unblockUse
 //order management
 admin_route.get("/orders",auth.isLogin,orderController.listOrders);
 admin_route.get("/orders/changeStatus",auth.isLogin,orderController.changeStatus)
+
+//coupon management
+admin_route.get("/coupons",auth.isLogin,couponController.loadAddCoupon);
+admin_route.post("/coupons/addCoupon",couponController.addCoupon);
+admin_route.get("/coupons/editCoupon",couponController.loadEditCoupon);
+admin_route.post("/coupons/editCoupon",couponController.editCoupon);
+admin_route.delete("/coupons",auth.isLogin,couponController.deleteCoupon)
 
 
 module.exports=admin_route;

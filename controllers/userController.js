@@ -7,6 +7,7 @@ const Product = require('../models/productModel');
 const Category = require("../models/categoryModel");
 const Address = require("../models/addressModel");
 const mongoose = require('mongoose');
+const crypto = require("crypto");
 const ObjectId = mongoose.Types.ObjectId;
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -255,7 +256,7 @@ const loadShop = async (req, res) => {
         const product = await Product.find({ isListed: false });
         const category = await Category.find({ isBlocked: false })
 
-        return res.render('shop', { product: product, category: category,sortOption:"" });
+        return res.render('shop', { product: product, category: category, sortOption: "" });
 
 
     } catch (error) {
@@ -337,22 +338,25 @@ const loadChangePassword = async (req, res) => {
 }
 const changePassword = async (req, res) => {
     try {
-        const userData = await User.findOne({ _id: req.session.user_id })
-        if (userData) {
-            const passwordMatch = await bcrypt.compare(req.body.oldPassword, userData.password)
-            if (passwordMatch) {
-                const spassword = await securePassword(req.body.newPassword)
-                userData.password = spassword
-                await userData.save();
-                res.redirect('/profile');
-
-            }
+        const userData = await User.findOne({ _id: req.session.user_id });
+        if (!userData) {
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
+        const passwordMatch =await bcrypt.compare(req.body.oldPassword, userData.password);
+        if (!passwordMatch) {
+            return res.status(400).json({ success: false, message: 'Incorrect old password' });
+        }
+
+        const spassword = await securePassword(req.body.newPassword);
+        userData.password = spassword;
+        await userData.save();
+        return res.status(200).json({ success: true, message: 'Password changed successfully' });
     } catch (error) {
-        console.log(error.message)
+        console.error(error.message);
+        return res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
     }
-}
+};
 
 const loadMyAddress = async (req, res) => {
     try {
@@ -469,7 +473,7 @@ const resetPassword = async (req, res) => {
         const user = await User.findOne({ email: req.body.email });
 
         if (user) {
-            if (user.isGoogleAuthenticated) {
+            if (user.is_googleAuthenticated) {
                 return res.status(400).json({ message: 'Unable to change password. Your account is linked with Google.' });
             }
 
@@ -542,7 +546,7 @@ const newPassword = async (req, res) => {
         const newPassword = req.body.password;
 
         if (token === req.session.token) {
-            const hashedPassword = await hashPassword(newPassword);
+            const hashedPassword = await securePassword(newPassword);
 
             await User.findOneAndUpdate(
                 { email: req.session.email },
@@ -609,6 +613,6 @@ module.exports = {
     newPasswordForm,
     newPassword,
     logoutLoad,
-    
+
 
 }

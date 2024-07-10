@@ -41,8 +41,12 @@ let mailSender = async (email,id,htmlContent) => {
       console.error("Error sending  email:", error);
     }
 };
-
+const hashPassword = async (password) => {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+};
 
 module.exports ={
-   mailSender
+   mailSender,
+   hashPassword
 };
