@@ -44,9 +44,9 @@ const loadEditCoupon =async(req,res)=>{
 const editCoupon = async(req,res)=>{
     try {
         console.log('kkkkk')
-        const{couponCode,percentage,minPrice,maxRedeemAmount,expiryDate}=req.body;
+        const {couponCode,percentage,minPrice,maxRedeemAmount,expiryDate} = req.body;
         console.log("lklklk");
-        const coupon = await Coupon.updateOne(
+         await Coupon.updateOne(
             {_id:req.query.id},
             {$set:{
                 couponCode:couponCode,
@@ -74,12 +74,45 @@ const deleteCoupon = async(req,res)=>{
         console.log(error.message)
     }
 }
+
+const checkCoupon = async(req,res)=>{
+    try {
+        const coupon =await Coupon.findOne({couponCode:req.query.couponCode});
+        if(!coupon){
+            return res.json({success:true,message:"Not A valid Coupon "})
+        }else if(coupon.minPrice>req.query.totalPrice){
+            return res.json({
+                success:true,
+                message:"Not eligible for this coupon"
+            });
+
+        }else{
+            const discountPercentage = coupon.percentage;
+            req.session.totalPrice=req.query.totalPrice
+            return res.json({success:true,coupon:coupon.couponCode,discountPercentage: discountPercentage})
+        }
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+const getAvailableCoupons = async(req,res)=>{
+    try {
+        const coupons = await Coupon.find();// Fetch all available coupons from the database
+        res.json({coupons:coupons})
+    } catch (error) {
+        
+        console.log(error.message)
+    }
+}
 module.exports = {
     loadAddCoupon,
     addCoupon,
     loadEditCoupon,
     editCoupon,
-    deleteCoupon
+    deleteCoupon,
+    checkCoupon,
+    getAvailableCoupons
 
 
 }

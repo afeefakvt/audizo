@@ -9,7 +9,7 @@ const couponSchema = mongoose.Schema({
     },
  
     percentage:{
-        type:Number,
+        type:Number,    
         required:true,
         
     },

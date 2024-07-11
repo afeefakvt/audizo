@@ -22,6 +22,47 @@
     <link rel="shortcut icon" href="/static/adminImages/images/favicon.ico" />
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
+    <style>
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .text-danger {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            height: calc(2.25rem + 2px);
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
+            border: 1px solid #ced4da;
+        }
+
+        .btn-gradient-primary,
+        .btn-gradient-danger {
+            font-size: 1rem;
+            padding: .5rem 1rem;
+            border-radius: .25rem;
+            color: #fff;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -186,53 +227,63 @@
                         </span> Edit Coupon
                     </h3>
                     <nav aria-label="breadcrumb">
-                   
-                        <div class="button-group" style="margin-top: 10px;">
-                            <button class="btn btn-gradient-danger" onclick="location.href='/admin/coupons'">Go Back</button>
-                        </div>
+
+                      
                     </nav>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <!-- <h4 class="card-title">Edit Coupon</h4> -->
-                                <form action="/admin/coupons/editCoupon" method="POST">
+                                <form action="/admin/coupons/editCoupon" method="post"
+                                    onsubmit="return validateEditCoupon()">
                                     <input type="hidden" name="coupon_id" value="<%= coupon._id %>">
                                     <div class="form-group">
                                         <label for="couponCode">Coupon Code</label>
                                         <input type="text" class="form-control" id="couponCode" name="couponCode"
                                             value="<%= coupon.couponCode %>" required>
+                                        <span id="couponCodeError" class="text-danger" style="display:none;">Coupon Code
+                                            must be a valid number between 1000 and 9999.</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="percentage">Percentage</label>
                                         <input type="number" class="form-control" id="percentage" name="percentage"
                                             value="<%= coupon.percentage %>" required>
+                                        <span id="couponOfferError" class="text-danger" style="display:none;">Offer
+                                            Percentage must be a valid number between 1 and 50.</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="minPrice">Minimum Price</label>
                                         <input type="number" class="form-control" id="minPrice" name="minPrice"
                                             value="<%= coupon.minPrice %>" required>
+                                        <span id="minPriceError" class="text-danger" style="display:none;">Minimum Price
+                                            must be a valid number between 51 and 5000.</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="maxRedeemAmount">Max Redeem Amount</label>
-                                        <input type="number" class="form-control" id="maxRedeemAmount" name="maxRedeemAmount"
-                                            value="<%= coupon.maxRedeemAmount %>" required>
+                                        <input type="number" class="form-control" id="maxRedeemAmount"
+                                            name="maxRedeemAmount" value="<%= coupon.maxRedeemAmount %>" required>
+                                        <span id="maxRedeemableError" class="text-danger" style="display:none;">Maximum
+                                            Redeemable Amount must be a valid number between 10 and 10000.</span>
                                     </div>
                                     <div class="form-group">
                                         <label for="expiryDate">Expiry Date</label>
                                         <input type="date" class="form-control" id="expiryDate" name="expiryDate"
                                             value="<%= coupon.expiryDate.toISOString().substr(0, 10) %>" required>
+                                        <span id="couponExpiryDateError" class="text-danger"
+                                            style="display:none;">Expiry Date must be a valid future date.</span>
                                     </div>
                                     <button type="submit" class="btn btn-gradient-primary">Save Changes</button>
-                                    <a href="/admin/coupons" class="btn btn-gradient-danger">Cancel </a>
+                                    <a href="/admin/coupons" class="btn btn-gradient-danger">Cancel</a>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                  
-                 
+                
+
+
+
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
                 <footer class="footer">
@@ -266,7 +317,62 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const validateEditCoupon = () => {
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const couponCode = document.getElementById("couponCode").value.trim();
+            const percentage = document.getElementById("percentage").value.trim();
+            const minPrice = document.getElementById("minPrice").value.trim();
+            const maxRedeemAmount = document.getElementById("maxRedeemAmount").value.trim();
+            const expiryDateValue = document.getElementById("expiryDate").value;
 
+            let expiryDate;
+            if (expiryDateValue) {
+                expiryDate = new Date(expiryDateValue);
+            }
+
+            let numberRegex = /^\d+$/;
+            let isValid = true;
+
+            if (!numberRegex.test(couponCode) || couponCode <= 999 || couponCode >= 10000) {
+                document.getElementById("couponCodeError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("couponCodeError").style.display = "none";
+            }
+
+            if (!numberRegex.test(percentage) || percentage <= 0 || percentage >= 51) {
+                document.getElementById("couponOfferError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("couponOfferError").style.display = "none";
+            }
+
+            if (!numberRegex.test(minPrice) || minPrice <= 51 || minPrice >= 5001) {
+                document.getElementById("minPriceError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("minPriceError").style.display = "none";
+            }
+
+            if (!numberRegex.test(maxRedeemAmount) || maxRedeemAmount <= 10 || maxRedeemAmount >= 10000) {
+                document.getElementById("maxRedeemableError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("maxRedeemableError").style.display = "none";
+            }
+
+            if (!expiryDate || expiryDate < today) {
+                document.getElementById("couponExpiryDateError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("couponExpiryDateError").style.display = "none";
+            }
+
+            return isValid;
+        }
+    </script>
     <!-- End custom js for this page -->
 </body>
 

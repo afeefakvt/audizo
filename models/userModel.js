@@ -1,5 +1,9 @@
 const mongoose=require("mongoose");
 
+function generateReferralId(){
+    return Math.random().toString(36).substring(2,10)
+}
+
 const userSchema=new mongoose.Schema({
     name:{
         type:String,
@@ -31,6 +35,11 @@ const userSchema=new mongoose.Schema({
     is_googleAuthenticated:{
         type: Boolean,
         default:false
+    },
+    referralId:{
+        type:String,
+        unique:true,
+        default:generateReferralId
     }
 });
 module.exports=mongoose.model('User',userSchema);

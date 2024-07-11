@@ -52,6 +52,92 @@
 			display: block;
 			margin-left: 30px;
 		}
+
+		#snackbar {
+			visibility: hidden;
+			/* Hidden by default. Visible on click */
+			min-width: 250px;
+			/* Set a default minimum width */
+			margin-left: -125px;
+			/* Divide value of min-width by 2 */
+			background-color: #28A745;
+			/* Black background color */
+			color: #fff;
+			/* White text color */
+			text-align: center;
+			/* Centered text */
+			border-radius: 2px;
+			/* Rounded borders */
+			padding: 16px;
+			/* Padding */
+			position: fixed;
+			/* Sit on top of the screen */
+			z-index: 1;
+			/* Add a z-index if needed */
+			left: 50%;
+			/* Center the snackbar */
+			bottom: 30px;
+			/* 30px from the bottom */
+		}
+
+		/* Show the snackbar when clicking on a button (class added with JavaScript) */
+		#snackbar.show {
+			visibility: visible;
+			/* Show the snackbar */
+			/* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+			-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+			animation: fadein 0.5s, fadeout 0.5s 2.5s;
+		}
+
+		/* Animations to fade the snackbar in and out */
+		@-webkit-keyframes fadein {
+			from {
+				bottom: 0;
+				opacity: 0;
+			}
+
+			to {
+				bottom: 30px;
+				opacity: 1;
+			}
+		}
+
+		@keyframes fadein {
+			from {
+				bottom: 0;
+				opacity: 0;
+			}
+
+			to {
+				bottom: 30px;
+				opacity: 1;
+			}
+		}
+
+		@-webkit-keyframes fadeout {
+			from {
+				bottom: 30px;
+				opacity: 1;
+			}
+
+			to {
+				bottom: 0;
+				opacity: 0;
+			}
+		}
+
+		@keyframes fadeout {
+			from {
+				bottom: 30px;
+				opacity: 1;
+			}
+
+			to {
+				bottom: 0;
+				opacity: 0;
+			}
+		}
 	</style>
 </head>
 
@@ -201,6 +287,38 @@
 							</div>
 						</div>
 
+						<!-- Coupon Section -->
+						<div class="container cart-detail mt-4">
+							<h2>Apply Coupon</h2>
+							<form id="couponForm" onsubmit="applyCoupon(event)">
+								<div class="row form-group">
+									<div class="col-sm-9">
+										<input type="text" name="couponCode" id="couponCode"
+											class="form-control input-number" placeholder="Your Coupon Number...">
+										<span id="couponError1" class="text-danger" style="display:none;">Invalid coupon
+											code.</span>
+										<span id="couponError2" class="text-danger" style="display:none;">Not eligible
+											for this coupon.</span>
+									</div>
+									<br>
+									<div class="col-sm-3">
+										<input type="submit" value="Apply Coupon" class="btn btn-primary">
+									</div>
+								</div>
+							</form>
+							<button id="viewCoupons" class="btn btn-primary" onclick="viewCoupon()">View Available
+								Coupons</button>
+							<div id="coupon" style="display:none;">
+								<h3>Available Coupons</h3>
+								<ul id="couponList" class="list-group">
+									<!-- Coupons will be dynamically populated here -->
+								</ul>
+								<button class="btn btn-secondary" onclick="hideCoupon()">Close</button>
+							</div>
+						</div>
+						<!-- End Coupon Section -->
+
+
 					</div>
 
 					<div class="col-lg-4">
@@ -230,8 +348,11 @@
 											</span>
 										</li>
 										<li>
+											<span>Discount</span> <span id="discountAmount">&#8377;<%= discount %></span>
+										</li>
+										<li>
 											<span>Order Total</span>
-											<span>&#8377;<%= grandTotal %></span>
+											<span>&#8377;<%= finalTotal %></span>
 											<input type="hidden" name="totalprice" value="<%= grandTotal %>">
 										</li>
 									</ul>
@@ -449,6 +570,8 @@
 	<div class="gototop js-top">
 		<a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
 	</div>
+	<div id="snackbar"></div>
+
 
 	<!-- jQuery -->
 	<script src="/static/userImages/js/jquery.min.js"></script>
@@ -675,7 +798,111 @@
 
 		}
 
+		function viewCoupon() {
+			event.preventDefault();
+			document.getElementById("coupon").style.display = "block";
+			document.getElementById("viewCoupons").style.display = "none";
 
+			// Fetch the coupons dynamically from the server (example AJAX call)
+			axios.get('/getAvailableCoupons')
+				.then(response => {
+					const coupons = response.data.coupons;
+					const couponList = document.getElementById("couponList");
+					couponList.innerHTML = ""; // Clear previous list items
+
+					coupons.forEach(coupon => {
+						const li = document.createElement("li");
+						li.className = "list-group-item";
+
+						const couponContent = `
+          <div class="coupon-content">
+            <div class="offer-text">If purchased above <strong>Rs ${coupon.minPrice - 1}</strong></div>
+            <div class="badge bg-info ">${coupon.percentage}% Discount</div>
+            <div class="coupon-code">Use Code: <strong>${coupon.couponCode}</strong></div>
+            <button class="btn btn-primary" onclick="copyCouponCode('${coupon.couponCode}')">Copy Code</button>
+          </div>
+        `;
+
+						li.innerHTML = couponContent;
+						couponList.appendChild(li);
+					});
+				})
+				.catch(error => {
+					console.error('Error fetching coupons:', error);
+				});
+		}
+
+		function hideCoupon() {
+			document.getElementById("coupon").style.display = "none";
+			document.getElementById("viewCoupons").style.display = "block";
+		}
+
+		function copyCouponCode(code) {
+			const el = document.createElement("textarea");
+			el.value = code;
+			document.body.appendChild(el);
+			el.select();
+			document.execCommand("copy");
+			document.body.removeChild(el);
+			showsnackbar(`Copied ${code} to clipboard!`);
+		}
+
+		function applyCoupon(event) {
+    event.preventDefault();
+    let couponCode = document.getElementById("couponCode").value.trim();
+    let totalPrice = document.querySelector("input[name='totalprice']").value;
+
+    axios.get(`/checkCoupon?couponCode=${couponCode}&totalPrice=${totalPrice}`)
+        .then((response) => {
+            if (response.data.success && response.data.message === "Not a valid coupon") {
+                document.getElementById("couponError1").style.display = "block";
+                document.getElementById("couponError2").style.display = "none";
+            } else if (response.data.success && response.data.message === "Not eligible for this coupon") {
+                document.getElementById("couponError1").style.display = "none";
+                document.getElementById("couponError2").style.display = "block";
+            } else if (response.data.success) {
+                // Coupon applied successfully
+                alert("Coupon applied!");
+                const discount = response.data.discountPercentage;
+                const discountAmount = Math.ceil((discount * totalPrice) / 100);
+                const maxRedeemAmount = response.data.maxRedeemAmount;
+                const finalDiscount = discountAmount > maxRedeemAmount ? maxRedeemAmount : discountAmount;
+                const newTotal = totalPrice - finalDiscount;
+
+                document.querySelector("span#orderTotal").innerText = `₹${newTotal.toFixed(2)}`;
+                document.querySelector("input[name='totalprice']").value = newTotal.toFixed(2);
+                document.querySelector("span#discountAmount").innerText = `₹${finalDiscount.toFixed(2)}`;
+
+                // Change the button to remove coupon
+                const couponButton = document.querySelector("input[type='submit']");
+                couponButton.value = "Remove Coupon";
+                couponButton.onclick = removeCoupon;
+            }
+        })
+        .catch((error) => {
+            console.error('Error applying coupon:', error);
+        });
+}
+
+function removeCoupon(event) {
+    event.preventDefault();
+    window.location.href = "/checkout";
+}
+
+		function removeCoupon() {
+			window.location.href = "/checkout";
+		}
+
+		function showsnackbar(text) {
+			// Get the snackbar DIV
+			var x = document.getElementById("snackbar");
+			x.innerHTML = text
+			// Add the "show" class to DIV
+			x.className = "show";
+
+			// After 3 seconds, remove the show class from DIV
+			setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+		}
 
 	</script>
 </body>

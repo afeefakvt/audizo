@@ -3,7 +3,8 @@ const user_route=express();
 const userController=require("../controllers/userController");
 const cartController=require("../controllers/cartController");
 const orderController=require("../controllers/orderController")
-const wishlistController=require("../controllers/wishlistController")
+const wishlistController=require("../controllers/wishlistController");
+const couponController=require("../controllers/couponController");
 const passport = require("passport");
 const multer=require("multer");
 const config=require("../config/config");
@@ -82,11 +83,17 @@ user_route.get("/orderSuccess",auth.isLogin,orderController.orderSuccess);
 user_route.get("/cancelOrder",auth.isLogin,orderController.cancelOrder);
 user_route.get("/payNow",auth.isLogin,orderController.payNow);
 user_route.get("/orderPlacing",auth.isLogin,orderController.orderPlacing);
+user_route.get("/orderFailed",auth.isLogin,orderController.orderFailed)
 
 //wishlist management
 user_route.post("/addToWishlist",auth.isLogin,wishlistController.addToWishlist);
 user_route.get('/wishlist',auth.isLogin,wishlistController.loadWishlist);
 user_route.get("/removeFromWishlist",auth.isLogin,wishlistController.removeFromWishlist);
 
+
+user_route.get("/checkCoupon",auth.isLogin,couponController.checkCoupon);
+user_route.get("/getAvailableCoupons",auth.isLogin,couponController.getAvailableCoupons);
+
+user_route.get("/referralLink",auth.isLogin,userController.loadReferralLink);
 
 module.exports=user_route

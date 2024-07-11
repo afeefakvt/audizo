@@ -1,6 +1,7 @@
 const Cart = require("../models/cartModel");
 const User = require("../models/userModel");
 const Address = require("../models/addressModel");
+const Coupon = require("../models/couponModel")
 const { ObjectId } = require('mongodb');
 
 
@@ -34,10 +35,10 @@ const addToCart = async (req, res) => {
                 )
                 console.log("product pushed to cart");
 
-                res.json({ success: true,message:'Product added to cart successfully' })
+                res.json({ success: true, message: 'Product added to cart successfully' })
             } else {
                 console.log("Product is already in the cart");
-                res.json({ success: false,message:'product is already in the cart' })
+                res.json({ success: false, message: 'product is already in the cart' })
             }
         }
     } catch (error) {
@@ -177,25 +178,88 @@ const checkStock = async (req, res) => {
     }
 }
 
+
 const loadCheckout = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id });
-        const addresses = await Address.findOne({ userId: req.session.user_id })
+        const addresses = await Address.findOne({ userId: req.session.user_id });
         const cart = await Cart.findOne({ userId: req.session.user_id }).populate("items.productId");
+        const coupon = await Coupon.find();
+
+        let discount = 0;
+        let appliedCouponCode = null;
+        if (req.query.coupon) {
+            const appliedCoupon = await Coupon.findOne({ couponCode: req.query.coupon });
+            appliedCouponCode = req.query.coupon;
+            discount = Math.ceil((appliedCoupon.percentage * req.session.totalPrice) / 100);
+            if (discount > appliedCoupon.maxRedeemAmount) {
+                discount = appliedCoupon.maxRedeemAmount;
+            }
+        }
+        if (req.session.discount) {
+            discount = req.session.discount;
+            delete req.session.discount;
+        }
 
         if (cart && cart.items.length > 0) {
             let grandTotal = 0;
             cart.items.forEach(item => {
                 grandTotal += item.productId.discountPrice * item.quantity;
             });
-            res.render("checkout", { user: userData, cart: cart, addresses: addresses, grandTotal: grandTotal })
+            const finalTotal = grandTotal - discount;
+            res.render("checkout", {
+                user: userData,
+                cart: cart,
+                addresses: addresses,
+                grandTotal: grandTotal,
+                finalTotal: finalTotal,
+                coupon: coupon,
+                discount: discount,
+                appliedCouponCode: appliedCouponCode
+            });
         } else {
             res.redirect('/cart');
         }
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
     }
-}
+};
+
+// const loadCheckout = async (req, res) => {
+//     try {
+//         const userData = await User.findOne({ _id: req.session.user_id });
+//         const addresses = await Address.findOne({ userId: req.session.user_id })
+//         const cart = await Cart.findOne({ userId: req.session.user_id }).populate("items.productId");
+//         const coupon = await Coupon.find();
+
+//         let discount;
+//         if (req.query.coupon) {
+//             const appliedCoupon = await Coupon.findOne({ couponCode: req.query.coupon });
+//             discount = Math.ceil(
+//                 (appliedCoupon.percentage * req.session.totalPrice) / 100
+//             );
+//             if (discount > appliedCoupon.maxRedeemAmount) {
+//                 discount = appliedCoupon.maxRedeemAmount;
+//             }
+//         }
+//         if (req.session.discount) {
+//             discount = req.session.discount;
+//             delete req.session.discount;
+//         }
+
+//         if (cart && cart.items.length > 0) {
+//             let grandTotal = 0;
+//             cart.items.forEach(item => {
+//                 grandTotal += item.productId.discountPrice * item.quantity;
+//             });
+//             res.render("checkout", { user: userData, cart: cart, addresses: addresses, grandTotal: grandTotal, coupon: coupon, discount: discount })
+//         } else {
+//             res.redirect('/cart');
+//         }
+//     } catch (error) {
+//         console.log(error.message)
+//     }
+// }
 const addNewAddress = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id });

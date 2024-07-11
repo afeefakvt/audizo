@@ -347,6 +347,14 @@ const payNow = async(req,res,next)=>{
       next(error);
     }
   }
+  const orderFailed = async(req,res)=>{
+    try {
+
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+  }
 
 module.exports = {
     createOrder,
@@ -357,7 +365,8 @@ module.exports = {
     changeStatus,
     cancelOrder,
     payNow,
-    orderPlacing
+    orderPlacing,
+    orderFailed
 
 
 }

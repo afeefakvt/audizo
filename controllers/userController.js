@@ -71,6 +71,14 @@ const insertUser = async (req, res) => {
             is_blocked: false
         });
 
+        if(req.query.referralId){
+            const referral = await new Referral({
+                userId:user._id,
+                referralId:req.query.referralId
+            });
+            req.session.referral = referral
+        }
+
 
         const userData = await user.save();
         console.log(userData)
@@ -566,6 +574,15 @@ const newPassword = async (req, res) => {
 };
 
 
+const loadReferralLink = async(req,res)=>{
+    try {
+        const userData = await User.findOne({_id:req.session.user_id});
+        res.render("referralLink",{user:userData});
+        
+    } catch (error) {
+        console.log9error.message
+    }
+}
 
 //logout
 const logoutLoad = async (req, res) => {
@@ -612,6 +629,7 @@ module.exports = {
     resetPassword,
     newPasswordForm,
     newPassword,
+    loadReferralLink,
     logoutLoad,
 
 

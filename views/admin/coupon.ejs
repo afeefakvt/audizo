@@ -21,6 +21,66 @@
     <!-- End layout styles -->
     <link rel="shortcut icon" href="/static/adminImages/images/favicon.ico" />
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .modal-dialog {
+            max-width: 600px;
+            /* Set a max-width for the modal */
+            margin: 1.75rem auto;
+        }
+
+        .modal-content {
+            border-radius: .3rem;
+            /* Keep the border radius */
+            border: 1px solid #dee2e6;
+            /* Add border to modal content */
+            padding: 1rem;
+            /* Add padding to modal content */
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #dee2e6;
+            /* Add border to modal header */
+        }
+
+        .modal-footer {
+            border-top: 1px solid #dee2e6;
+            /* Add border to modal footer */
+        }
+
+        .text-danger {
+            font-size: 0.875rem;
+            /* Adjust font size for error messages */
+            margin-top: 0.25rem;
+            /* Add space above error messages */
+        }
+
+        /* Add some padding to the modal body */
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* Adjust form control margins */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        /* Adjust form control sizes */
+        .form-control {
+            height: calc(2.25rem + 2px);
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
+            border: 1px solid #ced4da;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            font-size: 1rem;
+            padding: .5rem 1rem;
+            border-radius: .25rem;
+        }
+    </style>
 
 </head>
 
@@ -258,38 +318,40 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form id="addCouponForm" action="/admin/coupons/addCoupon" method="POST">
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="couponCode">Coupon Code</label>
-                                        <input type="text" class="form-control" id="couponCode" name="couponCode"
-                                            required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="minPrice">Minimum Price</label>
-                                        <input type="number" class="form-control" id="minPrice" name="minPrice"
-                                            required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="offerPercentage">Offer Percentage</label>
-                                        <input type="number" class="form-control" id="percentage" name="percentage"
-                                            required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="maxRedeemable">Maximum Redeemable Amount</label>
-                                        <input type="number" class="form-control" id="maxRedeemAmount"
-                                            name="maxRedeemAmount" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="expiryDate">Expiry Date</label>
-                                        <input type="date" class="form-control" id="expiryDate" name="expiryDate"
-                                            required>
-                                    </div>
+                            <form id="addCouponForm" action="/admin/coupons/addCoupon" method="POST" onsubmit="return validateCoupon()">
+                                <div class="form-group">
+                                    <label for="couponCode">Coupon Code</label>
+                                    <input type="text" class="form-control" id="couponCode" name="couponCode" required>
+                                    <span id="couponCodeError" class="text-danger" style="display:none;">Coupon Code
+                                        must be a valid number between 1000 and 9999.</span>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Add Coupon</button>
+                                <div class="form-group">
+                                    <label for="minPrice">Minimum Price</label>
+                                    <input type="number" class="form-control" id="minPrice" name="minPrice" required>
+                                    <span id="minPriceError" class="text-danger" style="display:none;">Minimum Price
+                                        must be a valid number between 100 and 5000.</span>
                                 </div>
+                                <div class="form-group">
+                                    <label for="percentage">Offer Percentage</label>
+                                    <input type="number" class="form-control" id="percentage" name="percentage"
+                                        required>
+                                    <span id="couponOfferError" class="text-danger" style="display:none;">Offer
+                                        Percentage must be a valid number between 1 and 50.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="maxRedeemAmount">Maximum Redeemable Amount</label>
+                                    <input type="number" class="form-control" id="maxRedeemAmount"
+                                        name="maxRedeemAmount" required>
+                                    <span id="maxRedeemableError" class="text-danger" style="display:none;">Maximum
+                                        Redeemable Amount must be a valid number between 10 and 10000.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiryDate">Expiry Date</label>
+                                    <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+                                    <span id="couponExpiryDateError" class="text-danger" style="display:none;">Expiry
+                                        Date must be a valid future date.</span>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add Coupon</button>
                             </form>
                         </div>
                     </div>
@@ -328,10 +390,68 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     <script>
+
+        const validateCoupon = () => {
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const coupon = document.getElementById("couponCode").value.trim();
+            const percentage = document.getElementById("percentage").value.trim();
+            const minPrice = document.getElementById("minPrice").value.trim();
+            const maxRedeemAmount = document.getElementById("maxRedeemAmount").value.trim();
+            const expireDateValue = document.getElementById("expiryDate").value;
+
+            let expireDate;
+            if (expireDateValue) {
+                expireDate = new Date(expireDateValue);
+            }
+
+            let numberRegex = /^\d+$/;
+            let isValid = true;
+
+            if (!numberRegex.test(coupon) || coupon <= 999 || coupon >= 10000) {
+                document.getElementById("couponCodeError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("couponCodeError").style.display = "none";
+            }
+
+            if (!numberRegex.test(percentage) || percentage <= 0 || percentage >= 51) {
+                document.getElementById("couponOfferError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("couponOfferError").style.display = "none";
+            }
+
+            if (!numberRegex.test(minPrice) || minPrice <= 100 || minPrice >= 5001) {
+                document.getElementById("minPriceError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("minPriceError").style.display = "none";
+            }
+
+            if (!numberRegex.test(maxRedeemAmount) || maxRedeemAmount <= 10 || maxRedeemAmount >= 10000) {
+                document.getElementById("maxRedeemableError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("maxRedeemableError").style.display = "none";
+            }
+
+            if (!expireDate || expireDate < today) {
+                document.getElementById("couponExpiryDateError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("couponExpiryDateError").style.display = "none";
+            }
+
+            return isValid;
+        }
+
+
         const confirmDelete = (couponId) => {
             Swal.fire({
                 title: 'Are you sure?',
