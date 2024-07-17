@@ -4,91 +4,92 @@ const Address = require("../models/addressModel");
 const Coupon = require("../models/couponModel")
 const { ObjectId } = require('mongodb');
 
-
-
 const addToCart = async (req, res) => {
     try {
         const id = req.query.id;
         console.log(`Received product ID: ${id}`);
-        const already = await Cart.findOne({ userId: req.session.user_id });
-        if (!already) {
-            const cartItem = await new Cart({
-                userId: req.session.user_id,
-                item: [{ productId: id }]
-            })
-            await cartItem.save();
 
-            return res.json({ success: true });
+        // Find the user's cart
+        let cart = await Cart.findOne({ userId: req.session.user_id });
+
+        // If the cart doesn't exist, create a new one
+        if (!cart) {
+            cart = new Cart({
+                userId: req.session.user_id,
+                items: [{ productId: id }]
+            });
+            await cart.save();
+
+            console.log('New cart created and product added');
+            return res.json({ success: true, message: 'Product added to cart successfully' });
         } else {
+            // Check if the product is already in the cart
             let flag = 0;
-            already.items.forEach((item) => {
-                if (item.productId == id) {
+            cart.items.forEach((item) => {
+                if (item.productId.toString() === id) {
                     flag = 1;
                 }
             });
 
+            // If the product is not in the cart, add it
+            if (flag === 0) {
+                cart.items.push({ productId: id });
+                await cart.save();
 
-            if (flag == 0) {
-                await Cart.updateOne(
-                    { userId: req.session.user_id },
-                    { $push: { items: { productId: id } } }
-                )
-                console.log("product pushed to cart");
-
-                res.json({ success: true, message: 'Product added to cart successfully' })
+                console.log("Product added to existing cart");
+                return res.json({ success: true, message: 'Product added to cart successfully' });
             } else {
                 console.log("Product is already in the cart");
-                res.json({ success: false, message: 'product is already in the cart' })
+                return res.json({ success: false, message: 'Product is already in the cart' });
             }
         }
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
+        res.status(500).json({ success: false, message: 'An error occurred while adding the product to the cart' });
     }
-}
+};
 
-// const   addToCart = async(req,res)=>{
-//     try{
+
+// const addToCart = async (req, res) => {
+//     try {
 //         const id = req.query.id;
-//         console.log(id,"hhhhh")
-//         const userId = req.session.user_id;
-//  // Log the product ID to see what is being received
-//  console.log(`Received product ID: ${id}`);
-
-//           // Validate if the provided id is a valid ObjectId
-//           if (!mongoose.Types.ObjectId.isValid(id)) {
-//             return res.status(400).json({ success: false, message: 'Invalid product ID' });
-//         }
-//         let cart =  await Cart.findOne({userId});
-
-//         if(!cart){
-//             cart =new Cart({
-//                 userId,
-//                 items:[{productId:mongoose.Types.ObjectId(id),quantity:1}]
+//         console.log(`Received product ID: ${id}`);
+//         let cart= await Cart.findOne({ userId: req.session.user_id });
+//         if (!cart) {
+//                 cart=  new Cart({
+//                 userId: req.session.user_id,
+//                 item: [{ productId: id }]
 //             })
 //             await cart.save();
-//             console.log(`New cart created for user ${userId} with product ${id}`);
 
-//             return res.json({success:true})
-//         }else{
-//             let item = cart.items.find(item=> item.productId.toString()===id);
-//             if(item){
-//                 console.log(`Product ${id} is already in the cart for user ${userId}`);
+//             return res.json({ success: true });
+//         } else {
+//             let flag = 0;
+//             cart.items.forEach((item) => {
+//                 if (item.productId == id) {
+//                     flag = 1;
+//                 }
+//             });
 
-//                 return res.json({success:false,message:"product already in the cart"})
-//             }else{
-//                 cart.items.push({productId:mongoose.Types.ObjectId(id),quantity:1});
-//                 await cart.save()
-// console.log(`Product ${id} added to existing cart for user ${userId}`);
-//                 return res.json({success:true});
+
+//             if (flag == 0) {
+//                 await Cart.updateOne(
+//                     { userId: req.session.user_id },
+//                     { $push: { items: { productId: id } } }
+//                 )
+//                 console.log("product pushed to cart");
+
+//                 res.json({ success: true, message: 'Product added to cart successfully' })
+//             } else {
+//                 console.log("Product is already in the cart");
+//                 res.json({ success: false, message: 'product is already in the cart' })
 //             }
 //         }
 
-//     }catch(error){
+//     } catch (error) {
 //         console.log(error.message)
-//         res.status(500).json({success:false})
 //     }
 // }
-
 
 
 const loadCart = async (req, res) => {

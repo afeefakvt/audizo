@@ -195,11 +195,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/banner">
-                        <span class="menu-title">banner</span>
-                        <i class="mdi mdi-flag-outline menu-icon"></i>
+                    <a class="nav-link" href="/admin/salesReport">
+                      <span class="menu-title">Sales Report</span>
+                      <i class="mdi mdi-chart-line menu-icon"></i>
                     </a>
-                </li>
+                  </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/admin/offers">
                         <span class="menu-title">offers</span>
@@ -235,7 +235,7 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <form action="/admin/coupons/editCoupon" method="post"
+                                <form action="/admin/coupons/editCoupon?id=<%= coupon._id%>" method="post"
                                     onsubmit="return validateEditCoupon()">
                                     <input type="hidden" name="coupon_id" value="<%= coupon._id %>">
                                     <div class="form-group">

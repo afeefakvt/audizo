@@ -12,9 +12,10 @@ app.set('view engine','ejs');
 app.set('views','./views');
 
 app.use(session({
-    secret:process.env.sessionSecret,
+    secret:process.env.SESSIONSECRET,
     resave:false,
-    saveUninitialized:true}));
+    saveUninitialized:true,
+}));
     
 app.use(passport.initialize())
 app.use(passport.session())

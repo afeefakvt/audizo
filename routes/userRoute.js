@@ -5,6 +5,7 @@ const cartController=require("../controllers/cartController");
 const orderController=require("../controllers/orderController")
 const wishlistController=require("../controllers/wishlistController");
 const couponController=require("../controllers/couponController");
+const walletController=require("../controllers/walletController")
 const passport = require("passport");
 const multer=require("multer");
 const config=require("../config/config");
@@ -43,8 +44,9 @@ user_route.post('/resendOtp',userController.resendOtp)
 
 user_route.get('/login',auth.isLogout,userController.loginLoad);
 user_route.post('/login',userController.verifyLogin);
-user_route.get('/logout',auth.isLogin,userController.logoutLoad);
+user_route.get('/logout',auth.isLogin,userController.logoutLoad);     
 user_route.get('/shop',auth.authMiddleware,auth.is_blocked,userController.loadShop);
+user_route.get('/sortFilter',auth.authMiddleware,auth.is_blocked,userController.sortFilter)
 user_route.get('/productDetail/:id',auth.authMiddleware,auth.is_blocked,userController.productDetail);
 
 //profile management
@@ -81,8 +83,6 @@ user_route.post("/checkout",auth.isLogin,cartController.addNewAddress)
 user_route.post("/createOrder",auth.isLogin,orderController.createOrder);
 user_route.get("/orderSuccess",auth.isLogin,orderController.orderSuccess);
 user_route.get("/cancelOrder",auth.isLogin,orderController.cancelOrder);
-user_route.get("/payNow",auth.isLogin,orderController.payNow);
-user_route.get("/orderPlacing",auth.isLogin,orderController.orderPlacing);
 user_route.get("/orderFailed",auth.isLogin,orderController.orderFailed)
 
 //wishlist management
@@ -90,9 +90,13 @@ user_route.post("/addToWishlist",auth.isLogin,wishlistController.addToWishlist);
 user_route.get('/wishlist',auth.isLogin,wishlistController.loadWishlist);
 user_route.get("/removeFromWishlist",auth.isLogin,wishlistController.removeFromWishlist);
 
-
+//coupon management
 user_route.get("/checkCoupon",auth.isLogin,couponController.checkCoupon);
 user_route.get("/getAvailableCoupons",auth.isLogin,couponController.getAvailableCoupons);
+
+//wallet management
+user_route.get("/wallet",auth.isLogin,walletController.loadWallet);
+
 
 user_route.get("/referralLink",auth.isLogin,userController.loadReferralLink);
 

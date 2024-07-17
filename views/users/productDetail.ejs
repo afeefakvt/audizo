@@ -257,6 +257,20 @@
 												<div class="row">
 													<div class="col-sm-12 text-center">
 														<p class="addtocart">
+															<% if (isAuthenticated) { %>
+																<a href="#" class="btn btn-primary btn-addtocart" style="width: 92px;padding: 8px;"
+																	onclick="addToWishlist('<%= details._id%>')">
+																	<i class="fas fa-heart" style="font-size: 17px;"></i> Add to Wishlist
+																</a>
+																<% } else { %>
+																	<a href="/login"
+																		class="btn btn-primary btn-addtocart" style="width: 92px;padding: 8px;">
+																		<i class="fas fa-heart"  style="font-size: 17px;"></i>
+																		Add to Wishlist
+																	</a>
+																	<% } %>
+														</p>
+														<p class="addtocart">
 															<%if(details.stock>0){%>
 																<% if (isAuthenticated) { %>
 																	<a href="#" class="btn btn-primary btn-addtocart"
@@ -274,20 +288,7 @@
 																			<%} %>
 
 														</p>
-														<p class="addtowishlist">
-															<% if (isAuthenticated) { %>
-																<a href="#" class="btn btn-primary btn-addtowishlist"
-																	onclick="addToWishlist('<%= details._id%>')">
-																	<i class="fas fa-heart"></i> Add to Wishlist
-																</a>
-																<% } else { %>
-																	<a href="/login"
-																		class="btn btn-primary btn-addtowishlist">
-																		<i class="fas fa-heart"></i>
-																		Add to Wishlist
-																	</a>
-																	<% } %>
-														</p>
+													
 													</div>
 												</div>
 						</div>

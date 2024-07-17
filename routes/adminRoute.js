@@ -77,5 +77,12 @@ admin_route.get("/coupons/editCoupon",couponController.loadEditCoupon);
 admin_route.post("/coupons/editCoupon",couponController.editCoupon);
 admin_route.delete("/coupons",auth.isLogin,couponController.deleteCoupon)
 
+//sales report
+admin_route.get('/filterSalesInterval',auth.isLogin,adminController.filterSalesInterval);
+admin_route.get("/filterSales",auth.isLogin,adminController.filterSalesReport)
+admin_route.get("/salesReport",auth.isLogin,adminController.loadSalesReport);
+
+
+
 
 module.exports=admin_route;

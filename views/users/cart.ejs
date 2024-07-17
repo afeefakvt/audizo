@@ -343,7 +343,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 <script>
 const decrease = (price, stock, index, pId) => {
-    let quantity = Number(document.getElementById(`qty${index}`)).value;
+    let quantity = Number(document.getElementById(`qty${index}`).value);
     quantity--;
     if (quantity < 1) {
         quantity = 1;
@@ -358,7 +358,7 @@ const decrease = (price, stock, index, pId) => {
                 const data=response.data
                 if (data) {
                     let subtotal = Number(quantity) * Number(price);
-                    document.getElementById(`subtotal${index}`).textContent = `₹ ${subtotal.toFixed(2)}`;
+					document.getElementById(`subtotal${index}`).textContent = `₹ ${subtotal.toFixed(2)}`;
                     document.getElementById(`qty${index}`).value = quantity;
                     const total = Number(document.getElementById("total").textContent);
                     document.getElementById("total").textContent = `${(Number(total) - Number(price)).toFixed(2)}`;

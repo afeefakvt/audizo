@@ -6,10 +6,12 @@ const Otp = require('../models/otpModel');
 const Product = require('../models/productModel');
 const Category = require("../models/categoryModel");
 const Address = require("../models/addressModel");
+const Wallet = require("../models/walletModel");
 const mongoose = require('mongoose');
 const crypto = require("crypto");
 const ObjectId = mongoose.Types.ObjectId;
 const passport = require("passport");
+const { search } = require('../routes/userRoute');
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require('dotenv').config();
 
@@ -17,12 +19,11 @@ require('dotenv').config();
 
 const loadHome = async (req, res) => {
     try {
-        // const user = req.session.user_id;
-
+        const user = req.session.user_id;
         const userData = await User.findOne({ _id: req.session.user_id });
         const productData = await Product.find({ isListed: false }).populate({
             path: "categoryId",
-            match: { isBlocked: false }
+            match: { isListed: false }
         })
 
         const categoryData = await Category.find({ isBlocked: false })
@@ -47,58 +48,58 @@ const securePassword = async (password) => {
 
 const loadRegister = async (req, res) => {
     try {
-        res.render('registration');
+        const referralId = req.query.referralId
+        console.log(referralId,"referrraal");
+        res.render('registration',{ referralId:referralId?referralId:""});
     } catch (error) {
         console.log(error.message);
     }
 }
 const insertUser = async (req, res) => {
-    try {
-        console.log(process.env.NODE_MAILER_EMAIL)
-        const { email, password, name, mobile } = req.body
 
-        //check if email already exists in the database
-        const existingUser = await User.findOne({ email, is_verified: true });
-        if (existingUser) {
-            return res.status(400).render("registration", { message: "Email already exists,please use another email address" })
-        }
-        const spassword = await securePassword(password);
-        const user = new User({
-            name,
-            email,
-            mobile,
-            password: spassword,
-            is_blocked: false
-        });
-
-        if(req.query.referralId){
-            const referral = await new Referral({
-                userId:user._id,
-                referralId:req.query.referralId
+        try {
+            const referralId=req.query.referralId
+            console.log("Query Parameters:", referralId);
+            const { email, password, name, mobile } = req.body;
+    
+            // Check if email already exists in the database
+            const existingUser = await User.findOne({ email, is_verified: true });
+            if (existingUser) {
+                return res.status(400).render("registration", { message: "Email already exists, please use another email address" });
+            }
+    
+            // Create and save new user
+            const spassword = await securePassword(password);
+            const user = new User({
+                name,
+                email,
+                mobile,
+                password: spassword,
+                is_blocked: false
             });
-            req.session.referral = referral
+          
+           if(referralId){
+            req.session.referral=referralId
+           }
+            const userData = await user.save();
+            console.log(userData);
+            req.session.user_id = userData._id;
+    
+            // Send verification email
+            await util.mailSender(
+                email,
+                userData._id,
+                `It seems you are logging in at Audizo and trying to verify your Email.
+                Here is the verification code. Please enter OTP and verify your Email.`
+            );
+    
+            res.redirect('/otp');
+        } catch (error) {
+            console.error(error.message);
+            res.status(500).send('Internal Server Error');
         }
-
-
-        const userData = await user.save();
-        console.log(userData)
-        req.session.user_id = userData._id;
-
-        await util.mailSender(
-            email,
-            userData._id,
-            `It seems you logging at audizo and trying to verify your Email.
-            Here is the verification code.Please enter otp and verify Email`
-        );
-
-        res.redirect('/otp');
-
-
-    } catch (error) {
-        console.log(error)
-
     }
-}
+
 const renderOTP = (req, res) => {
     try {
         res.render('otp');
@@ -122,8 +123,61 @@ const verifyOTP = async (req, res) => {
 
             //  remove the OTP after successful verification
             await Otp.deleteOne({ _id: otpp._id });
-
             req.session.isLogin = true;
+
+            console.log("referrrraaal",req.session.referral);
+             if (req.session.referral) {
+                const referral = req.session.referral
+                const user = await User.findOne({ referralId: referral })
+                console.log(user,"userrrr find");
+                if (user) {
+                    console.log("user ind");
+                    // wallet of user having the referral code
+                    let wallet = await Wallet.findOne({ userId: user._id })
+                    if (wallet) {
+                         console.log("user wallet");
+                        wallet.history.push({
+                            amount: 100,
+                            type: 'Credit',
+                            newBalance:100
+                        });
+                        wallet.balance += Number(100);
+                        await wallet.save();
+    
+                    } else {
+                        console.log("wwwwaallettt");
+    
+                        wallet = new Wallet({
+                                userId:user._id,
+                                history: [{
+                                amount: 100,
+                                type: 'Credit',
+                                newBalance:100
+                            }],
+                            balance: Number(100)
+                        });
+                        await wallet.save();
+                    }
+                }
+    
+                // wallet for new user
+    
+                const wallet = new Wallet({
+                        userId: userId,
+                        history: [{
+                        amount: 50,
+                        type: 'Credit',
+                        newBalance:Number(50)
+                        
+                    }],
+                    balance: Number(50)
+                });
+                await wallet.save();
+            }
+    
+    
+            delete req.session.referral
+
             res.json({ success: true, message: 'OTP verified successfully.' });
         } else {
             res.json({ success: false, message: 'Invalid OTP. Please try again.' });
@@ -261,10 +315,10 @@ const googleSuccess = async (req, res, next) => {
 
 const loadShop = async (req, res) => {
     try {
-        const product = await Product.find({ isListed: false });
+        const products = await Product.find({ isListed: false });
         const category = await Category.find({ isBlocked: false })
 
-        return res.render('shop', { product: product, category: category, sortOption: "" });
+        return res.render('shop', { products: products, category: category, sortOption: "",search:"", selectedCategory:"",selectedPriceRange:"" });
 
 
     } catch (error) {
@@ -272,7 +326,118 @@ const loadShop = async (req, res) => {
     }
 
 }
+const sortFilter = async (req, res) => {
+    try {
+        const category = await Category.find({ isBlocked: false });
+        const { sortOption, searchQuery, category: selectedCategory, priceRange:selectedPriceRange } = req.query;
 
+        let filter = { isListed: false };
+        if (selectedCategory) {
+            filter.categoryId = selectedCategory; 
+        }
+
+        if (selectedPriceRange) {
+            const [minPrice, maxPrice] = selectedPriceRange.split('-').map(Number);
+            filter.$or = [
+                { discountPrice: { $gte: minPrice, $lte: maxPrice } },
+                // { price: { $gte: minPrice, $lte: maxPrice } }
+            ];
+        }
+
+        let products;
+        switch (sortOption) {
+            case "newArrival":
+                products = await Product.find(filter).sort({ date: -1 });
+                break;
+            case "priceLowToHigh":
+                products = await Product.aggregate([
+                    { $match: filter },
+                    { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
+                    { $sort: { sortPrice: 1 } },
+                ]);
+                break;
+            case "priceHighToLow":
+                products = await Product.aggregate([
+                    { $match: filter },
+                    { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
+                    { $sort: { sortPrice: -1 } },
+                ]);
+                break;
+            case "nameAZ":
+                products = await Product.find(filter).sort({ name: 1 });
+                break;
+            case "nameZA":
+                products = await Product.find(filter).sort({ name: -1 });
+                break;
+            default:
+                products = await Product.find(filter);
+                break;
+        }
+
+        if (searchQuery) {
+            const regex = new RegExp(searchQuery, "i");
+            products = products.filter((item) => regex.test(item.name));
+        }
+
+        res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange });
+
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+
+// const sortFilter = async (req, res) => {
+//     try {
+//         const { sortOption,searchQuery, } = req.query;
+
+//     
+//         console.log(sortOption);
+//         let products;
+//         switch (sortOption) {
+//             case "newArrival":
+//                 console.log("newwwww");
+//                 products = await Product.find({ isListed: false }).sort({ date: -1 });
+//                 console.log(("whyyyy"));
+//                 break;
+//             case "priceLowToHigh":
+//                 console.log(("low ti hhhh"));
+//                 products = await Product.aggregate([
+//                     { $match: { isListed: false } },
+//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
+//                     { $sort: { sortPrice: 1 } },
+                    
+//                 ]);
+//                 console.log("low tohighhhh");
+//                 break;
+//             case "priceHighToLow":
+//                 products = await Product.aggregate([
+//                     { $match: { isListed: false } },
+//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
+//                     { $sort: { sortPrice: -1 } },
+//                 ]);
+//                 break;
+//             case "nameAZ":
+//                 products = await Product.find({ isListed: false }).sort({ name: 1 });
+//                 break;
+//             case "nameZA":
+//                 products =await Product.find({isListed:false,}).sort({name:-1});
+//                 break;
+//             default:
+//                 products = await Product.find({ isListed: false });
+//                 break;
+//         }
+
+//         if (searchQuery) {
+//             const regex = new RegExp(searchQuery, "i");
+//             products = products.filter((item) => regex.test(item.name));
+//           }
+//         res.render("shop", { products: products, sortOption: sortOption,search:searchQuery, category: category })
+
+//     } catch (error) {
+//         console.log(error.message)
+//     }
+// }
 const productDetail = async (req, res) => {
     try {
         const id = req.params.id;
@@ -351,7 +516,7 @@ const changePassword = async (req, res) => {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const passwordMatch =await bcrypt.compare(req.body.oldPassword, userData.password);
+        const passwordMatch = await bcrypt.compare(req.body.oldPassword, userData.password);
         if (!passwordMatch) {
             return res.status(400).json({ success: false, message: 'Incorrect old password' });
         }
@@ -486,8 +651,11 @@ const resetPassword = async (req, res) => {
             }
 
             const token = crypto.randomBytes(20).toString('hex');
+            console.log("generated token:",token);
             req.session.token = token;
             req.session.email = req.body.email;
+            console.log("Session token set:", req.session.token);
+
 
             const mailOptions = {
                 from: process.env.NODE_MAILER_EMAIL,
@@ -535,6 +703,7 @@ const resetPassword = async (req, res) => {
 const newPasswordForm = async (req, res) => {
     try {
         const token = req.query.token;
+        console.log("tooooooooooo",token);
 
         if (!token) {
             return res.redirect('/login');
@@ -550,35 +719,51 @@ const newPasswordForm = async (req, res) => {
 
 const newPassword = async (req, res) => {
     try {
+        console.log("Entering newPassword function");
         const token = req.body.token;
-        const newPassword = req.body.password;
+        const password = req.body.password;
+        const confirmPassword = req.body.confirmPassword;
 
-        if (token === req.session.token) {
-            const hashedPassword = await securePassword(newPassword);
+        console.log("Body token:", token);
+        console.log("Session token:", req.session.token); 
+        console.log("password:", password);
+        console.log("confirm:", confirmPassword);
 
-            await User.findOneAndUpdate(
-                { email: req.session.email },
-                { password: hashedPassword }
-            );
-
-            delete req.session.token;
-
-            res.status(200).json({ message: 'Password reset successful' });
-        } else {
-            res.status(400).send('Invalid token');
+        if (token !== req.session.token) {
+            return res.status(400).json({ message: 'Invalid token' });
         }
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: 'Passwords do not match' });
+        }
+
+        console.log("Passwords match and token is valid");
+
+        const hashedPassword = await securePassword(password);
+        console.log("Password hashed successfully");
+
+        const updateResult = await User.findOneAndUpdate(
+            { email: req.session.email },
+            { password: hashedPassword }
+        );
+        console.log("User password updated:", updateResult);
+
+        delete req.session.token;
+        console.log("Session token deleted");
+
+        res.status(200).json({ message: 'Password reset successful' });
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Server error');
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Failed to reset password. Please try again later.' });
     }
 };
 
 
-const loadReferralLink = async(req,res)=>{
+
+const loadReferralLink = async (req, res) => {
     try {
-        const userData = await User.findOne({_id:req.session.user_id});
-        res.render("referralLink",{user:userData});
-        
+        const userData = await User.findOne({ _id: req.session.user_id });
+        res.render("referralLink", { user: userData });
+
     } catch (error) {
         console.log9error.message
     }
@@ -614,6 +799,7 @@ module.exports = {
     verifyLogin,
     googleSuccess,
     loadShop,
+    sortFilter,
     productDetail,
     loadProfile,
     editProfile,

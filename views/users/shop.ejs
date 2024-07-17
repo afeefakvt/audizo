@@ -47,6 +47,22 @@
 		.sort-by-container label {
 			margin-right: 10px;
 		}
+
+		#searchForm .form-control {
+
+			padding: 18px;
+		}
+
+		#searchForm .input-group-append .btn {
+			border-radius: 1 0.25rem 0.25rem 0;
+			border: 1px solid #ced4da;
+			border-left: none;
+			background-color: grey;
+		}
+
+		#searchForm .input-group-append .btn .icon-search {
+			color: white;
+		}
 	</style>
 
 </head>
@@ -199,13 +215,28 @@
 					<div class="col-lg-3 col-xl-3">
 						<div class="row">
 							<div class="col-sm-12">
+
+								<div class="input-group">
+									<input type="text" name="query" id="searchInput" class="form-control"
+										placeholder="Search products..." <%if(search.length>0){%>
+									value="<%=search%>"<%}%> >
+											<div class="input-group-append">
+												<button type="submit" class="btn btn-primary" onclick="search()">
+													<span class="icon-search"></span>
+												</button>
+											</div>
+								</div>
+							</div>
+							<div class="col-sm-12">
 								<div class="side border mb-1">
 									<h3>Category</h3>
 
 									<ul>
 										<%category.forEach((category)=>{%>
 											<li><a href="#" class="category-link"
-													data-category-id="<%= category._id %>"><%= category.name%></a>
+													data-category-id="<%= category._id %>">
+													<%= category.name%>
+												</a>
 											</li>
 											<%})%>
 
@@ -217,13 +248,17 @@
 								<div class="side border mb-1">
 									<h3>Price</h3>
 									<ul>
-										<li><a href="#">Below 1000</a></li>
-										<li><a href="#">1001-2000</a></li>
-										<li><a href="#">2001-3000</a></li>
-										<li><a href="#">3001-4000</a></li>
-										<li><a href="#">4001-5000</a></li>
-										<li><a href="#">Above 5000</a></li>
-
+										<li><a href="#" class="price-link" data-price-range="0-1000">Below 1000</a></li>
+										<li><a href="#" class="price-link" data-price-range="1001-2000">1001-2000</a>
+										</li>
+										<li><a href="#" class="price-link" data-price-range="2001-3000">2001-3000</a>
+										</li>
+										<li><a href="#" class="price-link" data-price-range="3001-4000">3001-4000</a>
+										</li>
+										<li><a href="#" class="price-link" data-price-range="4001-5000">4001-5000</a>
+										</li>
+										<li><a href="#" class="price-link" data-price-range="5001-999999">Above 5000</a>
+										</li>
 									</ul>
 								</div>
 							</div>
@@ -236,6 +271,7 @@
 						<div class="sort-by-container" id="sort-by">
 							<label for="sort-by">SORT BY:</label>
 							<select id="sortOptions" name="sort-by" onchange="sortProduts()">
+								<option value="" disabled selected>Select an option</option>
 								<option value="newArrival" <%=sortOption==='newArrival' ? 'selected' : '' %>>New
 									arrivals</option>
 								<option value="priceLowToHigh" <%=sortOption==='priceLowToHigh' ? 'selected' : '' %>
@@ -249,7 +285,7 @@
 
 
 						<div class="row row-pb-md">
-							<% product.forEach((product)=> { %>
+							<% products.forEach((product)=> { %>
 								<div class="col-lg-4 mb-4 text-center">
 									<div class="product-entry border">
 										<a href="/productDetail/<%= product._id %>" class="prod-img">
@@ -262,7 +298,9 @@
 												</a></h2>
 											<% if (product.discountPrice && product.discountPrice < product.price) { %>
 												<span class="price">&#8377;<%= product.discountPrice %></span>
-												<span class="price-cut" style="text-decoration: line-through;">&#8377;<%= product.price %></span>
+												<span class="price-cut" style="text-decoration: line-through;">&#8377;
+													<%= product.price %>
+												</span>
 												<% } else { %>
 													<span class="price">&#8377;<%= product.price %></span>
 													<% } %>
@@ -292,32 +330,6 @@
 
 
 
-				<!-- <div class="colorlib-partner">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-8 offset-sm-2 text-center colorlib-heading colorlib-heading-sm">
-						<h2>Trusted Partners</h2>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-1.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-2.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-3.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-4.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-					<div class="col partner-col text-center">
-						<img src="/static/userImages/images/brand-5.jpg" class="img-fluid" alt="Free html4 bootstrap 4 template">
-					</div>
-				</div>
-			</div>
-		</div>  -->
 
 				<footer id="colorlib-footer" role="contentinfo">
 					<div class="container">
@@ -433,63 +445,44 @@
 			<script src="/static/userImages/js/main.js"></script>
 			<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 			<script>
-				// document.addEventListener('DOMContentLoaded', function () {
-				// 	document.querySelectorAll('.category-link').forEach(function (link) {
-				// 		link.addEventListener('click', function (e) {
-				// 			e.preventDefault();
-				// 			var categoryId = this.getAttribute('data-category-id');
+			
 
-				// 			axios.get('/shop/getProductsByCategory', {
-				// 				params: {
-				// 					categoryId: categoryId
-				// 				}
-				// 			})
-				// 				.then(function (response) {
-				// 					// Assuming response.data is an array of products
-				// 					var productContainer = document.getElementById('product-container');
-				// 					productContainer.innerHTML = '';
+				let selectedOption = document.getElementById('sortOptions').value;
+				let searchInput = document.getElementById("searchInput").value;
+				let selectedCategory = "";
+				let selectedPriceRange = "";
 
-				// 					response.data.forEach(function (product) {
-				// 						var productHtml = `
-                //         <div class="col-lg-4 mb-4 text-center">
-                //             <div class="product-entry border">
-                //                 <a href="/productDetail/${product._id}" class="prod-img">
-                //                     <img src="/static/userImages/images/${product.images[0]}"
-                //                         class="img-fluid" alt="product image">
-                //                 </a>
-                //                 <div class="desc">
-                //                     <h2><a href="/productDetail/${product._id}">
-                //                             ${product.name}
-                //                         </a></h2>
-                //                     ${product.discountPrice && product.discountPrice < product.price ?
-				// 								`<span class="price">&#8377;${product.discountPrice}</span>
-                //                          <span class="price-cut">&#8377;${product.price}</span>`
-				// 								:
-				// 								`<span class="price">&#8377;${product.price}</span>`
-				// 							}
-                //                 </div>
-                //             </div>
-                //         </div>`;
-
-				// 						productContainer.insertAdjacentHTML('beforeend', productHtml);
-				// 					});
-				// 				})
-				// 				.catch(function (error) {
-				// 					console.error(error);
-				// 					alert('Failed to fetch products');
-				// 				});
-				// 		});
-				// 	});
-				// });
-
-
-
-				const sort = () => {
+				const sortProduts = () => {
 
 					selectedOption = document.getElementById('sortOptions').value;
-					window.location.href = `/sortFilter?sortOption=${selectedOption}`;
+					window.location.href = `/sortFilter?sortOption=${selectedOption}&searchQuery=${searchInput}&category=${selectedCategory}&priceRange=${selectedPriceRange}`;
 
 				};
+				const search = () => {
+					searchInput = document.getElementById("searchInput").value;
+					window.location.href = `/sortFilter?sortOption=${selectedOption}&searchQuery=${searchInput}&category=${selectedCategory}&priceRange=${selectedPriceRange}`;
+				}
+				document.querySelectorAll('.category-link').forEach(link => {
+					link.addEventListener('click', (event) => {
+						event.preventDefault();
+						selectedCategory = event.target.getAttribute('data-category-id');
+						window.location.href = `/sortFilter?sortOption=${selectedOption}&searchQuery=${searchInput}&category=${selectedCategory}&priceRange=${selectedPriceRange}`;
+					});
+				});
+				document.querySelectorAll('.price-link').forEach(link => {
+					link.addEventListener('click', (event) => {
+						event.preventDefault();
+						selectedPriceRange = event.target.getAttribute('data-price-range');
+						window.location.href = `/sortFilter?sortOption=${selectedOption}&searchQuery=${searchInput}&category=${selectedCategory}&priceRange=${selectedPriceRange}`;
+					});
+				});
+
+
+				// const navigateToPage = (page) => {
+				// 	const urlParams = new URLSearchParams(window.location.search);
+				// 	urlParams.set('page', page);
+				// 	window.location.href = '?' + urlParams.toString();
+				// }
 			</script>
 
 

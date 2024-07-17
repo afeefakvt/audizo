@@ -35,6 +35,8 @@
 
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="/static/userImages/css/style.css">
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 	<style>
 		.address-card-checkout {
 			position: relative;
@@ -311,7 +313,7 @@
 							<div id="coupon" style="display:none;">
 								<h3>Available Coupons</h3>
 								<ul id="couponList" class="list-group">
-									<!-- Coupons will be dynamically populated here -->
+									<!-- Dynamically create the coupon content -->
 								</ul>
 								<button class="btn btn-secondary" onclick="hideCoupon()">Close</button>
 							</div>
@@ -348,11 +350,12 @@
 											</span>
 										</li>
 										<li>
-											<span>Discount</span> <span id="discountAmount">&#8377;<%= discount %></span>
+											<span>Discount</span> <span id="discountAmount">&#8377;<%= discount %>
+											</span>
 										</li>
 										<li>
 											<span>Order Total</span>
-											<span>&#8377;<%= finalTotal %></span>
+											<span id="orderTotal">&#8377;<%= finalTotal %></span>
 											<input type="hidden" name="totalprice" value="<%= grandTotal %>">
 										</li>
 									</ul>
@@ -371,7 +374,7 @@
 												<label for="payment"><input type="radio" id="payment"
 														name="paymentMethod" value="cod"> Cash on
 													Delivery</label><span class="text-danger" style="display: none;"
-													id="codError"> cannot place cod over Rs:10000</span>
+													id="codError"> cannot place cod over Rs:1000</span>
 											</div>
 										</div>
 									</div>
@@ -386,8 +389,9 @@
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-												<label for="payment"><input type="radio" id="wallet"
+												<label for="payment"><input type="radio" 
 														name="paymentMethod" value="wallet"> Wallet</label>
+														<span class="text-danger" style="display: none;" id="walletError"> Insufficient Balance in Wallet</span>
 											</div>
 										</div>
 									</div>
@@ -599,7 +603,6 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 	<script>
@@ -717,8 +720,8 @@
 				return false;
 			}
 
-			stockCheck().then((isStockAvailabale) => {
-				if (!isStockAvailabale) {
+			stockCheck().then((isStockAvailable) => {
+				if (!isStockAvailable) {
 					return;
 				}
 				Swal.fire({
@@ -736,6 +739,7 @@
 							paymentMethod: selectedPaymentMethod.value,
 							totalprice: document.querySelector("input[name='totalprice']").value
 						};
+						console.log("Form Data: ", formData);
 						axios.post("/createOrder", formData).then((response) => {
 							if (response.data.success && selectedPaymentMethod.value === 'razorpay') {
 								let options = {
@@ -746,9 +750,11 @@
 									"description": "Test Transaction",
 									"order_id": response.data.order_id,
 									"handler": function (response) {
+										console.error("Payment Failed: ", response.error);
 										if (response.error) {
 											window.location.href = "/cart";
 										} else if (response.razorpay_payment_id) {
+											console.log("Payment Successful: ", response);
 											window.location.href = "/orderSuccess";
 										}
 									},
@@ -761,20 +767,24 @@
 								};
 								let rzp1 = new Razorpay(options);
 								rzp1.open();
-								rzp1.on('cart', (response) => {
-									setTimeout(() => {
-										rzp1.close();
-										window.location.href = "/cart";
-									}, 3000);
+								rzp1.on('payment.failed', function (response) {
+									console.error("Payment Failed: ", response.error);
+									Swal.fire("Payment Failed", response.error.description, "error")
 								});
 
 							} else if (response.data.success && selectedPaymentMethod.value === 'cod') {
-								if (response.data.message === "cannot place order in cod") {
+								if (response.data.message== "Cannot place order in COD") {
 									document.getElementById("codError").style.display = "block";
 									return false;
 								}
 
 								window.location.href = "/orderSuccess";
+							}else if(response.data.success && selectedPaymentMethod.value==="wallet"){
+								if(response.data.message==="Insufficient Balance"){
+									document.getElementById('walletError').style.display = "block";
+									return false
+								}
+								window.location.href  = "/orderSuccess"
 
 							} else {
 								Swal.fire(
@@ -790,47 +800,45 @@
 								'An error occurred while placing the order.',
 								'error'
 							);
-						})
+						});
 					}
-				})
-			})
-
-
-		}
-
+				});
+			});
+		};
 		function viewCoupon() {
 			event.preventDefault();
 			document.getElementById("coupon").style.display = "block";
 			document.getElementById("viewCoupons").style.display = "none";
-
-			// Fetch the coupons dynamically from the server (example AJAX call)
-			axios.get('/getAvailableCoupons')
-				.then(response => {
-					const coupons = response.data.coupons;
-					const couponList = document.getElementById("couponList");
-					couponList.innerHTML = ""; // Clear previous list items
-
-					coupons.forEach(coupon => {
-						const li = document.createElement("li");
-						li.className = "list-group-item";
-
-						const couponContent = `
-          <div class="coupon-content">
-            <div class="offer-text">If purchased above <strong>Rs ${coupon.minPrice - 1}</strong></div>
-            <div class="badge bg-info ">${coupon.percentage}% Discount</div>
-            <div class="coupon-code">Use Code: <strong>${coupon.couponCode}</strong></div>
-            <button class="btn btn-primary" onclick="copyCouponCode('${coupon.couponCode}')">Copy Code</button>
-          </div>
-        `;
-
-						li.innerHTML = couponContent;
-						couponList.appendChild(li);
-					});
-				})
-				.catch(error => {
-					console.error('Error fetching coupons:', error);
-				});
 		}
+		// Fetch the coupons dynamically from the server (example AJAX call)
+		axios.get('/getAvailableCoupons')
+			.then(response => {
+				const coupons = response.data.coupons;
+				const couponList = document.getElementById("couponList");
+				couponList.innerHTML = ""; // Clear previous list items
+
+				coupons.forEach(coupon => {
+					const li = document.createElement("li");
+					li.className = "list-group-item";
+
+
+					const couponContent = `
+                <div class="coupon-content">
+                    <div class="offer-text">If purchased above <strong>Rs ${coupon.minPrice - 1}</strong></div>
+                    <div class="badge bg-info">${coupon.percentage}% Discount</div>
+                    <div class="coupon-code">Use Code: <strong>${coupon.couponCode}</strong></div>
+                    <a href="#" style="color: blue;" onclick="copyCouponCode('${coupon.couponCode}'); return false;">Copy Code</a>
+                </div>
+            `;
+
+					li.innerHTML = couponContent;
+					couponList.appendChild(li);
+				});
+			})
+			.catch(error => {
+				console.error('Error fetching coupons:', error);
+			});
+
 
 		function hideCoupon() {
 			document.getElementById("coupon").style.display = "none";
@@ -845,53 +853,60 @@
 			document.execCommand("copy");
 			document.body.removeChild(el);
 			showsnackbar(`Copied ${code} to clipboard!`);
+
+
 		}
 
 		function applyCoupon(event) {
-    event.preventDefault();
-    let couponCode = document.getElementById("couponCode").value.trim();
-    let totalPrice = document.querySelector("input[name='totalprice']").value;
+			event.preventDefault();
+			let couponCode = document.getElementById("couponCode").value.trim();
+			let totalPrice = document.querySelector("input[name='totalprice']").value;
 
-    axios.get(`/checkCoupon?couponCode=${couponCode}&totalPrice=${totalPrice}`)
-        .then((response) => {
-            if (response.data.success && response.data.message === "Not a valid coupon") {
-                document.getElementById("couponError1").style.display = "block";
-                document.getElementById("couponError2").style.display = "none";
-            } else if (response.data.success && response.data.message === "Not eligible for this coupon") {
-                document.getElementById("couponError1").style.display = "none";
-                document.getElementById("couponError2").style.display = "block";
-            } else if (response.data.success) {
-                // Coupon applied successfully
-                alert("Coupon applied!");
-                const discount = response.data.discountPercentage;
-                const discountAmount = Math.ceil((discount * totalPrice) / 100);
-                const maxRedeemAmount = response.data.maxRedeemAmount;
-                const finalDiscount = discountAmount > maxRedeemAmount ? maxRedeemAmount : discountAmount;
-                const newTotal = totalPrice - finalDiscount;
+			console.log('Applying coupon:', couponCode, 'with total price:', totalPrice);
 
-                document.querySelector("span#orderTotal").innerText = `₹${newTotal.toFixed(2)}`;
-                document.querySelector("input[name='totalprice']").value = newTotal.toFixed(2);
-                document.querySelector("span#discountAmount").innerText = `₹${finalDiscount.toFixed(2)}`;
+			axios.get(`/checkCoupon?couponCode=${couponCode}&totalPrice=${totalPrice}`)
+				.then((response) => {
+					// Hide both error messages initially
+					document.getElementById("couponError1").style.display = "none";
+					document.getElementById("couponError2").style.display = "none";
+					if (!response.data.success&& response.data.message==="Not A valid Coupon") {
+						console.log('Showing invalid coupon error');
+						document.getElementById("couponError1").style.display = "block";
+						console.log('Response data:', response.data);
 
-                // Change the button to remove coupon
-                const couponButton = document.querySelector("input[type='submit']");
-                couponButton.value = "Remove Coupon";
-                couponButton.onclick = removeCoupon;
-            }
-        })
-        .catch((error) => {
-            console.error('Error applying coupon:', error);
-        });
-}
+					} else if (!response.data.success && response.data.message === "Not eligible for this coupon") {
+						console.log('Showing not eligible error');
+						document.getElementById("couponError2").style.display = "block";
+					} else if (response.data.success) {
+						// Coupon applied successfully
+						showsnackbar("Coupon applied!");
+						const discount = response.data.discountPercentage;
+						const discountAmount = Math.ceil((discount * totalPrice) / 100);
+						const maxRedeemAmount = response.data.maxRedeemAmount;
+						const finalDiscount = discountAmount > maxRedeemAmount ? maxRedeemAmount : discountAmount;
+						const newTotal = totalPrice - finalDiscount;
 
-function removeCoupon(event) {
-    event.preventDefault();
-    window.location.href = "/checkout";
-}
+						document.querySelector("span#orderTotal").innerText = `₹${newTotal.toFixed(2)}`;
+						document.querySelector("input[name='totalprice']").value = newTotal.toFixed(2);
+						document.querySelector("span#discountAmount").innerText = `₹${finalDiscount.toFixed(2)}`;
 
-		function removeCoupon() {
+						// Change the button to remove coupon
+						const couponButton = document.querySelector("input[type='submit']");
+						couponButton.value = "Remove Coupon";
+						couponButton.onclick = removeCoupon;
+					}
+				})
+				.catch((error) => {
+					console.error('Error applying coupon:', error);
+				});
+		}
+
+		function removeCoupon(event) {
+			event.preventDefault();
 			window.location.href = "/checkout";
 		}
+
+
 
 		function showsnackbar(text) {
 			// Get the snackbar DIV
