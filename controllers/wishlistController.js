@@ -44,7 +44,7 @@ const addToWishlist = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
-        res.status(500).json({ success: false, message: 'An error occurred while adding the product to the wishlist' });
+     
     }
 };
 

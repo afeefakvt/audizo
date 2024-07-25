@@ -83,7 +83,10 @@ user_route.post("/checkout",auth.isLogin,cartController.addNewAddress)
 user_route.post("/createOrder",auth.isLogin,orderController.createOrder);
 user_route.get("/orderSuccess",auth.isLogin,orderController.orderSuccess);
 user_route.get("/cancelOrder",auth.isLogin,orderController.cancelOrder);
-user_route.get("/orderFailed",auth.isLogin,orderController.orderFailed)
+user_route.get("/orderFailed",auth.isLogin,orderController.orderFailed);
+user_route.get("/returnOrder",auth.isLogin,orderController.returnOrder);
+user_route.get('/payNow',auth.isLogin,orderController.payNow);
+user_route.get("/orderPlacing",auth.isLogin,orderController.orderPlacing)
 
 //wishlist management
 user_route.post("/addToWishlist",auth.isLogin,wishlistController.addToWishlist);
@@ -96,8 +99,10 @@ user_route.get("/getAvailableCoupons",auth.isLogin,couponController.getAvailable
 
 //wallet management
 user_route.get("/wallet",auth.isLogin,walletController.loadWallet);
+user_route.get("/addMoney",auth.isLogin,walletController.addMoney);
+user_route.get("/addingMoney",auth.isLogin,walletController.addingMoney);
 
-
+//referral
 user_route.get("/referralLink",auth.isLogin,userController.loadReferralLink);
 
 module.exports=user_route

@@ -176,7 +176,7 @@
 											<span class="original-price" style="text-decoration: line-through; color: grey;">&#8377;<%= item.productId.price %></span>
 											<span class="discount-price" style="color: red; margin-left: 5px;">&#8377;<%= item.productId.discountPrice %></span>
 										</span>
-									<% } else { %>
+									<% } else if(item.productId) { %>
 										<span class="price">&#8377;<%= item.productId.price %></span>
 									<% } %>
 								</div>
@@ -188,9 +188,31 @@
 										<%}else{%>
 									<div class="quantity" >
 										<div class="qty-input d-flex" style="padding-left: 34px; height: 25px;">
-											<button class="qty-count qty-count--minus" data-action="minus" type="button" onclick="decrease('<%= item.productId.discountPrice%>','<%= item.productId.stock%>','<%=index%>','<%= item.productId._id%>')">-</button>
+											<button 
+											class="qty-count qty-count--minus" 
+											data-action="minus" 
+											type="button" 
+											onclick="decrease(
+												'<%= item.productId.discountPrice ? item.productId.discountPrice : item.productId.price %>',
+												'<%= item.productId.stock %>',
+												'<%= index %>',
+												'<%= item.productId._id %>'
+											)">
+											-
+										</button>
 											<input class="product-qty" id="qty<%= index%>" type="text" name="product-qty" min="1" max="<%= item.productId.stock %>" value="<%= item.quantity %>" disabled style="width: 25px; ">
-											<button class="qty-count qty-count--add" data-action="add" type="button" onclick="increase( '<%= item.productId.discountPrice%>','<%= item.productId.stock%>','<%=index%>','<%= item.productId._id %>')">+</button>
+											<button 
+											class="qty-count qty-count--add" 
+											data-action="add" 
+											type="button" 
+											onclick="increase(
+												'<%= item.productId.discountPrice ? item.productId.discountPrice : item.productId.price %>',
+												'<%= item.productId.stock %>',
+												'<%= index %>',
+												'<%= item.productId._id %>'
+											)">
+											+
+										</button>
 										</div>
 									</div>
 									<% if(item.quantity===item.productId.stock){%>
@@ -202,7 +224,10 @@
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<% let itemSubtotal = item.productId.discountPrice * item.quantity; %>
+									<% 
+										let priceToUse = item.productId.discountPrice ? item.productId.discountPrice : item.productId.price;
+										let itemSubtotal = priceToUse * item.quantity;
+									%>
 									<span id="subtotal<%= index %>" class="price">&#8377;<%= itemSubtotal %></span>
 								</div>
 							</div>

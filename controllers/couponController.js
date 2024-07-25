@@ -5,8 +5,15 @@ const Cart = require("../models/cartModel");
 
 const loadAddCoupon = async(req,res)=>{
     try {
-        let coupon  =await Coupon.find();
-        res.render("coupon",{coupon:coupon});
+        const page = parseInt(req.query.page) || 1;
+        const skip = (page - 1) * 5;
+        
+        let coupon  =await Coupon.find().skip(skip).limit(5);
+
+        const totalCoupons = await Coupon.countDocuments()
+        const totalPages = Math.ceil(totalCoupons / 5);
+
+        res.render("coupon",{coupon:coupon,totalPages:totalPages,currentPage:page});
     } catch (error) {
         console.log(error.message)
     }

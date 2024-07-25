@@ -240,27 +240,40 @@
        
         <li class="nav-item">
           <a class="nav-link" href="/admin/product">
-            <span class="menu-title">products</span>
+            <span class="menu-title">Products</span>
             <i class="mdi mdi-cube-outline menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/userList">
-            <span class="menu-title">users</span>
+            <span class="menu-title">Users</span>
             <i class="mdi mdi-contacts menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/orders">
-            <span class="menu-title">orders</span>
+            <span class="menu-title">Orders</span>
             <i class="mdi mdi-cart menu-icon"></i>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/coupons">
-            <span class="menu-title">coupons</span>
+            <span class="menu-title">Coupons</span>
             <i class="mdi mdi-ticket-percent menu-icon"></i>
           </a>
+        </li>
+        <li class="nav-item ">
+          <a class="nav-link" data-toggle="collapse" href="#offers-pages" aria-expanded="false" aria-controls="offers-pages">
+            <span class="menu-title ">Offers</span>
+            <i class="menu-arrow"></i>
+            <i class="mdi mdi-tag menu-icon "></i>
+          </a>
+          <div class="collapse" id="offers-pages">
+            <ul class="nav flex-column sub-menu">
+              <li class="nav-item"> <a class="nav-link" href="/admin/productOffer">Product Offers</a></li>
+              <li class="nav-item"> <a class="nav-link " href="/admin/categoryOffer">Category Offers</a></li>
+            </ul>
+          </div>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/admin/salesReport">
@@ -268,15 +281,10 @@
             <i class="mdi mdi-chart-line menu-icon"></i>
           </a>
         </li> 
-        <li class="nav-item">
-          <a class="nav-link" href="/admin/offers">
-            <span class="menu-title">offers</span>
-            <i class="mdi mdi-tag menu-icon"></i>
-          </a>
-        </li>
+ 
         <li class="nav-item">
           <a class="nav-link" href="/admin/logout">
-            <span class="menu-title">logout</span>
+            <span class="menu-title">Logout</span>
             <i class="mdi mdi-logout menu-icon"></i>
           </a>
         </li>
@@ -368,12 +376,7 @@
                     value="<%=product[0].price%>">
                   <small id="priceError" class="text-danger"></small>
                 </div>
-                <div class="form-group">
-                  <label for="exampleInputName1">Discount Price</label>
-                  <input type="number" class="form-control" id="discountprice" name="discountPrice"
-                    placeholder="Enter the Discount Price" value="<%=product[0].discountPrice%>">
-                  <small id="discountPriceError" class="text-danger"></small>
-                </div>
+          
                 <div class="form-group">
                   <label for="exampleTextarea1">Product Description</label>
                   <textarea class="form-control" id="productDescription" name="productDescription"
@@ -415,7 +418,6 @@
       let productName = document.getElementById('productName');
       let quantity = document.getElementById('quantity');
       let price = document.getElementById('price');
-      let discountPrice = document.getElementById('discountprice');
       let productDescription = document.getElementById('productDescription');
       let images = document.querySelector(".file-upload-default");
       let id = productName.dataset.id;
@@ -423,12 +425,10 @@
       productName = productName ? productName.value.trim() : '';
       quantity = quantity ? quantity.value.trim() : '';
       price = price ? price.value.trim() : '';
-      discountPrice = discountPrice ? discountPrice.value.trim() : '';
       productDescription = productDescription ? productDescription.value.trim() : '';
 
        // Converting price and discountPrice to floats for comparison
       let priceValue = parseFloat(price);
-      let discountPriceValue = parseFloat(discountPrice);
 
       let nameRegex = /^[a-zA-Z0-9\s]+$/;
       let numberRegex = /^\d+$/;
@@ -439,7 +439,6 @@
       document.getElementById('productNameError').innerText = '';
       document.getElementById('quantityError').innerText = '';
       document.getElementById('priceError').innerText = '';
-      document.getElementById('discountPriceError').innerText = '';
       document.getElementById('productDescriptionError').innerText = '';
       document.getElementById('imageError').innerText = '';
 
@@ -472,10 +471,6 @@
         isValid = false;
       }
 
-      if (!priceRegex.test(discountPrice) || discountPriceValue <= 0 || discountPriceValue>=priceValue) {
-        document.getElementById('discountPriceError').innerText = 'Discount Price must be a number greater than 0 and less than actual price';
-        isValid = false;
-      }
 
       if (productDescription.length === 0) {
         document.getElementById('productDescriptionError').innerText = 'Product Description is required';

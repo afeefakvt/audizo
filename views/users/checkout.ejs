@@ -332,12 +332,16 @@
 										<li>
 											<span>Subtotal</span> <span>&#8377;<%= grandTotal %></span>
 											<ul>
-												<% cart.items.forEach(item=> { %>
-													<li><span>
+												<% cart.items.forEach(item => { %>
+													<li>
+														<span>
 															<%= item.quantity %> x <%= item.productId.name %>
-														</span> <span>&#8377;<%= item.quantity *
-																item.productId.discountPrice %></span></li>
-													<% }) %>
+														</span>
+														<span>
+															&#8377;<%= item.quantity * (item.productId.discountPrice ? item.productId.discountPrice : item.productId.price) %>
+														</span>
+													</li>
+												<% }) %>
 											</ul>
 										</li>
 										<!-- <li><span>Discount</span><span>₹0</span></li> -->
@@ -389,9 +393,10 @@
 									<div class="form-group">
 										<div class="col-md-12">
 											<div class="radio">
-												<label for="payment"><input type="radio" 
-														name="paymentMethod" value="wallet"> Wallet</label>
-														<span class="text-danger" style="display: none;" id="walletError"> Insufficient Balance in Wallet</span>
+												<label for="payment"><input type="radio" name="paymentMethod"
+														value="wallet"> Wallet</label>
+												<span class="text-danger" style="display: none;" id="walletError">
+													Insufficient Balance in Wallet</span>
 											</div>
 										</div>
 									</div>
@@ -752,7 +757,7 @@
 									"handler": function (response) {
 										console.error("Payment Failed: ", response.error);
 										if (response.error) {
-											window.location.href = "/cart";
+											window.location.href = "/orderFailed";
 										} else if (response.razorpay_payment_id) {
 											console.log("Payment Successful: ", response);
 											window.location.href = "/orderSuccess";
@@ -767,24 +772,26 @@
 								};
 								let rzp1 = new Razorpay(options);
 								rzp1.open();
-								rzp1.on('payment.failed', function (response) {
-									console.error("Payment Failed: ", response.error);
-									Swal.fire("Payment Failed", response.error.description, "error")
+								rzp1.on('payment.failed', (response) => {
+									setTimeout(() => {
+										rzp1.close();
+										window.location.href = "/orderFailed";
+									}, 3000);
 								});
 
 							} else if (response.data.success && selectedPaymentMethod.value === 'cod') {
-								if (response.data.message== "Cannot place order in COD") {
+								if (response.data.message == "Cannot place order in COD") {
 									document.getElementById("codError").style.display = "block";
 									return false;
 								}
 
 								window.location.href = "/orderSuccess";
-							}else if(response.data.success && selectedPaymentMethod.value==="wallet"){
-								if(response.data.message==="Insufficient Balance"){
+							} else if (response.data.success && selectedPaymentMethod.value === "wallet") {
+								if (response.data.message === "Insufficient Balance") {
 									document.getElementById('walletError').style.display = "block";
 									return false
 								}
-								window.location.href  = "/orderSuccess"
+								window.location.href = "/orderSuccess"
 
 							} else {
 								Swal.fire(
@@ -869,7 +876,7 @@
 					// Hide both error messages initially
 					document.getElementById("couponError1").style.display = "none";
 					document.getElementById("couponError2").style.display = "none";
-					if (!response.data.success&& response.data.message==="Not A valid Coupon") {
+					if (!response.data.success && response.data.message === "Not A valid Coupon") {
 						console.log('Showing invalid coupon error');
 						document.getElementById("couponError1").style.display = "block";
 						console.log('Response data:', response.data);

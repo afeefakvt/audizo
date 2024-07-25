@@ -19,6 +19,21 @@
     <link rel="stylesheet" href="/static/adminImages/css/style.css">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="/static/adminImages/images/favicon.ico" />
+    <style>
+      .pagination .page-item.active .page-link {
+        background-color: #9a55ff;
+        border-color: black; 
+        color: white;
+      }
+      .pagination .page-link {
+        color: black; 
+      }
+      .pagination .page-link:hover {
+        background-color: #edeaf2;
+        border-color: black;
+        color: black;
+      }
+    </style>
   </head>
   <body>
 
@@ -119,27 +134,40 @@
            
             <li class="nav-item">
               <a class="nav-link" href="/admin/product">
-                <span class="menu-title">products</span>
+                <span class="menu-title">Products</span>
                 <i class="mdi mdi-cube-outline menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/userList">
-                <span class="menu-title">users</span>
+                <span class="menu-title">Users</span>
                 <i class="mdi mdi-contacts menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/orders">
-                <span class="menu-title">orders</span>
+                <span class="menu-title">Orders</span>
                 <i class="mdi mdi-cart menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/coupons">
-                <span class="menu-title">coupons</span>
+                <span class="menu-title">Coupons</span>
                 <i class="mdi mdi-ticket-percent menu-icon"></i>
               </a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" data-toggle="collapse" href="#offers-pages" aria-expanded="false" aria-controls="offers-pages">
+                <span class="menu-title ">Offers</span>
+                <i class="menu-arrow"></i>
+                <i class="mdi mdi-tag menu-icon "></i>
+              </a>
+              <div class="collapse" id="offers-pages">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="/admin/productOffer">Product Offers</a></li>
+                  <li class="nav-item"> <a class="nav-link " href="/admin/categoryOffer">Category Offers</a></li>
+                </ul>
+              </div>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/salesReport">
@@ -147,15 +175,10 @@
                 <i class="mdi mdi-chart-line menu-icon"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/admin/offers">
-                <span class="menu-title">offers</span>
-                <i class="mdi mdi-tag menu-icon"></i>
-              </a>
-            </li>
+          
             <li class="nav-item">
               <a class="nav-link" href="/admin/logout">
-                <span class="menu-title">logout</span>
+                <span class="menu-title">Logout</span>
                 <i class="mdi mdi-logout menu-icon"></i>
               </a>
             </li>
@@ -186,7 +209,6 @@
                   <th>Name</th>
                   <th>Qty</th>
                   <th>Price</th>
-                  <th>Discount Price</th>
                   <th>Category</th>
                   <th>Actions</th>
                 </tr>
@@ -199,7 +221,7 @@
                       <td><%= product[i].name %></td>
                       <td><%= product[i].stock%></td>
                       <td>&#8377;<%= product[i].price %></td>
-                      <td>&#8377;<%= product[i].discountPrice %></td>
+                  
                       <td><%= product[i].category.name %></td>
                       <td>
                         <a href="#" class="btn btn-danger btn-sm" onclick="confirmRestore('<%= product[i]._id %>')">Restore</a>
@@ -213,6 +235,23 @@
                 <% } %>
               </tbody>
             </table>
+          </div>
+          <div class="pagination-container mt-4">
+            <ul class="pagination justify-content-center">
+              <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+              </li>
+              <% } %> <% for(let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+              </li>
+              <% } %> <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+              </li>
+              <% } %>
+            </ul>
           </div>
         </div>
       </div>

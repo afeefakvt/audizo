@@ -177,12 +177,13 @@
 								<span class="price" style="color: orange;">
 								  <%= order.paymentStatus %>
 								</span>
+
 							  </div>
 							</div>
 							<div class="one-eight text-center">
 							  <div class="display-tc">
 								<span class="price" style="color: orange;">
-									<% if(order.items.every(item => item.itemStatus === "Delivered" || item.itemStatus === "Cancelled")) { %>
+									<% if(order.items.every(item => item.itemStatus === "Delivered" || item.itemStatus === "Cancelled"|| item.itemStatus ==="Returned")) { %>
 										<%= order.status = "Completed" %>
 									  <% } else { %>
 										<%= order.status = "Pending" %>
@@ -195,6 +196,7 @@
 								<span class="price" id="total${item._id}">
 								  <%= order.paymentMethod=="ONLINE_PAYMENT" ? "Online" : order.paymentMethod %>
 								</span>
+
 							  </div>
 							</div>
 							<!-- <div class="one-eight text-center">

@@ -194,6 +194,8 @@
 				<div class="row row-pb-lg product-detail-wrap">
 					<div class="col-sm-8">
 						<div class="owl-carousel">
+							<% if (details.images && Array.isArray(details.images)) { %>
+
 							<% details.images.forEach(function(image) { %>
 								<div class="item">
 									<div class="product-entry border">
@@ -204,6 +206,7 @@
 									</div>
 								</div>
 								<% }); %>
+								<% } %>
 
 						</div>
 					</div>
@@ -515,10 +518,18 @@
 								</a>
 								<div class="desc">
 									<h2><a href="/productDetail/<%= product._id %>">
-											<%= product.name %>
-										</a></h2>
-									<span class="price">&#8377;<%= product.price %></span>
+										<%= product.name %>
+									</a></h2>
+									<span class="price">
+										<% if (product.discountPrice) { %>
+											<span class="original-price" style="text-decoration: line-through;">&#8377;<%= product.price %></span>
+											<span class="discounted-price">&#8377;<%= product.discountPrice %></span>
+										<% } else { %>
+											&#8377;<%= product.price %>
+										<% } %>
+									</span>
 								</div>
+								
 							</div>
 						</div>
 						<% }); %>

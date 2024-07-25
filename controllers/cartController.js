@@ -205,8 +205,9 @@ const loadCheckout = async (req, res) => {
         if (cart && cart.items.length > 0) {
             let grandTotal = 0;
             cart.items.forEach(item => {
-                grandTotal += item.productId.discountPrice * item.quantity;
-            });
+                const price = item.productId.discountPrice ? item.productId.discountPrice : item.productId.price;
+                grandTotal += price * item.quantity;
+                    });
             const finalTotal = grandTotal - discount;
             res.render("checkout", {
                 user: userData,

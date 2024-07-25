@@ -5,9 +5,18 @@ const { loadAddProduct } = require('./productController');
 
 const loadCategory = async (req, res) => {
   try {
-    const categoryData = await Category.find({ isBlocked: false });
+
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * 5;
+
+
+    const categoryData = await Category.find({ isBlocked: false }).skip(skip).limit(5);
+    
+    const totalCategory = await Category.countDocuments()
+    const totalPages = Math.ceil(totalCategory / 5);
+
     console.log("ssss")
-    res.render('category', { categoryData })
+    res.render('category', { categoryData,totalPages:totalPages,currentPage:page })
   } catch (error) {
     res.send(error)
 

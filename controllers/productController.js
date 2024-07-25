@@ -12,10 +12,17 @@ const path = require('path');
 
 const loadProduct = async (req, res) => {
   try {
+    let search = "";
+    if(req.query.search){
+      search= req.query.search;
+    }
+    const page = parseInt(req.query.page)||1;
+    const skip = (page-1)*5
 
     let productData = await Product.aggregate([
       {
         $match: {
+          name: { $regex: ".*" + search + ".*", $options: "i" },
           isListed: false,
         }
       },
@@ -29,7 +36,16 @@ const loadProduct = async (req, res) => {
       },
       { $unwind: "$category" }
     ])
-    res.render("product", { product: productData, })
+    const totalProducts = await Product.countDocuments({
+      name: { $regex: ".*" + search + ".*", $options: "i" },
+      isListed: false,
+    });
+
+    productData = productData.slice(skip,skip+5);
+    const totalPages = Math.ceil(totalProducts / 5);
+
+
+    res.render("product", { product: productData,currentPage:page,totalPages:totalPages })
 
   } catch (error) {
     console.log(error.message)
@@ -90,7 +106,7 @@ const checkAlready = async (req, res, next) => {
 
 const addProduct = async (req, res, next) => {
   try {
-    const { productName, category, price, discountPrice, quantity, productDescription } = req.body;
+    const { productName, category, price,  quantity, productDescription } = req.body;
     console.log('Category:', category);
 
     const categoryId = category.trim();
@@ -99,7 +115,6 @@ const addProduct = async (req, res, next) => {
       name: productName,
       categoryId: category,
       price: price,
-      discountPrice: discountPrice,
       stock: quantity,
       description: productDescription,
       images: req.files.map(file => file.filename),
@@ -147,9 +162,13 @@ const loadEditProduct = async (req, res) => {
 
 const editProduct = async (req, res, next) => {
   try {
-    const { categoryName, productName, price, discountPrice, quantity, productDescription } = req.body;
+    const { categoryName, productName, price,  quantity, productDescription } = req.body;
     const id = req.query.id;
     const category = await Category.findOne({ name: categoryName });
+    if (!category) {
+      throw new Error('Category not found');
+    }
+
     const product = await Product.findByIdAndUpdate(
       { _id: id },
       {
@@ -157,21 +176,20 @@ const editProduct = async (req, res, next) => {
           name: productName,
           categoryId: category._id,
           price: price,
-          discountPrice: discountPrice,
           stock: quantity,
           description: productDescription,
         },
       },
       { new: true }
     );
-
+    // If there are deleted images indices
     if (req.body.deletedIndices) {
       const deletedIndices = JSON.parse(req.body.deletedIndices);
       for (let index of deletedIndices) {
         product.images.splice(Number(index), 1);
       }
     }
-
+  // Set up the upload directory
     const uploadDir = path.join(__dirname, '..', 'public', 'userImages', 'images');
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
@@ -211,9 +229,17 @@ const deleteProduct = async (req, res) => {
 
 const loadDeletedProduct = async (req, res) => {
   try {
+    let search = "";
+    if (req.query.search) {
+      search = req.query.search;
+    }
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * 5;
+
     const productData = await Product.aggregate([
       {
         $match: {
+          name: { $regex: ".*" + search + ".*", $options: "i" },
           isListed: true,
         },
       },
@@ -225,12 +251,18 @@ const loadDeletedProduct = async (req, res) => {
           as: "category",
         },
       },
-      {
-        $unwind: "$category"
-      }
+      {$unwind:"$category"},
+      { $skip: skip },
+      { $limit: 5 },
 
     ])
-    res.render("deletedProduct", { product: productData })
+    const totalProducts = await Product.countDocuments({
+      name: { $regex: ".*" + search + ".*", $options: "i" },
+      isListed: true,
+    });
+    const totalPages = Math.ceil(totalProducts / 5);
+
+    res.render("deletedProduct", { product: productData ,currentPage:page,totalPages:totalPages})
   } catch (error) {
     console.log(error.message);
   }

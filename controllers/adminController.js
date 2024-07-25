@@ -2,6 +2,7 @@ const Admin = require('../models/adminModel');
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const Order = require('../models/orderModel');
+const { format } = require('sharp');
 
 const securePassword = async (password) => {
     try {
@@ -52,9 +53,223 @@ const verifyLogin = async (req, res) => {
 const loadDashboard = async (req, res) => {
 
     try {
+        let orderData = await Order.aggregate([
+            {
+                $lookup:{
+                    from:"users",
+                    localField:"userId",
+                    foreignField:"_id",
+                    as:"user"
+                },   
+            },
+            {$unwind:"$items"},
+            {$match:{"items.itemStatus":"Delivered"}},
+            {$sort:{date:-1}}
+        ]);
 
-        console.log("kkk");
-        res.render('home');
+
+        let bestProducts = await Order.aggregate([
+            {$unwind:"$items"},
+            {$group:{
+                _id:"$items.productName",
+                totalQuantity:{$sum:"$items.quantity"},
+                image:{$first:"$items.image"}
+            }},
+            {$sort:{
+                totalQuantity:-1
+            }},
+            {$limit:3},
+            {$project:{
+                productName:"$_id",
+                totalQuantity:1,
+                image:1
+            }}
+        ]);
+
+        let bestCategories=await Order.aggregate([
+            {$unwind:"$items"},
+            {$group:{
+                _id:"$items.categoryName",
+                totalQuantity:{$sum:"$items.quantity"},
+            }},
+            {$sort:{
+                totalQuantity:-1
+            }},
+            {$limit:2},
+            {$project:{
+                categoryName:"$_id",
+                totalQuantity:-1
+            }}
+        ]);
+        revenue=0;
+        totalOrders=0;
+        discount=0;
+        for(let order of orderData){
+            totalOrders++;
+            revenue+= order.items.finalPrice*order.items.quantity;
+            discount+=order.items.price*order.items.quantity - order.items.finalPrice*order.items.quantity
+        }
+        let results = await Order.aggregate([
+            {$unwind:"$items"},
+            {$match:{
+                "items.itemStatus":"Delivered"
+            }},
+            {$project:{
+                dayOfWeek:{$dayOfWeek:"$date"},
+                revenue:{$multiply:["$items.finalPrice","$items.quantity"]},
+
+            }},
+            {$group:{
+                _id:"$dayOfWeek",
+                total:{$sum:"$revenue"}
+            }},
+            {$sort:{_id:1}}
+        ]);
+
+        function getDayName(dayOfWeek){
+            const daysOfWeek = [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ];
+            return daysOfWeek[dayOfWeek-1]
+        }
+const labels = results.map((result)=>getDayName(result._id));
+const values = results.map((result)=>result.total);
+
+let fromDate;
+let toDate;
+let interval;
+let groupByField;
+let labelFunction;
+
+if(req.query.interval==="monthly"){
+    interval = 'month';
+    groupByField = {$month:"$date"};
+    labelFunction = (date)=>{
+        return new Intl.DateTimeFormat('en-US', { month: 'short' }).format(date); 
+    }
+}else if(req.query.interval==='yearly'){
+    interval = 'year';
+    groupByField = {$year:"$date"};
+    labelFunction = (date)=>{
+        return date.getFullYear().toString();
+    }
+
+}else{
+    interval = 'week';
+    groupByField = {$week:"$date"};
+    labelFunction = (date)=>{
+        return new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date); 
+
+    };
+}
+const today = new Date();
+if(interval ==='week'){
+    toDate= new Date(today);
+    fromDate = new Date(toDate);
+    fromDate.setDate(fromDate.getDate()-6);
+}else if(interval ==='month'){
+    fromDate = new Date(today.getFullYear(),today.getMonth(),1);
+    toDate = new Date(today.getFullYear(),today.getMonth() +1,0);
+
+}else if(interval==="year"){
+    fromDate = new Date(today.getFullYear(),0,1);
+    toDate = new Date(today.getFullYear(),11,31);
+}
+
+let results2;
+if(interval ==='week'){
+    results2 = await Order.aggregate([
+        {$unwind:"$items"},
+        {$match:{
+            date:{$gte:fromDate,$lte:toDate},
+            "items.itemStatus":"Delivered"
+        }},
+        {$project:{
+            dayOfWeek:{$dayOfWeek:"$date"},
+            revenue:{$multiply: ["$items.quantity","$items.finalPrice"]}
+        }},
+        {$group:{
+            _id:"$dayOfWeek",
+            total:{$sum:"$revenue"}
+        }},
+        {$sort:{_id:1}}
+    ])
+}else if(interval ==="month"){
+    results2 = await Order.aggregate([
+        {$unwind:"$items"},
+        {$match:{
+            date:{$gte:fromDate,$lte:toDate},
+            "items.itemStatus":"Delivered"
+        }},
+        {$project:{
+            month:{$month:"$date"},
+            revenue:{$multiply:["$items.quantity","$items.finalPrice"]},
+        }},
+        {$group:{
+            _id:{month:"$month"},
+            total:{$sum:"$revenue"}
+        }},
+        {$sort:{"_id.month":1}}
+
+    ]);
+    
+}else if(interval ==='year'){
+    results2 = await Order.aggregate([
+        {$unwind:"$items"},
+        {$match:{
+            date:{$gte:fromDate,$lte:toDate},
+            "items.itemStatus":"Delivered"
+        }},
+        {$project:{
+            year:{$year:"$date"},
+            revenue:{$multiply:["$items.quantity","$items.finalPrice"]}
+        }},
+        {$group:{
+            _id:{year:"$year"},
+            total:{$sum:"$revenue"}
+        }
+        },
+        {$sort:{"_id.year":1}}
+    ])
+}
+function getMonthName(month){
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return months[month-1];
+}
+function formatYear(year){
+    return year.toString();
+}
+const labels2 = results2.map((result)=>{
+    if(interval==='week'){
+        return getDayName(result._id);
+
+    }else if(interval==='month'){
+        return getMonthName(result._id.month);
+    }else if(interval==='year'){
+        return formatYear(result._id.year);
+    }
+})
+
+const values2 = results2.map((result) => result.total);
+        res.render('home',{
+            orders:orderData,
+            bestProducts:bestProducts,
+            bestCategories:bestCategories,
+            revenue: revenue,
+            totalOrders: totalOrders,
+            discount: discount,
+            labels: labels,
+            values: values,
+            labels2:labels2,
+            values2:values2,
+            interval:interval
+        });
     } catch (error) {
         console.log(error.message);
     }
@@ -62,10 +277,35 @@ const loadDashboard = async (req, res) => {
 
 const loadUser = async (req, res) => {
     try {
-        const users = await User.find({ is_verified: true })
+        let search = "";
+        if (req.query.search) {
+            search = req.query.search;
+        }
+
+        const page = Number(req.query.page) || 1;
+        const skip = (page - 1) * 5;
+
+        const users = await User.find({
+            $or: [
+                { name: { $regex: ".*" + search + ".*", $options: "i" } },
+                { email: { $regex: ".*" + search + ".*", $options: "i" } },
+            ],
+            is_verified: true
+        }).skip(skip).limit(5);
+
+
+        const totalUsers = await User.countDocuments({
+            $or: [
+                { name: { $regex: ".*" + search + ".*", $options: "i" } },
+                { email: { $regex: ".*" + search + ".*", $options: "i" } }
+            ],
+        });
+
+
+        const totalPages = Math.ceil(totalUsers / 5);
         console.log(users)
-        res.render('userList', { users })
-        // res.end()
+        res.render('userList', { users:users,totalPages:totalPages,currentPage:page })
+
 
     } catch (error) {
         console.log(error.message)
@@ -236,7 +476,12 @@ const filterSalesInterval = async (req, res) => {
         ]);
 
         console.log(orderData, "Filtered Orders Data");
-        res.render("salesReport", { orders: orderData });
+        let totalSales = orderData.length;
+
+        let totalPrice = orderData.reduce((acc, order) => {
+            return acc + (order.items.finalPrice || order.items.price) * order.items.quantity;
+        }, 0);
+        res.render("salesReport", { orders: orderData ,totalSales,totalPrice: totalPrice});
 
     } catch (error) {
         console.log(error.message);
@@ -277,8 +522,13 @@ const filterSalesReport = async (req, res) => {
             },
         ])
         console.log('Filtered Orders:', orderData);
+        let totalSales = orderData.length;
 
-        res.render("salesReport", { orders: orderData });
+        let totalPrice = orderData.reduce((acc, order) => {
+            return acc + (order.items.finalPrice || order.items.price) * order.items.quantity;
+        }, 0);
+
+        res.render("salesReport", { orders: orderData,totalSales,totalPrice: totalPrice });
 
 
     } catch (error) {
@@ -302,14 +552,20 @@ const loadSalesReport = async (req, res) => {
                     "items.itemStatus": "Delivered",
                 }
             },
+          
             {
                 $sort: {
                     date: -1
                 }
             }
         ])
+        let totalSales = orderData.length;
 
-        res.render("salesReport", { orders: orderData })
+        let totalPrice = orderData.reduce((acc, order) => {
+            return acc + (order.items.finalPrice || order.items.price) * order.items.quantity;
+        }, 0);
+
+        res.render("salesReport", { orders: orderData,totalSales,totalPrice: totalPrice })
     } catch (error) {
         console.log(error.message)
     }

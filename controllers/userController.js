@@ -7,15 +7,90 @@ const Product = require('../models/productModel');
 const Category = require("../models/categoryModel");
 const Address = require("../models/addressModel");
 const Wallet = require("../models/walletModel");
+const ProductOffer = require("../models/productOfferModel");
+const CategoryOffer = require("../models/categoryOfferModel")
 const mongoose = require('mongoose');
 const crypto = require("crypto");
 const ObjectId = mongoose.Types.ObjectId;
 const passport = require("passport");
-const { search } = require('../routes/userRoute');
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require('dotenv').config();
 
 
+
+
+const offerPrice = async (products) => {
+    try {
+        let updatedProducts = []
+        const productOffer = await ProductOffer.find().populate("productId");
+        const categoryOffer = await CategoryOffer.find().populate("categoryId");
+
+        for (let product of products) {
+            let productOfferMatch = 0;
+            let categoryOfferMatch = 0;
+            let productOfferPercentage;
+            let categoryOfferPercentage;
+
+            for (let offer of productOffer) {
+                if (offer.productId._id.toString() === product._id.toString()) {
+                    productOfferMatch = 1;
+                    productOfferPercentage = offer.offerPercentage;
+                    break;
+                }
+
+            }
+            for (let offer of categoryOffer) {
+                if (offer.categoryId._id.toString() === product.categoryId.toString()) {
+                    categoryOfferMatch = 1;
+                    categoryOfferPercentage = offer.offerPercentage;
+                    break;
+                }
+            }
+            if (categoryOfferMatch === 1 && productOfferMatch === 1) {
+                if (categoryOfferPercentage > productOfferPercentage) {
+                    await Product.updateOne(
+                        { _id: product._id },
+                        {
+                            discountPrice: product.price - Math.ceil((product.price * productOfferPercentage) / 100)
+
+                        }
+                    )
+                } else {
+                    await Product.updateOne(
+                        { _id: product._id },
+                        { discountPrice: product.price - Math.ceil((product.price * productOfferPercentage) / 100) }
+                    )
+                }
+            } else if (categoryOfferMatch === 1) {
+                await Product.updateOne(
+                    { _id: product._id },
+                    { discountPrice: product.price - Math.ceil((product.price * categoryOfferPercentage) / 100) }
+                )
+            } else if (productOfferMatch === 1) {
+                await Product.updateOne(
+                    { _id: product._id },
+                    { discountPrice: product.price - Math.ceil((product.price * productOfferPercentage) / 100) }
+                )
+            } else {
+                if (product.discountPrice) {
+                    await Product.updateOne(
+                        { _id: product._id },
+                        { $unset: { discountPrice: "" } }
+                    )
+                }
+            }
+            const updatedProdcut = await Product.findOne({ _id: product._id });
+            updatedProducts.push(updatedProdcut);
+
+        }
+        return updatedProducts;
+
+
+    } catch (error) {
+        return [];
+    }
+
+}
 
 const loadHome = async (req, res) => {
     try {
@@ -33,6 +108,7 @@ const loadHome = async (req, res) => {
         res.render('home', { user: userData, productData, categoryData });
     } catch (error) {
         console.log(error.message);
+
     }
 }
 
@@ -48,57 +124,58 @@ const securePassword = async (password) => {
 
 const loadRegister = async (req, res) => {
     try {
-        const referralId = req.query.referralId
-        console.log(referralId,"referrraal");
-        res.render('registration',{ referralId:referralId?referralId:""});
+        const referralId = req.query.referralId || ""
+        console.log(referralId, "referrraal");
+        res.render('registration', { referralId: referralId ? referralId : "" });
     } catch (error) {
         console.log(error.message);
+
     }
 }
 const insertUser = async (req, res) => {
 
-        try {
-            const referralId=req.query.referralId
-            console.log("Query Parameters:", referralId);
-            const { email, password, name, mobile } = req.body;
-    
-            // Check if email already exists in the database
-            const existingUser = await User.findOne({ email, is_verified: true });
-            if (existingUser) {
-                return res.status(400).render("registration", { message: "Email already exists, please use another email address" });
-            }
-    
-            // Create and save new user
-            const spassword = await securePassword(password);
-            const user = new User({
-                name,
-                email,
-                mobile,
-                password: spassword,
-                is_blocked: false
-            });
-          
-           if(referralId){
-            req.session.referral=referralId
-           }
-            const userData = await user.save();
-            console.log(userData);
-            req.session.user_id = userData._id;
-    
-            // Send verification email
-            await util.mailSender(
-                email,
-                userData._id,
-                `It seems you are logging in at Audizo and trying to verify your Email.
-                Here is the verification code. Please enter OTP and verify your Email.`
-            );
-    
-            res.redirect('/otp');
-        } catch (error) {
-            console.error(error.message);
-            res.status(500).send('Internal Server Error');
+    try {
+        const referralId = req.query.referralId || ""
+        console.log("Query Parameters:", referralId);
+        const { email, password, name, mobile } = req.body;
+
+        // Check if email already exists in the database
+        const existingUser = await User.findOne({ email, is_verified: true });
+        if (existingUser) {
+            return res.status(400).render("registration", { message: "Email already exists, please use another email address", referralId });
         }
+
+        // Create and save new user
+        const spassword = await securePassword(password);
+        const user = new User({
+            name,
+            email,
+            mobile,
+            password: spassword,
+            is_blocked: false
+        });
+
+        if (referralId) {
+            req.session.referral = referralId
+        }
+        const userData = await user.save();
+        console.log(userData);
+        req.session.user_id = userData._id;
+
+        // Send verification email
+        await util.mailSender(
+            email,
+            userData._id,
+            `It seems you are logging in at Audizo and trying to verify your Email.
+                Here is the verification code. Please enter OTP and verify your Email.`
+        );
+
+        res.redirect('/otp');
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Internal Server Error');
     }
+}
 
 const renderOTP = (req, res) => {
     try {
@@ -125,57 +202,57 @@ const verifyOTP = async (req, res) => {
             await Otp.deleteOne({ _id: otpp._id });
             req.session.isLogin = true;
 
-            console.log("referrrraaal",req.session.referral);
-             if (req.session.referral) {
+            console.log("referrrraaal", req.session.referral);
+            if (req.session.referral) {
                 const referral = req.session.referral
                 const user = await User.findOne({ referralId: referral })
-                console.log(user,"userrrr find");
+                console.log(user, "userrrr find");
                 if (user) {
                     console.log("user ind");
                     // wallet of user having the referral code
                     let wallet = await Wallet.findOne({ userId: user._id })
                     if (wallet) {
-                         console.log("user wallet");
+                        console.log("user wallet");
                         wallet.history.push({
                             amount: 100,
                             type: 'Credit',
-                            newBalance:100
+                            newBalance: 100
                         });
                         wallet.balance += Number(100);
                         await wallet.save();
-    
+
                     } else {
                         console.log("wwwwaallettt");
-    
+
                         wallet = new Wallet({
-                                userId:user._id,
-                                history: [{
+                            userId: user._id,
+                            history: [{
                                 amount: 100,
                                 type: 'Credit',
-                                newBalance:100
+                                newBalance: 100
                             }],
                             balance: Number(100)
                         });
                         await wallet.save();
                     }
                 }
-    
+
                 // wallet for new user
-    
+
                 const wallet = new Wallet({
-                        userId: userId,
-                        history: [{
+                    userId: userId,
+                    history: [{
                         amount: 50,
                         type: 'Credit',
-                        newBalance:Number(50)
-                        
+                        newBalance: Number(50)
+
                     }],
                     balance: Number(50)
                 });
                 await wallet.save();
             }
-    
-    
+
+
             delete req.session.referral
 
             res.json({ success: true, message: 'OTP verified successfully.' });
@@ -246,7 +323,7 @@ const verifyLogin = async (req, res) => {
                 }
 
             } else {
-                res.render("login", { message: "Wrong Password" });
+                res.render("login", { message: "Incorrect password.Please try again!" });
             }
         } else {
             res.render("login", { message: "No user found" });
@@ -310,15 +387,14 @@ const googleSuccess = async (req, res, next) => {
     }
 };
 
-
-
-
 const loadShop = async (req, res) => {
     try {
-        const products = await Product.find({ isListed: false });
+        let products = await Product.find({ isListed: false });
         const category = await Category.find({ isBlocked: false })
 
-        return res.render('shop', { products: products, category: category, sortOption: "",search:"", selectedCategory:"",selectedPriceRange:"" });
+        products = await offerPrice(products);
+
+        return res.render('shop', { products: products, category: category, sortOption: "", search: "", selectedCategory: "", selectedPriceRange: "" });
 
 
     } catch (error) {
@@ -329,18 +405,18 @@ const loadShop = async (req, res) => {
 const sortFilter = async (req, res) => {
     try {
         const category = await Category.find({ isBlocked: false });
-        const { sortOption, searchQuery, category: selectedCategory, priceRange:selectedPriceRange } = req.query;
+        const { sortOption, searchQuery, category: selectedCategory, priceRange: selectedPriceRange } = req.query;
 
         let filter = { isListed: false };
         if (selectedCategory) {
-            filter.categoryId = selectedCategory; 
+            filter.categoryId = selectedCategory;
         }
 
         if (selectedPriceRange) {
             const [minPrice, maxPrice] = selectedPriceRange.split('-').map(Number);
             filter.$or = [
                 { discountPrice: { $gte: minPrice, $lte: maxPrice } },
-                // { price: { $gte: minPrice, $lte: maxPrice } }
+                { price: { $gte: minPrice, $lte: maxPrice } }
             ];
         }
 
@@ -374,10 +450,15 @@ const sortFilter = async (req, res) => {
                 break;
         }
 
+
+      
         if (searchQuery) {
             const regex = new RegExp(searchQuery, "i");
             products = products.filter((item) => regex.test(item.name));
         }
+
+        products = await offerPrice(products);
+
 
         res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange });
 
@@ -387,83 +468,187 @@ const sortFilter = async (req, res) => {
 };
 
 
+
+
+// const loadShop = async (req, res) => {
+//     try {
+//         let search = "";
+//         if (req.query.search) {
+//             search = req.query.search;
+//         }
+//         const page = parseInt(req.query.page) || 1;
+//         const skip = (page - 1) * 3;
+
+//         let products = await Product.find({ name: { $regex: ".*" + search + ".*", $options: "i" }, isListed: false })
+//             .skip(skip)
+//             .limit(6);
+//         const category = await Category.find({ isBlocked: false })
+
+//         const totalProducts = await Product.countDocuments({
+//             name: { $regex: ".*" + search + ".*", $options: "i" },
+//             isListed: false,
+//         });
+//         const totalPages = Math.ceil(totalProducts / 3);
+
+//         products = await offerPrice(products);
+
+//         return res.render('shop', {
+//             products: products,
+//             category: category,
+//             sortOption: "",
+//             search: "",
+//             selectedCategory: "",
+//             selectedPriceRange: "",
+//             totalPages: totalPages,
+//             currentPage: page
+
+//         });
+
+
+//     } catch (error) {
+//         console.log(error.message)
+//     }
+
+// }
 // const sortFilter = async (req, res) => {
 //     try {
-//         const { sortOption,searchQuery, } = req.query;
+//         const category = await Category.find({ isBlocked: false });
+//         const { sortOption, searchQuery, category: selectedCategory, priceRange: selectedPriceRange } = req.query;
 
-//     
-//         console.log(sortOption);
+//         const page = parseInt(req.query.page) || 1;
+//         const skip = (page - 1) * 3;
+
+//         let filter = { isListed: false };
+//         if (selectedCategory) {
+//             filter.categoryId = selectedCategory;
+//         }
+
+//         if (selectedPriceRange) {
+//             const [minPrice, maxPrice] = selectedPriceRange.split('-').map(Number);
+//             filter.$or = [
+//                 { discountPrice: { $gte: minPrice, $lte: maxPrice } },
+//                 // { price: { $gte: minPrice, $lte: maxPrice } }
+//             ];
+//         }
+
 //         let products;
 //         switch (sortOption) {
 //             case "newArrival":
-//                 console.log("newwwww");
-//                 products = await Product.find({ isListed: false }).sort({ date: -1 });
-//                 console.log(("whyyyy"));
+//                 products = await Product.find(filter).sort({ date: -1 });
 //                 break;
 //             case "priceLowToHigh":
-//                 console.log(("low ti hhhh"));
 //                 products = await Product.aggregate([
-//                     { $match: { isListed: false } },
+//                     { $match: filter },
 //                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
 //                     { $sort: { sortPrice: 1 } },
-                    
 //                 ]);
-//                 console.log("low tohighhhh");
 //                 break;
 //             case "priceHighToLow":
 //                 products = await Product.aggregate([
-//                     { $match: { isListed: false } },
+//                     { $match: filter },
 //                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
 //                     { $sort: { sortPrice: -1 } },
 //                 ]);
 //                 break;
 //             case "nameAZ":
-//                 products = await Product.find({ isListed: false }).sort({ name: 1 });
+//                 products = await Product.find(filter).sort({ name: 1 });
 //                 break;
 //             case "nameZA":
-//                 products =await Product.find({isListed:false,}).sort({name:-1});
+//                 products = await Product.find(filter).sort({ name: -1 });
 //                 break;
 //             default:
-//                 products = await Product.find({ isListed: false });
+//                 products = await Product.find(filter);
 //                 break;
 //         }
+//         products = await offerPrice(products);
 
 //         if (searchQuery) {
 //             const regex = new RegExp(searchQuery, "i");
 //             products = products.filter((item) => regex.test(item.name));
-//           }
-//         res.render("shop", { products: products, sortOption: sortOption,search:searchQuery, category: category })
+//         }
+//         const totalProducts = products.length;
+//         const totalPages = Math.ceil(totalProducts / 3);
+
+//         products = products.slice(skip, skip + 3);
+
+//         res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange,totalPages:totalPages,currentPage:page });
 
 //     } catch (error) {
-//         console.log(error.message)
+//         console.log(error.message);
 //     }
-// }
+// };
+
+
+
+
 const productDetail = async (req, res) => {
     try {
         const id = req.params.id;
 
         // Fetch product details
-        const details = await Product.findById(id);
+        let details = await Product.findById(id);
         if (!details) {
             console.log("Product not found");
             return res.status(404).send("Product not found");
         }
+        let [updatedDetails] = await offerPrice([details]);
+
         // Fetch related products based on the category
         const relatedProducts = await Product.find({
             categoryId: details.categoryId,
             _id: { $ne: id },
-            isListed: false// assuming isListed should be true to show listed products
+            isListed: false
         }).limit(4);
         return res.render('productDetail', {
-            details: details,
+            details: updatedDetails,
             relatedProducts: relatedProducts
         });
 
     } catch (error) {
         console.error("Error fetching product details:", error.message);
-        res.status(500).send("Server Error");
+        res.render('error')
     }
 };
+// const productDetail = async (req, res) => {
+//     try {
+//         const id = new ObjectId(req.params.id)
+
+//         // Fetch product details
+//         let details = await Product.findById(id);
+//         if (!details) {
+//             console.log("Product not found");
+//             return res.status(404).send("Product not found");
+//         }
+
+//         details = await offerPrice(details)
+//         details = await Product.aggregate([
+//             { $match: { _id: id } },
+//             {
+//                 $lookup: {
+//                     from: "categories",
+//                     localField: "categoryId",
+//                     foreignField: "_id",
+//                     as: "category",
+//                 },
+//             },
+//         ]);
+
+//         // Fetch related products based on the category
+//         const relatedProducts = await Product.find({
+//             categoryId: details.categoryId,
+//             _id: { $ne: id },
+//             isListed: false// assuming isListed should be true to show listed products
+//         }).limit(4);
+//         return res.render('productDetail', {
+//             details: details,
+//             relatedProducts: relatedProducts
+//         });
+
+//     } catch (error) {
+//         console.error("Error fetching product details:", error.message);
+//         res.status(500).send("Server Error");
+//     }
+// };
 
 const loadProfile = async (req, res) => {
     try {
@@ -651,7 +836,7 @@ const resetPassword = async (req, res) => {
             }
 
             const token = crypto.randomBytes(20).toString('hex');
-            console.log("generated token:",token);
+            console.log("generated token:", token);
             req.session.token = token;
             req.session.email = req.body.email;
             console.log("Session token set:", req.session.token);
@@ -703,7 +888,7 @@ const resetPassword = async (req, res) => {
 const newPasswordForm = async (req, res) => {
     try {
         const token = req.query.token;
-        console.log("tooooooooooo",token);
+        console.log("tooooooooooo", token);
 
         if (!token) {
             return res.redirect('/login');
@@ -725,7 +910,7 @@ const newPassword = async (req, res) => {
         const confirmPassword = req.body.confirmPassword;
 
         console.log("Body token:", token);
-        console.log("Session token:", req.session.token); 
+        console.log("Session token:", req.session.token);
         console.log("password:", password);
         console.log("confirm:", confirmPassword);
 
@@ -765,7 +950,7 @@ const loadReferralLink = async (req, res) => {
         res.render("referralLink", { user: userData });
 
     } catch (error) {
-        console.log9error.message
+        console.log(error.message)
     }
 }
 

@@ -103,7 +103,7 @@ const createOrder = async (req, res) => {
                 return res.json({ success: true, message: "Insufficient Balance" })
             }
             wallet.balance -= req.body.totalprice;
-            console.log("New wallet balance:", wallet.balance);   
+            console.log("New wallet balance:", wallet.balance);
             wallet.history.push({
                 amount: req.body.totalprice,
                 type: "Debit",
@@ -154,6 +154,35 @@ const orderSuccess = async (req, res) => {
         console.log(error.message)
     }
 }
+
+const orderFailed = async (req, res) => {
+    try {
+        if (!req.session.orderData) {
+            return res.redirect("/shop");
+        }
+
+        const userData = await User.findOne({ _id: req.session.user_id });
+        const orderData = new Order(req.session.orderData);
+        delete req.session.orderData;
+        delete req.session.totalPrice;
+
+        orderData.paymentStatus = "Pending";
+        orderData.status = "Pending";
+        for (let item of orderData.items) {
+          item.itemStatus = "Pending";
+        }
+        await orderData.save();
+        await Cart.deleteOne({ userId: req.session.user_id })
+
+
+        res.render("orderFailed", { user: userData, order: orderData });
+
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 const myOrders = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id });
@@ -170,7 +199,68 @@ const myOrders = async (req, res) => {
 }
 const listOrders = async (req, res) => {
     try {
-        orderData = await Order.aggregate([
+        let search = "";
+        if (req.query.search) {
+            search = req.query.search;
+        }
+        const page = parseInt(req.query.page) || 1;
+        const skip = (page - 1) * 5;
+        let orderData;
+
+        if (search) {
+            orderData = await Order.aggregate([
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "user",
+                    },
+                },
+                { $unwind: "$user" },
+                {
+                    $match: {
+                        $or: [
+                            { "user.name": { $regex: ".*" + search + ".*", $options: "i" } },
+                            {
+                                status: { $regex: ".*" + search + ".*", $options: "i" },
+                            },
+                            {
+                                paymentStatus: { $regex: ".*" + search + ".*", $options: "i" },
+                            },
+                            {
+                                orderId: { $regex: ".*" + search + ".*", $options: "i" },
+                            },
+                        ],
+                    },
+                },
+                { $sort: { date: -1 } },
+                { $skip: skip },
+                { $limit: 5 },
+
+            ]);
+
+        } else {
+
+            orderData = await Order.aggregate([
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "user",
+                    },
+                },
+                { $unwind: "$user" },
+                { $sort: { date: -1 } },
+                { $skip: skip },
+                { $limit: 5 },
+
+            ]);
+
+        }
+
+        const totalOrders = await Order.aggregate([
             {
                 $lookup: {
                     from: "users",
@@ -180,12 +270,21 @@ const listOrders = async (req, res) => {
                 },
             },
             { $unwind: "$user" },
-            { $sort: { date: -1 } },
-
+            {
+                $match: {
+                    "user.name": { $regex: ".*" + search + ".*", $options: "i" },
+                },
+            },
+            { $count: "totalOrders" },
         ]);
 
-
-        res.render("orders", { orders: orderData })
+        const totalPages =
+            totalOrders.length > 0 ? Math.ceil(totalOrders[0].totalOrders / 5) : 0;
+        res.render("orders", {
+            orders: orderData,
+            currentPage: page,
+            totalPages: totalPages,
+        })
 
     } catch (error) {
         console.log(error.message);
@@ -197,17 +296,26 @@ const orderDetails = async (req, res) => {
         const userData = await User.findOne({ _id: req.session.user_id });
         const order = await Order.findOne({ _id: req.query.orderId });
 
-        if (!order) {
-            return res.status(404).send("Order not found");
-        }
+
+
+        let orders = order.items.filter((item) => {
+            if (item.itemStatus === "Ordered" || item.itemStatus === "Shipped" || item.itemStatus === "Delivered") {
+                return item;
+            }
+        });
+
 
         res.render("orderDetails", {
             user: userData,
-            order: order
-        });
+            order: order,
+            orders: orders,
+
+        })
+
+
     } catch (error) {
         console.log(error.message);
-        res.status(500).send("Internal Server Error");
+        res.render("error")
     }
 }
 
@@ -268,7 +376,7 @@ const changeStatus = async (req, res) => {
             if (item._id == req.query.itemId) {
                 item.itemStatus = req.query.currentStatus;
             }
-            if (item.itemStatus !== "Delivered" && item.itemStatus !== "Cancelled") {
+            if (item.itemStatus !== "Delivered" && item.itemStatus !== "Cancelled" && item.itemStatus !== "Returned") {
                 status = false
             }
         })
@@ -319,45 +427,25 @@ const cancelOrder = async (req, res) => {
             }
             let wallet = await Wallet.findOne({ userId: req.session.user_id });
             console.log(wallet);
-            if (!wallet) {
-                wallet = await new Wallet({
+
+            
+            if (refund  && order.paymentStatus == "Success") {
+                if (!wallet) {
+                  wallet = await new Wallet({
                     userId: req.session.user_id,
-                    balance: order.totalPrice * item.quantity,
-                    history: [{
-                        amount: order.totalPrice * item.quantity,
-                        type: "Credit",
-                        newBalance: order.totalPrice * item.quantity,
-                    }]
-                })
-            } else {
-                if (refund && order.paymentStatus == "Success" && order.paymentMethod == "razorpay") {
-                    console.log("hey there")
-                    if (item.finalPrice) {
-
-                        wallet.history.push({
-                            amount: item.finalPrice * item.quantity,
-                            type: "Credit",
-                            newBalance: wallet.balance + Number(item.finalPrice * item.quantity),
-                        })
-                        wallet.balance += Number(item.finalPrice * item.quantity);
-                    } else {
-                        console.log("prucee");
-                        wallet.history.push({
-
-                            amount: item.price * item.quantity,
-                            type: "Credit",
-                            newBalance: wallet.balance + Number(item.price * item.quantity),
-                        })
-                        wallet.balance += Number(item.price * item.quantity);
-
-                    }
-
-
+                    balance: 0,
+                    history: [],
+                  });
                 }
-
-            }
-            await wallet.save()
-            if (item.itemStatus !== "Cancelled" && item.itemStatus !== "Delivered") {
+                wallet.history.push({
+                  amount: item.finalPrice * item.quantity,
+                  type: "Credit",
+                  newBalance: wallet.balance + Number(item.finalPrice * item.quantity),
+                });
+                wallet.balance += Number(item.finalPrice * item.quantity);
+                await wallet.save();
+              }
+            if (item.itemStatus !== "Cancelled" && item.itemStatus !== "Delivered" && item.itemStatus !== "Returned") {
                 completed = false
             }
             refund = false;
@@ -379,25 +467,137 @@ const cancelOrder = async (req, res) => {
 
     }
 }
-
-const orderFailed = async (req, res) => {
+const returnOrder = async (req, res) => {
     try {
+        console.log("returnnnnn");
+        const order = await Order.findOne({ _id: req.query.orderId });
+        const productId = new ObjectId(req.query.productId);
+        for (let item of order.items) {
+            if (item._id.toString() === productId.toString()) {
+                item.itemStatus = "Return Requested";
+                item.reason = req.query.reason;
 
-
+            }
+        }
+        await order.save()
+        res.json({ success: true })
     } catch (error) {
         console.log(error.message)
     }
 }
 
+
+const approveReturn = async (req, res) => {
+    try {
+        const { orderId, itemId, isApproved, isDamaged } = req.query;
+        const order = await Order.findOne({ _id: orderId });
+        let wallet = await Wallet.findOne({ userId: req.session.user_id });
+        let completed = 1;
+        for (let item of order.items) {
+            if (item._id == itemId) {
+                if (isApproved == "Approve") {
+                    item.itemStatus = "Returned";
+                    item.isApproved = true;
+                    if (!wallet) {
+                        wallet = await new Wallet({
+                            userId: req.session.user_id,
+                            balance: 0,
+                            history: [],
+                        });
+                    }
+                    wallet.history.push({
+                        amount: item.finalPrice * item.quantity,
+                        type: "Credit",
+                        newBalance: wallet.balance + Number(item.finalPrice * item.quantity),
+                    });
+                    wallet.balance += Number(item.finalPrice * item.quantity);
+                    await wallet.save();
+                    if (isDamaged === "0") {
+                        await Product.findByIdAndUpdate(
+                            { _id: item.productId },
+                            { $inc: { stock: item.quantity } }
+                        );
+                    }
+                } else {
+                    item.itemStatus = "Delivered";
+                    item.isApproved = false
+
+                }
+            }
+            if (completed == 1) {
+                order.status = "Completed";
+                order.paymentStatus = "Success"
+            } else {
+                order.status = "Pending";
+            }
+            await order.save();
+            res.json({ success: true });
+
+        }
+    } catch (error) {
+        console.log(error.message)
+
+    }
+}
+const payNow = async(req,res)=>{
+    try {
+        const amount = req.query.amount * 100;
+        const orderId = req.query.orderId;
+        const orderData = await Order.findOne({_id:req.query.orderId});
+        const options = {
+            amount: amount,
+            currency: "INR",
+            receipt: orderData.orderId.toString(),
+        }
+        
+
+        const order = await razorpay.orders.create(options);
+        return res.json({
+          success: true,
+          message: "Order Created",
+          order_id: order.id,
+          amount: amount,
+          key_id: razorpay.key_id,
+          orderId:orderId
+        });
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+
+const orderPlacing = async(req,res)=>{
+    try {
+
+        console.log(req.query.orderId);
+        const orderData = await Order.findOne({_id:req.query.orderId});
+        orderData.paymentStatus = "Success";
+        orderData.status = "Pending";
+        for (let item of orderData.items) {
+          item.itemStatus = "Ordered";
+        }
+        await orderData.save();
+        res.redirect("/myOrders")
+        
+    } catch (error) {
+        console,log(error.message)
+    }
+}
 module.exports = {
     createOrder,
     orderSuccess,
+    orderFailed,
     myOrders,
     listOrders,
     orderDetails,
     changeStatus,
     cancelOrder,
-    orderFailed
+    returnOrder,
+    approveReturn,
+    payNow,
+    orderPlacing
+
 
 
 }

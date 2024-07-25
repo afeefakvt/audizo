@@ -35,6 +35,8 @@
 
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="/static/userImages/css/style.css">
+	    <!-- Bootstrap CSS -->
+
   
 <style>
     .wallet-balance {
@@ -46,7 +48,7 @@
     }
 
     .balance-box {
-        background: #d6dee6;
+        background: rgb(173, 169, 169);
         color: white;
         padding: 20px;
         border-radius: 10px;
@@ -67,7 +69,7 @@
 
     .add-money-btn {
         padding: 10px 20px;
-        background: #68a4e6;
+        background: rgb(72, 71, 71);
         color: white;
         border: none;
         border-radius: 5px;
@@ -76,7 +78,7 @@
     }
 
     .add-money-btn:hover {
-        background: #90bceb;
+        background: black;
     }
 </style>
 	</head>
@@ -169,7 +171,7 @@
                         <h3>BALANCE: ₹ <span id="wallet-balance"><%if(wallet){%>
 							<%= wallet.balance %>
 						<%}%></span></h3>
-                        <button class="add-money-btn">ADD MONEY</button>
+						<button class="add-money-btn" data-toggle="modal" data-target="#addMoneyModal">ADD MONEY</button>
                     </div>
                 </div>
         
@@ -230,6 +232,27 @@
                 </div>
             </div>
         </div>
+		<!-- Add Money Modal -->
+<div class="modal fade" id="addMoneyModal" tabindex="-1" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMoneyModalLabel">Add Money to Wallet</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="number" id="addAmount" class="form-control" placeholder="Enter amount to add" min="1" step="0.01" required>
+                </div>
+                <button class="btn btn-primary " type="button" onclick="addMoney()">Add</button>
+                <span class="text-danger mt-2" id="addError" style="display: none;">Amount should be greater than 0</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">
@@ -336,6 +359,63 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	
+
+	<script>
+		function addMoney(){
+			const amount = document.getElementById("addAmount").value;
+			if(amount<=0 || !amount){
+			   document.getElementById("addError").style.display = "block";
+			   return false;
+			}else{
+				document.getElementById("addError").style.display = "none";
+			}
+			axios.get(`/addMoney?amount=${amount}`)
+			.then((response)=>{
+			
+				if(response.data.success){
+					let options = {
+                    "key": response.data.key_id,
+                    "amount": response.data.amount,
+                    "currency": "INR",
+                    "name": "AUDIZO",
+                    "description": "Test Transaction",
+                    "order_id": response.data.order_id,
+                    "handler": function(response) {
+                        if (response.error) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Payment Failed",
+                                text: "Something went wrong!"
+                            }).then((result) => {
+                                window.location.reload();
+                            });
+                        } else if (response.razorpay_payment_id) {
+                            window.location.href = `/addingMoney?amount=${options.amount / 100}`;
+                        }
+                    },
+                    "theme": {
+                        "color": "#F37254"
+                    }
+                };
+				let rzp1 = new Razorpay(options);
+                rzp1.open();
+                rzp1.on('payment.failed', (response) => {
+                    setTimeout(() => {
+                        rzp1.close();
+                        window.location.reload();
+                    }, 3000);
+                });
+				}
+			})
+			.catch((error) => {
+            console.log(error);
+            Swal.fire('Error!', 'An error occurred while processing the payment.', 'error');
+        });
+		}
+	</script>
+
 
 	</body>
 </html>

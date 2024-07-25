@@ -28,7 +28,7 @@ const productSchema=new Schema({
     },
     discountPrice:{
         type:Number,
-        required:true
+      
     },
     stock:{
         type:Number,
@@ -44,5 +44,5 @@ const productSchema=new Schema({
         default: Date.now,
       }
 
-})
+},{timestamps:true})
 module.exports=mongoose.model('Product',productSchema);
