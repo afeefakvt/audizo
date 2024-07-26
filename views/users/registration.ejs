@@ -165,7 +165,8 @@
 									<%= message %>
 								</div>
 								<% } %>
-									<form id="form" action="/register?referralId=<%= referralId %>" method="POST" class="contact-form">
+									<form id="form" action="/register?referralId=<%= referralId %>" method="POST"
+										class="contact-form">
 										<div class="row">
 											<div class="col-md-12">
 												<div class="form-group">
@@ -194,8 +195,16 @@
 											<div class="col-md-12">
 												<div class="form-group">
 													<label for="password">Password</label>
-													<input type="password" id="password" name="password"
-														class="form-control" placeholder="Your password" required>
+													<div class="input-group">
+														<input type="password" id="register-password" name="password"
+															class="form-control" placeholder="Your password" required>
+														<div class="input-group-append">
+															<button class="btn btn-secondary" type="button"
+																id="toggleRegisterPassword">
+																<i class="fas fa-eye-slash" id="registerEyeIcon"></i>
+															</button>
+														</div>
+													</div>
 													<div id="password-error" class="text-danger"></div>
 												</div>
 											</div>
@@ -398,6 +407,23 @@
 
 			function confirmPasswordValidate(password, confirmPassword) {
 				return password === confirmPassword;
+			}
+		});
+
+		document.getElementById('toggleRegisterPassword').addEventListener('click', function (e) {
+			// Toggle the type attribute
+			const passwordField = document.getElementById('register-password');
+			const eyeIcon = document.getElementById('registerEyeIcon');
+			const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+			passwordField.setAttribute('type', type);
+
+			// Toggle the eye icon
+			if (type === 'password') {
+				eyeIcon.classList.remove('fa-eye');
+				eyeIcon.classList.add('fa-eye-slash');
+			} else {
+				eyeIcon.classList.remove('fa-eye-slash');
+				eyeIcon.classList.add('fa-eye');
 			}
 		});
 	</script>

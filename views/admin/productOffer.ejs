@@ -209,7 +209,14 @@
                                                     <%= productOffers[i].offerPercentage %>
                                                 </td>
                                                 <td>
-                                                    <%= productOffers[i].expiryDate.toLocaleDateString() %>
+                                                    <% if (productOffers[i].expiryDate) { %>
+                                                        <%= productOffers[i].expiryDate.toLocaleDateString() %>
+                                                    <% } else { %>
+                                                        No expiry date
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-danger" onclick="removeOffer('<%= productOffers[i]._id %>')">Delete</button>
                                                 </td>
                                                 <td>
                                                     <button class="btn btn-danger"

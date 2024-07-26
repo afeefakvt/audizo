@@ -105,4 +105,6 @@ user_route.get("/addingMoney",auth.isLogin,walletController.addingMoney);
 //referral
 user_route.get("/referralLink",auth.isLogin,userController.loadReferralLink);
 
+user_route.get("/about",auth.authMiddleware,auth.is_blocked,userController.loadAboutPage);
+
 module.exports=user_route

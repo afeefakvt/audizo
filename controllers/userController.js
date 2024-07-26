@@ -8,7 +8,8 @@ const Category = require("../models/categoryModel");
 const Address = require("../models/addressModel");
 const Wallet = require("../models/walletModel");
 const ProductOffer = require("../models/productOfferModel");
-const CategoryOffer = require("../models/categoryOfferModel")
+const CategoryOffer = require("../models/categoryOfferModel");
+const Order = require("../models/orderModel");
 const mongoose = require('mongoose');
 const crypto = require("crypto");
 const ObjectId = mongoose.Types.ObjectId;
@@ -105,7 +106,29 @@ const loadHome = async (req, res) => {
         if (!productData) {
             return res.render("home", { productData: [], user });
         }
-        res.render('home', { user: userData, productData, categoryData });
+        const orders = await Order.aggregate([
+            { $unwind: "$items" }, // Unwind the items array to process each item separately
+
+            { $match: { "items.itemStatus": "Delivered" } },
+            {
+                $group: {
+                    _id: "$items.productId",
+                    totalQuantity: { $sum: "$items.quantity" }
+                }
+            },
+            { $sort: { totalQuantity: -1 } }, // Sort by total quantity in descending order
+            { $limit: 4 } // Limit to top 4 products
+        ]);
+        const bestSellingProductIds = orders.map(order => order._id);
+        const bestSellingProducts = await Product.find({
+            _id: { $in: bestSellingProductIds },
+            isListed: false
+        }).populate({
+            path: "categoryId",
+            match: { isListed: false }
+        });
+
+        res.render('home', { user: userData, productData, categoryData, bestSellingProducts });
     } catch (error) {
         console.log(error.message);
 
@@ -389,12 +412,32 @@ const googleSuccess = async (req, res, next) => {
 
 const loadShop = async (req, res) => {
     try {
-        let products = await Product.find({ isListed: false });
-        const category = await Category.find({ isBlocked: false })
+        const page = parseInt(req.query.page) || 1;
+        const limit = 6; // Number of products per page
+        const skip = (page - 1) * limit;
 
+        let products = await Product.find({ isListed: false })
+            .skip(skip)
+            .limit(limit);
+
+
+        // Calculate total number of products
+        const totalProducts = await Product.countDocuments({ isListed: false });
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        const category = await Category.find({ isBlocked: false })
         products = await offerPrice(products);
 
-        return res.render('shop', { products: products, category: category, sortOption: "", search: "", selectedCategory: "", selectedPriceRange: "" });
+        return res.render('shop', {
+            products: products,
+            category: category,
+            sortOption: "",
+            search: "",
+            selectedCategory: "",
+            selectedPriceRange: "",
+            currentPage: page,
+            totalPages: totalPages
+        });
 
 
     } catch (error) {
@@ -404,6 +447,15 @@ const loadShop = async (req, res) => {
 }
 const sortFilter = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 6; // Number of products per page
+        const skip = (page - 1) * limit;
+
+
+        let products = await Product.find({ isListed: false })
+            .skip(skip)
+            .limit(limit);
+
         const category = await Category.find({ isBlocked: false });
         const { sortOption, searchQuery, category: selectedCategory, priceRange: selectedPriceRange } = req.query;
 
@@ -420,7 +472,6 @@ const sortFilter = async (req, res) => {
             ];
         }
 
-        let products;
         switch (sortOption) {
             case "newArrival":
                 products = await Product.find(filter).sort({ date: -1 });
@@ -451,16 +502,20 @@ const sortFilter = async (req, res) => {
         }
 
 
-      
+
         if (searchQuery) {
             const regex = new RegExp(searchQuery, "i");
             products = products.filter((item) => regex.test(item.name));
         }
 
+
+
+        const totalProducts = await Product.countDocuments({ isListed: false });
+        const totalPages = Math.ceil(totalProducts / limit);
         products = await offerPrice(products);
 
 
-        res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange });
+        res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange, totalPages: totalPages, currentPage: page });
 
     } catch (error) {
         console.log(error.message);
@@ -954,6 +1009,14 @@ const loadReferralLink = async (req, res) => {
     }
 }
 
+const loadAboutPage= async(req,res)=>{
+    try {
+        res.render("about");
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+}
 //logout
 const logoutLoad = async (req, res) => {
     try {
@@ -1001,6 +1064,7 @@ module.exports = {
     newPasswordForm,
     newPassword,
     loadReferralLink,
+    loadAboutPage,
     logoutLoad,
 
 

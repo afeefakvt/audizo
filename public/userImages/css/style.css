@@ -7391,7 +7391,7 @@ h1, h2, h3, h4, h5,
 
 .colorlib-nav .sale {
   padding: 14px 0;
-  background: black; }
+  background: grey; }
   .colorlib-nav .sale h3 {
     margin-bottom: 0;
     font-family: "Montserrat", Arial, sans-serif;
@@ -8362,7 +8362,7 @@ h1, h2, h3, h4, h5,
     border: 1px solid rgba(0, 0, 0, 0.8) !important; }
 
 input[type="text"] {
-  height: 25px !important; }
+  height: 33px !important; }
 
 .form-group {
   margin-bottom: 20px;

@@ -93,6 +93,13 @@
 		.btn-addtowishlist:hover {
 			background-color: #444;
 		}
+		.products-img img {
+			transition: transform 0.3s ease;
+		}
+
+		.products-img img:hover {
+			transform: scale(1.10);
+		}
 	</style>
 
 </head>
@@ -196,17 +203,17 @@
 						<div class="owl-carousel">
 							<% if (details.images && Array.isArray(details.images)) { %>
 
-							<% details.images.forEach(function(image) { %>
-								<div class="item">
-									<div class="product-entry border">
-										<a href="#" class="prod-img" id="container-<%= image %>">
-											<img src="/static/userImages/images/<%= image %>" class="img-fluid"
-												alt="Product image">
-										</a>
+								<% details.images.forEach(function(image) { %>
+									<div class="item">
+										<div class="product-entry border">
+											<a href="#" class="prod-img" id="container-<%= image %>">
+												<img src="/static/userImages/images/<%= image %>" class="img-fluid"
+													alt="Product image">
+											</a>
+										</div>
 									</div>
-								</div>
-								<% }); %>
-								<% } %>
+									<% }); %>
+										<% } %>
 
 						</div>
 					</div>
@@ -261,14 +268,18 @@
 													<div class="col-sm-12 text-center">
 														<p class="addtocart">
 															<% if (isAuthenticated) { %>
-																<a href="#" class="btn btn-primary btn-addtocart" style="width: 92px;padding: 8px;"
+																<a href="#" class="btn btn-primary btn-addtocart"
+																	style="width: 92px;padding: 8px;"
 																	onclick="addToWishlist('<%= details._id%>')">
-																	<i class="fas fa-heart" style="font-size: 17px;"></i> Add to Wishlist
+																	<i class="fas fa-heart"
+																		style="font-size: 17px;"></i> Add to Wishlist
 																</a>
 																<% } else { %>
 																	<a href="/login"
-																		class="btn btn-primary btn-addtocart" style="width: 92px;padding: 8px;">
-																		<i class="fas fa-heart"  style="font-size: 17px;"></i>
+																		class="btn btn-primary btn-addtocart"
+																		style="width: 92px;padding: 8px;">
+																		<i class="fas fa-heart"
+																			style="font-size: 17px;"></i>
 																		Add to Wishlist
 																	</a>
 																	<% } %>
@@ -291,7 +302,7 @@
 																			<%} %>
 
 														</p>
-													
+
 													</div>
 												</div>
 						</div>
@@ -315,11 +326,7 @@
 												href="#pills-manufacturer" role="tab" aria-controls="pills-manufacturer"
 												aria-expanded="true">Manufacturer</a>
 										</li>
-										<li class="nav-item">
-											<a class="nav-link" id="pills-review-tab" data-toggle="pill"
-												href="#pills-review" role="tab" aria-controls="pills-review"
-												aria-expanded="true">Review</a>
-										</li>
+
 									</ul>
 
 									<div class="tab-content" id="pills-tabContent">
@@ -328,174 +335,43 @@
 											<p>
 												<%= details.description %>
 											</p>
-											<p>When she reached the first hills of the Italic Mountains, she had a last
-												view back on the skyline of her hometown Bookmarksgrove, the headline of
-												Alphabet Village and the subline of her own road, the Line Lane. Pityful
-												a rethoric question ran over her cheek, then she continued her way.</p>
+											<p></p>
 											<ul>
-												<li>The Big Oxmox advised her not to do so</li>
-												<li>Because there were thousands of bad Commas</li>
-												<li>Wild Question Marks and devious Semikoli</li>
-												<li>She packed her seven versalia</li>
-												<li>tial into the belt and made herself on the way.</li>
+												<li>Exceptional Sound Quality: Immerse yourself in crystal-clear audio
+													with our high-fidelity headset, designed to deliver deep bass and
+													crisp highs for an unparalleled listening experience.</li>
+												<li>Comfortable Fit: Enjoy hours of comfortable use with our ergonomic
+													design, featuring soft memory foam ear cushions and an adjustable
+													headband that ensures a perfect fit for any head size.</li>
+												<li>Noise-Canceling Technology: Block out unwanted ambient noise with
+													advanced active noise-canceling technology, allowing you to focus on
+													your music or calls without distractions.</li>
+												<li>Long Battery Life: Stay connected all day with up to 20 hours of
+													continuous playtime on a single charge, ensuring your headset is
+													ready whenever you need it.</li>
+												<li>Built-In Microphone: Communicate clearly with the integrated
+													high-sensitivity microphone, perfect for hands-free calls, online
+													meetings, and gaming sessions.</li>
+
 											</ul>
 										</div>
 
 										<div class="tab-pane border fade" id="pills-manufacturer" role="tabpanel"
 											aria-labelledby="pills-manufacturer-tab">
-											<p>Even the all-powerful Pointing has no control about the blind texts it is
-												an almost unorthographic life One day however a small line of blind text
-												by the name of Lorem Ipsum decided to leave for the far World of
-												Grammar.</p>
-											<p>When she reached the first hills of the Italic Mountains, she had a last
-												view back on the skyline of her hometown Bookmarksgrove, the headline of
-												Alphabet Village and the subline of her own road, the Line Lane. Pityful
-												a rethoric question ran over her cheek, then she continued her way.</p>
+											<p>"Experience the pinnacle of audio engineering with AUDIZO, a
+												leading innovator in the audio technology industry. With a legacy of
+												excellence spanning over 10 years, AUDIZO is
+												committed to delivering high-quality audio products that blend
+												cutting-edge technology with exceptional craftsmanship. Each headset is
+												meticulously designed and rigorously tested to ensure superior
+												performance, durability, and user satisfaction. Choose AUDIZO for a
+												listening experience that transcends the ordinary and sets
+												new standards in audio fidelity."</p>
+
 										</div>
 
-										<div class="tab-pane border fade" id="pills-review" role="tabpanel"
-											aria-labelledby="pills-review-tab">
-											<div class="row">
-												<div class="col-md-8">
-													<h3 class="head">23 Reviews</h3>
-													<div class="review">
-														<div class="user-img"
-															style="background-image: url(/static/userImages/images/person1.jpg)">
-														</div>
-														<div class="desc">
-															<h4>
-																<span class="text-left">Jacob Webb</span>
-																<span class="text-right">14 March 2018</span>
-															</h4>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-half"></i>
-																	<i class="icon-star-empty"></i>
-																</span>
-																<span class="text-right"><a href="#" class="reply"><i
-																			class="icon-reply"></i></a></span>
-															</p>
-															<!-- <p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrov</p> -->
-														</div>
-													</div>
-													<div class="review">
-														<div class="user-img"
-															style="background-image: url(/static/userImages/images/person2.jpg)">
-														</div>
-														<div class="desc">
-															<h4>
-																<span class="text-left">Jacob Webb</span>
-																<span class="text-right">14 March 2018</span>
-															</h4>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-half"></i>
-																	<i class="icon-star-empty"></i>
-																</span>
-																<span class="text-right"><a href="#" class="reply"><i
-																			class="icon-reply"></i></a></span>
-															</p>
-															<p>When she reached the first hills of the Italic Mountains,
-																she had a last view back on the skyline of her hometown
-																Bookmarksgrov</p>
-														</div>
-													</div>
-													<div class="review">
-														<div class="user-img"
-															style="background-image: url(/static/userImages/images/person3.jpg)">
-														</div>
-														<div class="desc">
-															<h4>
-																<span class="text-left">Jacob Webb</span>
-																<span class="text-right">14 March 2018</span>
-															</h4>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-half"></i>
-																	<i class="icon-star-empty"></i>
-																</span>
-																<span class="text-right"><a href="#" class="reply"><i
-																			class="icon-reply"></i></a></span>
-															</p>
-															<p>When she reached the first hills of the Italic Mountains,
-																she had a last view back on the skyline of her hometown
-																Bookmarksgrov</p>
-														</div>
-													</div>
-												</div>
-												<div class="col-md-4">
-													<div class="rating-wrap">
-														<h3 class="head">Give a Review</h3>
-														<div class="wrap">
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	(98%)
-																</span>
-																<span>20 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	(85%)
-																</span>
-																<span>10 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	(70%)
-																</span>
-																<span>5 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	(10%)
-																</span>
-																<span>0 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	(0%)
-																</span>
-																<span>0 Reviews</span>
-															</p>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
+
+
 									</div>
 								</div>
 							</div>
@@ -512,24 +388,26 @@
 					<% relatedProducts.forEach(product=> { %>
 						<div class="col-md-3 col-lg-3 mb-4 text-center">
 							<div class="product-entry border">
-								<a href="/productDetail/<%= product._id %>" class="prod-img">
+								<a href="/productDetail/<%= product._id %>" class="products-img">
 									<img src="/static/userImages/images/<%=product.images[0] %>" class="img-fluid"
 										alt="<%= product.name %>">
 								</a>
 								<div class="desc">
 									<h2><a href="/productDetail/<%= product._id %>">
-										<%= product.name %>
-									</a></h2>
+											<%= product.name %>
+										</a></h2>
 									<span class="price">
 										<% if (product.discountPrice) { %>
-											<span class="original-price" style="text-decoration: line-through;">&#8377;<%= product.price %></span>
+											<span class="original-price" style="text-decoration: line-through;">&#8377;
+												<%= product.price %>
+											</span>
 											<span class="discounted-price">&#8377;<%= product.discountPrice %></span>
-										<% } else { %>
-											&#8377;<%= product.price %>
-										<% } %>
+											<% } else { %>
+												&#8377;<%= product.price %>
+													<% } %>
 									</span>
 								</div>
-								
+
 							</div>
 						</div>
 						<% }); %>
@@ -707,7 +585,7 @@
 				img.style.transform = "scale(1)";
 			});
 		});
-	
+
 		document.addEventListener('DOMContentLoaded', function () {
 			const addToCartButton = document.getElementById('add-to-cart-button');
 			if (addToCartButton) {
@@ -720,69 +598,69 @@
 			}
 		});
 		function add(productId) {
-    console.log(productId, "product");
-    fetch(`/addToCart?id=${productId}`, {
-        method: 'POST',
-        credentials: "same-origin",
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Product added to cart successfully',
-            }).then(() => {
-                // Optionally, update the cart UI here without refreshing the page
-            });
-        } else {
-            Swal.fire({
-                icon: 'info',
-                title: 'info',
-                text: data.message || 'Product is already in the cart',
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while adding the product to the cart',
-        });
-    });
-}
-</script>
-<script>
+			console.log(productId, "product");
+			fetch(`/addToCart?id=${productId}`, {
+				method: 'POST',
+				credentials: "same-origin",
+			})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						Swal.fire({
+							icon: 'success',
+							title: 'Success',
+							text: 'Product added to cart successfully',
+						}).then(() => {
+							// Optionally, update the cart UI here without refreshing the page
+						});
+					} else {
+						Swal.fire({
+							icon: 'info',
+							title: 'info',
+							text: data.message || 'Product is already in the cart',
+						});
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'An error occurred while adding the product to the cart',
+					});
+				});
+		}
+	</script>
+	<script>
 		const addToWishlist = (productId) => {
-        axios.post(`/addToWishlist?productId=${productId}`)
-            .then(response => {
-                if (response.data.success) {	
-                    Swal.fire(
-                        "Success",
-                        "Product added to wishlist",
-                        "success"
-                    ).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire(
-                        "info",
-                        response.data.message || "Product is already in the wishlist",
-                        "info"
-                    );
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                Swal.fire(
-                    "Error!",
-                    "An error occurred while adding the product to the wishlist",
-                    "error"
-                );
-            });
-    }
-</script>
+			axios.post(`/addToWishlist?productId=${productId}`)
+				.then(response => {
+					if (response.data.success) {
+						Swal.fire(
+							"Success",
+							"Product added to wishlist",
+							"success"
+						).then(() => {
+							window.location.reload();
+						});
+					} else {
+						Swal.fire(
+							"info",
+							response.data.message || "Product is already in the wishlist",
+							"info"
+						);
+					}
+				})
+				.catch(error => {
+					console.error("Error:", error);
+					Swal.fire(
+						"Error!",
+						"An error occurred while adding the product to the wishlist",
+						"error"
+					);
+				});
+		}
+	</script>
 </body>
 
 </html>
