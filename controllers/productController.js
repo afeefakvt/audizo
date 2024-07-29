@@ -34,7 +34,8 @@ const loadProduct = async (req, res) => {
           as: "category",
         },
       },
-      { $unwind: "$category" }
+      { $unwind: "$category" },
+      {$sort: {date:-1}}
     ])
     const totalProducts = await Product.countDocuments({
       name: { $regex: ".*" + search + ".*", $options: "i" },
