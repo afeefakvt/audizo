@@ -8362,7 +8362,7 @@ h1, h2, h3, h4, h5,
     border: 1px solid rgba(0, 0, 0, 0.8) !important; }
 
 input[type="text"] {
-  height: 33px !important; }
+  height: 25px !important; }
 
 .form-group {
   margin-bottom: 20px;
