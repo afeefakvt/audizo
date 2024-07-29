@@ -36,6 +36,22 @@
 
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="/static/userImages/css/style.css">
+	<style>
+		.payment-pending {
+			display: flex;
+			align-items: center;
+		}
+
+		.payment-pending p {
+			margin-bottom: 0;
+			margin-right: 10px;
+			/* Adjust the margin as needed */
+		}
+
+		.payment-pending .btn {
+			padding: 2px;
+		}
+	</style>
 
 </head>
 
@@ -52,7 +68,7 @@
 							<div id="colorlib-logo"><a href="#">AUDIZO.</a></div>
 						</div>
 						<div class="col-sm-5 col-md-3">
-						
+
 						</div>
 					</div>
 					<div class="row">
@@ -88,7 +104,7 @@
 						<div class="col-sm-8 offset-sm-2 text-center">
 							<div class="row">
 								<div class="owl-carousel2">
-									
+
 								</div>
 							</div>
 						</div>
@@ -112,166 +128,183 @@
 			<div class="container">
 				<div class="row row-pb-lg">
 					<div class="col-md-12">
-						<!-- Check if payment status is pending -->
-						<% if (order.paymentStatus === 'Pending') { %>
-							<div class="payment-pending">
-								<p>Your order has not been completed. Please complete the payment.</p>
-								<button  onclick="payNow('<%= order._id %>','<%= order.totalPrice%>')">Pay Now</button>
+						<% if (order.paymentStatus==='Pending' ) { %>
+							<div class="payment-pending d-flex align-items-center">
+								<p class="mb-0 mr-2">Your order has not been completed. Please complete the payment.</p>
+								<button class="btn btn-primary " style="padding: 4px;"
+									onclick="payNow('<%= order._id %>','<%= order.totalPrice%>')">Pay Now</button>
 							</div>
-						<% } %>
-		
-						<% order.items.forEach((item, index)=> { %>
-							<div class="product-cart d-flex">
-								<!-- Product Image -->
-								<div class="one-forth">
-									<div class="product-img"
-										style="background-image: url('/static/userImages/images/<%= item.image %>');">
-									</div>
-									<div class="display-tc">
-										<h3 style="font-size: 16px;">
-											<%= item.productName %>
-										</h3>
-									</div>
-								</div>
-								<!-- Product Price -->
-								<div class="one-eight text-center">
-									<div class="display-tc">
-										<span class="quantity">Quantity: <%= item.quantity %></span>
-										<br>
-										<span class="price">₹ <%= item.finalPrice %></span>
-									</div>
-								</div>
-								<!-- Status -->
-								<div class="one-forth text-center">
-									<div class="display-tc">
-										<p class="mb-1"><strong>Status:</strong>
-											<span class="<%= item.itemStatus === 'Ordered' ? 'text-warning' : 
+							<% } %>
+							<br>
+
+								<% order.items.forEach((item, index)=> { %>
+									<div class="product-cart d-flex">
+										<!-- Product Image -->
+										<div class="one-forth">
+											<div class="product-img"
+												style="background-image: url('/static/userImages/images/<%= item.image %>');">
+											</div>
+											<div class="display-tc">
+												<h3 style="font-size: 16px;">
+													<%= item.productName %>
+												</h3>
+											</div>
+										</div>
+										<!-- Product Price -->
+										<div class="one-eight text-center">
+											<div class="display-tc">
+												<span class="quantity">Quantity: <%= item.quantity %></span>
+												<br>
+												<span class="price">₹ <%= item.finalPrice %></span>
+											</div>
+										</div>
+										<!-- Status -->
+										<div class="one-forth text-center">
+											<div class="display-tc">
+												<p class="mb-1"><strong>Status:</strong>
+													<span class="<%= item.itemStatus === 'Ordered' ? 'text-warning' : 
 													item.itemStatus === 'Shipped' ? 'text-warning' : 
 													item.itemStatus === 'Delivered' ? 'text-success' : 
 													item.itemStatus === 'Cancelled' ? 'text-danger' : 
 													item.itemStatus === 'Return Requested' ? 'text-danger' : 'text-dark' %>">
-												<%= item.itemStatus %>
-											</span>
-										</p>
-										<% if (item.itemStatus==='Delivered' ) { %>
-											<p>Your item has been delivered on <%= new Date(order.date).toDateString()
-													%>
-											</p>
-											<% } %>
-												<% if (item.itemStatus==='Ordered' || item.itemStatus==='Shipped' ) { %>
-													<p>Want to cancel your order?</p>
-													<button class="btn btn-grey"
-														onclick="cancelOrder('<%= order._id %>', '<%= item.productId %>')">Cancel</button>
-													<% } else if (item.itemStatus==='Delivered' ) { %>
-														<button class="btn btn-primary" data-toggle="modal"
-															data-target="#returnReasonModal-<%= index %>">Return</button>
-														<% } %>
+														<%= item.itemStatus %>
+													</span>
+												</p>
+												<% if (item.itemStatus==='Delivered' ) { %>
+													<p>Your item has been delivered on <%= new
+															Date(order.date).toDateString() %>
+													</p>
+													<% } %>
+														<% if (item.itemStatus==='Ordered' ||
+															item.itemStatus==='Shipped' ) { %>
+															<p>Want to cancel your order?</p>
+															<button class="btn btn-primary "
+																onclick="cancelOrder('<%= order._id %>', '<%= item.productId %>')">Cancel</button>
+															<% } else if (item.itemStatus==='Delivered' ) { %>
+																<button class="btn btn-primary" data-toggle="modal"
+																	data-target="#returnReasonModal-<%= index %>">Return</button>
+																<% } %>
 
-									</div>
-								</div>
-							</div>
-							<!-- Return Reason Modal -->
-							<div class="modal fade" id="returnReasonModal-<%= index %>" tabindex="-1"
-								aria-labelledby="returnReasonModalLabel-<%= index %>" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="returnReasonModalLabel-<%= index %>">Select
-												Return Reason</h5>
+											</div>
 										</div>
-										<div class="modal-body">
-											<form id="returnReasonForm-<%= index %>">
-												<div class="mb-3">
-													<label for="returnReasonSelect-<%= index %>"
-														class="form-label">Reason for Return:</label>
-													<br>
-													<select class="form-select" id="returnReasonSelect-<%= index %>"
-														required>
-														<option value="" disabled selected>Select a reason</option>
-														<option value="Wrong Item">Wrong Item</option>
-														<option value="Changed my mind">Changed my mind</option>
-														<option value="Defective Product">Defective Product</option>
-														<option value="Other">Other</option>
-													</select>
+									</div>
+									<!-- Return Reason Modal -->
+									<div class="modal fade" id="returnReasonModal-<%= index %>" tabindex="-1"
+										aria-labelledby="returnReasonModalLabel-<%= index %>" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="returnReasonModalLabel-<%= index %>">
+														Select
+														Return Reason</h5>
 												</div>
-											</form>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-danger"
-												data-dismiss="modal">Close</button>
-											<button type="button" class="btn btn-success"
-												onclick="confirmReturn('<%= order._id %>', '<%= item._id %>', '<%= index %>')">Confirm
-												Return</button>
+												<div class="modal-body">
+													<form id="returnReasonForm-<%= index %>">
+														<div class="mb-3">
+															<label for="returnReasonSelect-<%= index %>"
+																class="form-label">Reason for Return:</label>
+															<br>
+															<select class="form-select"
+																id="returnReasonSelect-<%= index %>" required>
+																<option value="" disabled selected>Select a reason
+																</option>
+																<option value="Wrong Item">Wrong Item</option>
+																<option value="Changed my mind">Changed my mind</option>
+																<option value="Defective Product">Defective Product
+																</option>
+																<option value="Other">Other</option>
+															</select>
+														</div>
+													</form>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-danger"
+														data-dismiss="modal">Close</button>
+													<button type="button" class="btn btn-success"
+														onclick="confirmReturn('<%= order._id %>', '<%= item._id %>', '<%= index %>')">Confirm
+														Return</button>
+												</div>
+											</div>
 										</div>
 									</div>
-								</div>
-							</div>
 
-							<% }) %>
+									<% }) %>
 
 
-								<!-- Delivery Address -->
-								<div class="display-tc mt-4">
-									<h6 style="font-size: 14px;">DELIVERY ADDRESS:</h6>
-									<div class="mt-2">
-										<span><strong>
-												<%= order.address.name %>
-											</strong></span><br>
-										<span>
-											<%= order.address.house %>, <%= order.address.locality %>, <%=
-														order.address.city %>, <%= order.address.state %>, <%=
-																order.address.pincode %>
-										</span><br>
-										<span>
-											<%= order.address.mobile %>
-										</span>
-									</div>
-									<br>
-									<% if (order.items.some(item => item.itemStatus === 'Ordered' || item.itemStatus === 'Shipped' || item.itemStatus === 'Delivered')) { %>
-										<button class="btn btn-grey ml-3" onclick="downloadInvoice('<%= order._id %>')">Download Invoice</button>
-									<% } %>
-									
-								</div>
+										<!-- Delivery Address -->
+										<div class="display-tc mt-4">
+											<h6 style="font-size: 14px;">DELIVERY ADDRESS:</h6>
+											<div class="mt-2">
+												<span><strong>
+														<%= order.address.name %>
+													</strong></span><br>
+												<span>
+													<%= order.address.house %>, <%= order.address.locality %>, <%=
+																order.address.city %>, <%= order.address.state %>, <%=
+																		order.address.pincode %>
+												</span><br>
+												<span>
+													<%= order.address.mobile %>
+												</span>
+											</div>
+											<br>
+											<% if (order.items.some(item=> item.itemStatus === 'Delivered')) { %>
+												<button class="btn btn-primary ml-3"
+													onclick="downloadInvoice('<%= order._id %>')">Download
+													Invoice</button>
+												<% } %>
+
+										</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<table class="table" style="display: none;">
 			<thead>
-			  <tr>
-				<th>Product Name</th>
-				<th>Price (Rs)</th>
-				<th>Quantity</th>
-				<th>Discount (Rs)</th>
-				<th>Total (Rs)</th>
-			  </tr>
+				<tr>
+					<th>Product Name</th>
+					<th>Price (Rs)</th>
+					<th>Quantity</th>
+					<th>Discount (Rs)</th>
+					<th>Total (Rs)</th>
+				</tr>
 			</thead>
 			<tbody>
-			<% for(let item of orders){%>
-			  <tr>
-				<td><%= item.productName %></td>
-				<td><%= item.price %></td>
-				<td><%= item.quantity %></td>
-				<td><%= item.quantity * item.price - item.quantity * item.finalPrice%></td>
-				<td><%= item.quantity * item.finalPrice %></td>
-			  </tr>
-				<%}%>
-				<tr>
-				  <td>Delivery Charge</td>
-				  <td>0</td>
-				  <td>-</td>
-				  <td>-</td>
-				  <td>0</td>
-				</tr>
+				<% for(let item of orders){%>
+					<tr>
+						<td>
+							<%= item.productName %>
+						</td>
+						<td>
+							<%= item.price %>
+						</td>
+						<td>
+							<%= item.quantity %>
+						</td>
+						<td>
+							<%= item.quantity * item.price - item.quantity * item.finalPrice%>
+						</td>
+						<td>
+							<%= item.quantity * item.finalPrice %>
+						</td>
+					</tr>
+					<%}%>
+						<tr>
+							<td>Delivery Charge</td>
+							<td>0</td>
+							<td>-</td>
+							<td>-</td>
+							<td>0</td>
+						</tr>
 			</tbody>
-		  </table>
+		</table>
 
 
-		  <footer id="colorlib-footer" role="contentinfo" >
+		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">
 					<div class="col footer-col colorlib-widget">
-						<h4 >About audizo</h4>
+						<h4>About audizo</h4>
 						<p> We’re dedicated to
 							giving you the very best audio experience, with a focus on innovation, quality, and
 							customer satisfaction.</p>
@@ -284,10 +317,10 @@
 						</ul>
 						</p> -->
 					</div>
-					<div class="col footer-col colorlib-widget" >
-						<h4 >Customer Care</h4>
+					<div class="col footer-col colorlib-widget">
+						<h4>Customer Care</h4>
 						<p>
-						<ul class="colorlib-footer-links" >
+						<ul class="colorlib-footer-links">
 							<li><a href="/about">Contact</a></li>
 							<li><a href="/myOrders">Returns/Exchange</a></li>
 							<li><a href="/cart">Gift Voucher</a></li>
@@ -300,7 +333,7 @@
 					<div class="col footer-col colorlib-widget">
 						<h4>Information</h4>
 						<p>
-						<ul class="colorlib-footer-links" >
+						<ul class="colorlib-footer-links">
 							<li><a href="/about">About us</a></li>
 							<li><a href="/myOrders">Delivery Information</a></li>
 							<li><a href="/about">Privacy Policy</a></li>
@@ -324,7 +357,7 @@
 						<ul class="colorlib-footer-links">
 							<li>291 South 21th Street, <br>Koramangala,Banglore</li>
 							<li><a href="zoaudi866@gmail.com">zoaudi866@gmail.com</a></li>
-							
+
 						</ul>
 					</div>
 				</div>
@@ -337,7 +370,7 @@
 								Copyright &copy;
 								<script>document.write(new Date().getFullYear());</script> AUDIZO
 							</span>
-							
+
 						</p>
 					</div>
 				</div>
@@ -477,55 +510,55 @@
 		};
 
 
-function payNow(orderId,amount){
-	console.log("paynowwww");
-	axios.get(`/payNow?amount=${amount}&orderId=${orderId}`)
-	.then((response)=>{
-		if(response.data.success){
-			let orderId = response.data.orderId;
-			let options = {
-                                "key": response.data.key_id,
-                                "amount": response.data.amount,
-                                "currency": "INR",
-                                "name": "AUDIZO",
-                                "description": "Test Transaction",
-                                "order_id": response.data.order_id,
-                                "handler": function (response) {
-                                    if (response.error) {
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: "Payment Failed",
-                                            text: "Something went wrong!"
-                                        }).then((result) => {
-                                            window.location.reload();
-                                        });
-                                    } else if (response.razorpay_payment_id) {
-                                        window.location.href = `/orderPlacing?orderId=${orderId}`;
-                                    }
-                                },
-                                "theme": {
-                                    "color": "#F37254"
-                                }
-                            };
-                            let rzp1 = new Razorpay(options);
-                            rzp1.open();
-                            rzp1.on('payment.failed', (response) => {
-                                setTimeout(() => {
-                                    rzp1.close();
-                                    window.location.reload();
-                                }, 3000);
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        Swal.fire(
-                            'Error!',
-                            'An error occurred while processing the payment.',
-                            'error'
-                        );
-                    });
-            };
+		function payNow(orderId, amount) {
+			console.log("paynowwww");
+			axios.get(`/payNow?amount=${amount}&orderId=${orderId}`)
+				.then((response) => {
+					if (response.data.success) {
+						let orderId = response.data.orderId;
+						let options = {
+							"key": response.data.key_id,
+							"amount": response.data.amount,
+							"currency": "INR",
+							"name": "AUDIZO",
+							"description": "Test Transaction",
+							"order_id": response.data.order_id,
+							"handler": function (response) {
+								if (response.error) {
+									Swal.fire({
+										icon: "error",
+										title: "Payment Failed",
+										text: "Something went wrong!"
+									}).then((result) => {
+										window.location.reload();
+									});
+								} else if (response.razorpay_payment_id) {
+									window.location.href = `/orderPlacing?orderId=${orderId}`;
+								}
+							},
+							"theme": {
+								"color": "#F37254"
+							}
+						};
+						let rzp1 = new Razorpay(options);
+						rzp1.open();
+						rzp1.on('payment.failed', (response) => {
+							setTimeout(() => {
+								rzp1.close();
+								window.location.reload();
+							}, 3000);
+						});
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+					Swal.fire(
+						'Error!',
+						'An error occurred while processing the payment.',
+						'error'
+					);
+				});
+		};
 
 		function downloadInvoice() {
 
@@ -577,7 +610,7 @@ function payNow(orderId,amount){
 			doc.text(`State: ${state}`, shippingAddressStartX, 90);
 			doc.text(`Pin: ${pin}`, shippingAddressStartX, 95);
 			doc.text(`Payment Method: ${paymentMethod}`, shippingAddressStartX, 105);
-			
+
 
 			const table = document.querySelector(".table");
 			const tableData = Array.from(table.querySelectorAll('tbody tr')).map(row => {
@@ -600,9 +633,9 @@ function payNow(orderId,amount){
 					total += totalPrice;
 				}
 			});
-			  // Set delivery charge to 0
-			  const deliveryCharge = 0;
-			const grandTotal = total+deliveryCharge;
+			// Set delivery charge to 0
+			const deliveryCharge = 0;
+			const grandTotal = total + deliveryCharge;
 
 			const finalY = doc.lastAutoTable.finalY + 10;
 			doc.setFontSize(14);

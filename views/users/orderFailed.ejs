@@ -118,8 +118,9 @@
 							<!-- Check if payment status is pending -->
 							<% if (order.paymentStatus==='Pending' ) { %>
 								<div class="payment-pending">
-									<p>Your order has not been completed. Please complete the payment.</p>
-									<button class="btn btn-primary btn-outline-primary"   onclick="payNow('<%= order._id %>','<%= order.totalPrice%>')">Pay
+
+									<button class="btn btn-primary"
+										onclick="payNow('<%= order._id %>','<%= order.totalPrice%>')">Pay
 										Now</button>
 								</div>
 								<% } %>
@@ -240,55 +241,55 @@
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 	<script>
-		function payNow(orderId,amount){
-	console.log("paynowwww");
-	axios.get(`/payNow?amount=${amount}&orderId=${orderId}`)
-	.then((response)=>{
-		if(response.data.success){
-			let orderId = response.data.orderId;
-			let options = {
-                                "key": response.data.key_id,
-                                "amount": response.data.amount,
-                                "currency": "INR",
-                                "name": "AUDIZO",
-                                "description": "Test Transaction",
-                                "order_id": response.data.order_id,
-                                "handler": function (response) {
-                                    if (response.error) {
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: "Payment Failed",
-                                            text: "Something went wrong!"
-                                        }).then((result) => {
-                                            window.location.reload();
-                                        });
-                                    } else if (response.razorpay_payment_id) {
-                                        window.location.href = `/orderPlacing?orderId=${orderId}`;
-                                    }
-                                },
-                                "theme": {
-                                    "color": "#F37254"
-                                }
-                            };
-                            let rzp1 = new Razorpay(options);
-                            rzp1.open();
-                            rzp1.on('payment.failed', (response) => {
-                                setTimeout(() => {
-                                    rzp1.close();
-                                    window.location.reload();
-                                }, 3000);
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        Swal.fire(
-                            'Error!',
-                            'An error occurred while processing the payment.',
-                            'error'
-                        );
-                    });
-            };
+		function payNow(orderId, amount) {
+			console.log("paynowwww");
+			axios.get(`/payNow?amount=${amount}&orderId=${orderId}`)
+				.then((response) => {
+					if (response.data.success) {
+						let orderId = response.data.orderId;
+						let options = {
+							"key": response.data.key_id,
+							"amount": response.data.amount,
+							"currency": "INR",
+							"name": "AUDIZO",
+							"description": "Test Transaction",
+							"order_id": response.data.order_id,
+							"handler": function (response) {
+								if (response.error) {
+									Swal.fire({
+										icon: "error",
+										title: "Payment Failed",
+										text: "Something went wrong!"
+									}).then((result) => {
+										window.location.reload();
+									});
+								} else if (response.razorpay_payment_id) {
+									window.location.href = `/orderPlacing?orderId=${orderId}`;
+								}
+							},
+							"theme": {
+								"color": "#F37254"
+							}
+						};
+						let rzp1 = new Razorpay(options);
+						rzp1.open();
+						rzp1.on('payment.failed', (response) => {
+							setTimeout(() => {
+								rzp1.close();
+								window.location.reload();
+							}, 3000);
+						});
+					}
+				})
+				.catch((error) => {
+					console.log(error);
+					Swal.fire(
+						'Error!',
+						'An error occurred while processing the payment.',
+						'error'
+					);
+				});
+		};
 
 	</script>
 

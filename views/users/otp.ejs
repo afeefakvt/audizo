@@ -1,124 +1,212 @@
-
-
 <!DOCTYPE HTML>
 <html>
-	<head>
-	<title>audizo</title>
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Facebook and Twitter integration -->
-	<meta property="og:title" content=""/>
-	<meta property="og:image" content=""/>
-	<meta property="og:url" content=""/>
-	<meta property="og:site_name" content=""/>
-	<meta property="og:description" content=""/>
-	<meta name="twitter:title" content="" />
-	<meta name="twitter:image" content="" />
-	<meta name="twitter:url" content="" />
-	<meta name="twitter:card" content="" />
+<head>
+    <title>audizo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Facebook and Twitter integration -->
+    <meta property="og:title" content="" />
+    <meta property="og:image" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:site_name" content="" />
+    <meta property="og:description" content="" />
+    <meta name="twitter:title" content="" />
+    <meta name="twitter:image" content="" />
+    <meta name="twitter:url" content="" />
+    <meta name="twitter:card" content="" />
 
-	<!-- Animate.css -->
-	<link rel="stylesheet" href="/static/userImages/css/animate.css">
-	<!-- Icomoon Icon Fonts-->
-	<link rel="stylesheet" href="/static/userImages/css/icomoon.css">
-	<!-- Ion Icon Fonts-->
-	<link rel="stylesheet" href="/static/userImages/css/ionicons.min.css">
-	<!-- Bootstrap  -->
-	<link rel="stylesheet" href="/static/userImages/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rokkitt:100,300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-	<!-- Magnific Popup -->
-	<link rel="stylesheet" href="/static/userImages/css/magnific-popup.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="/static/userImages/css/animate.css">
+    <!-- Icomoon Icon Fonts-->
+    <link rel="stylesheet" href="/static/userImages/css/icomoon.css">
+    <!-- Ion Icon Fonts-->
+    <link rel="stylesheet" href="/static/userImages/css/ionicons.min.css">
+    <!-- Bootstrap  -->
+    <link rel="stylesheet" href="/static/userImages/css/bootstrap.min.css">
 
-	<!-- Flexslider  -->
-	<link rel="stylesheet" href="/static/userImages/css/flexslider.css">
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" href="/static/userImages/css/magnific-popup.css">
 
-	<!-- Owl Carousel -->
-	<link rel="stylesheet" href="/static/userImages/css/owl.carousel.min.css">
-	<link rel="stylesheet" href="/static/userImages/css/owl.theme.default.min.css">
-	
-	<!-- Date Picker -->
-	<link rel="stylesheet" href="/static/userImages/css/bootstrap-datepicker.css">
-	<!-- Flaticons  -->
-	<link rel="stylesheet" href="/static/userImages/fonts/flaticon/font/flaticon.css">
+    <!-- Flexslider  -->
+    <link rel="stylesheet" href="/static/userImages/css/flexslider.css">
 
-	<!-- Theme style  -->
-	<link rel="stylesheet" href="/static/userImages/css/style.css">
-	<style>
-		#colorlib-contact {
-		  display: flex;
-		  justify-content: center;
-		  align-items: center;
-		  height: 100vh;
-		}
-		.contact-wrap {
-		  width: 100%;
-		  max-width: 500px;
-		}
-	  </style>
+    <!-- Owl Carousel -->
+    <link rel="stylesheet" href="/static/userImages/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/static/userImages/css/owl.theme.default.min.css">
 
-	</head>
-	<body>
-		
-	<div class="colorlib-loader"></div>
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="/static/userImages/css/bootstrap-datepicker.css">
+    <!-- Flaticons  -->
+    <link rel="stylesheet" href="/static/userImages/fonts/flaticon/font/flaticon.css">
 
-	<div id="page">
-		<nav class="colorlib-nav" role="navigation">
-			<div class="top-menu">
-				<div class="container">
-					<div class="row">
-						<div class="col-sm-7 col-md-9">
-							<div id="colorlib-logo"><a href="index.html">AUDIZO.</a></div>
-						</div>
-						<div class="col-sm-5 col-md-3">
-			          
-			         </div>
-		         </div>
-					<div class="row">
-						<div class="col-sm-12 text-left menu-1">
-							<ul>
-								<li><a href="/">Home</a></li>
-								<li class="has-dropdown">
-									<a href="/shop">Shop</a>
-									<ul class="dropdown">
-										<li><a href="/shop">Shop Products</a></li>
-										<li><a href="/cart">Shopping Cart</a></li>
-										<!-- <li><a href="checkout.html">Checkout</a></li>
+    <!-- Theme style  -->
+    <link rel="stylesheet" href="/static/userImages/css/style.css">
+    <style>
+        #colorlib-contact {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .contact-wrap {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* The snackbar - position it at the bottom and in the middle of the screen */
+        #snackbar {
+            visibility: hidden;
+            /* Hidden by default. Visible on click */
+            min-width: 250px;
+            /* Set a default minimum width */
+            margin-left: -125px;
+            /* Divide value of min-width by 2 */
+            background-color: #333;
+            /* Black background color */
+            color: #fff;
+            /* White text color */
+            text-align: center;
+            /* Centered text */
+            border-radius: 2px;
+            /* Rounded borders */
+            padding: 16px;
+            /* Padding */
+            position: fixed;
+            /* Sit on top of the screen */
+            z-index: 1;
+            /* Add a z-index if needed */
+            left: 50%;
+            /* Center the snackbar */
+            bottom: 30px;
+            /* 30px from the bottom */
+        }
+
+        /* Show the snackbar when clicking on a button (class added with JavaScript) */
+        #snackbar.show {
+            visibility: visible;
+            /* Show the snackbar */
+            /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the snackbar in and out */
+        @-webkit-keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="colorlib-loader"></div>
+
+    <div id="page">
+        <nav class="colorlib-nav" role="navigation">
+            <div class="top-menu">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-7 col-md-9">
+                            <div id="colorlib-logo"><a href="index.html">AUDIZO.</a></div>
+                        </div>
+                        <div class="col-sm-5 col-md-3">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-left menu-1">
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li class="has-dropdown">
+                                    <a href="/shop">Shop</a>
+                                    <ul class="dropdown">
+                                        <li><a href="/shop">Shop Products</a></li>
+                                        <li><a href="/cart">Shopping Cart</a></li>
+                                        <!-- <li><a href="checkout.html">Checkout</a></li>
 										<li><a href="order-complete.html">Order Complete</a></li> -->
-										<li><a href="/wishlist">Wishlist</a></li>
-									</ul>
-								</li>
-								<li><a href="/about">About</a></li>
-								<!-- <li><a href="/shop">Shop</a></li> -->
-								<!-- <li class="active"><a href="contact.html">Contact</a></li> -->
-								<li class="cart"><a href="/cart"><i class="icon-shopping-cart"></i>cart</a></li>
-                                <li class="cart"><a href="/wishlist"><i class="icon-heart"></i>wishlist</a></li>	
-								<li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="sale">
-				<div class="container">
-					<div class="row">
-						<div class="col-sm-8 offset-sm-2 text-center">
-							<div class="row">
-								<div class="owl-carousel2">
-									
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</nav>
+                                        <li><a href="/wishlist">Wishlist</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="/about">About</a></li>
+                                <!-- <li><a href="/shop">Shop</a></li> -->
+                                <!-- <li class="active"><a href="contact.html">Contact</a></li> -->
+                                <li class="cart"><a href="/cart"><i class="icon-shopping-cart"></i>cart</a></li>
+                                <li class="cart"><a href="/wishlist"><i class="icon-heart"></i>wishlist</a></li>
+                                <li class="cart"><a href="/login"><i class="icon-user"></i> Login</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sale">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-8 offset-sm-2 text-center">
+                            <div class="row">
+                                <div class="owl-carousel2">
 
-		<!-- <div class="breadcrumbs">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- <div class="breadcrumbs">
 			<div class="container">
 				<div class="row">
 					<div class="col">
@@ -130,51 +218,52 @@
 
 
 
-<!-- OTP form -->
-<div id="colorlib-contact">
-  <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-md-6">
-              <div class="contact-wrap">
-                  <h3>Enter OTP</h3>
-                  <div id="errorMessage" class="text-danger mb-3"></div>
-                  <form id="otpForm" class="contact-form" method="POST" action="/otp">
-                      <div class="row">
-                          <div class="col-md-12">
-                              <div class="form-group">
-                                  <label for="otp">OTP</label>
-                                  <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter OTP" required>
-                              </div>
-                          </div>
-                          <div class="w-100"></div>
-                          <div class="col-sm-12">
-                              <div class="form-group">
-                                  <input type="submit" value="Verify OTP" class="btn btn-primary">
-                              </div>
-                          </div>
-                      </div>
-                  </form>
-                  <div class="additional-links">
-                      <p id="timer">Resend OTP in <span id="countdown">30</span> seconds</p>
-                      <p id="resendText" style="display: none;">
-                          Didn't get the OTP? <a href="#" id="resendLink">Resend OTP</a>
-                      </p>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
+        <!-- OTP form -->
+        <div id="colorlib-contact">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="contact-wrap">
+                            <h3>Enter OTP</h3>
+                            <div id="errorMessage" class="text-danger mb-3"></div>
+                            <form id="otpForm" class="contact-form" method="POST" action="/otp">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="otp">OTP</label>
+                                            <input type="text" id="otp" name="otp" class="form-control"
+                                                placeholder="Enter OTP" required>
+                                        </div>
+                                    </div>
+                                    <div class="w-100"></div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <input type="submit" value="Verify OTP" class="btn btn-primary">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="additional-links">
+                                <p id="timer">Resend OTP in <span id="countdown">30</span> seconds</p>
+                                <p id="resendText" style="display: none;">
+                                    Didn't get the OTP? <a href="#" id="resendLink">Resend OTP</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<footer id="colorlib-footer" role="contentinfo" >
-    <div class="container">
-        <div class="row row-pb-md">
-            <div class="col footer-col colorlib-widget">
-                <h4 >About audizo</h4>
-                <p> We’re dedicated to
-                    giving you the very best audio experience, with a focus on innovation, quality, and
-                    customer satisfaction.</p>
-                <!-- <p>
+        <footer id="colorlib-footer" role="contentinfo">
+            <div class="container">
+                <div class="row row-pb-md">
+                    <div class="col footer-col colorlib-widget">
+                        <h4>About audizo</h4>
+                        <p> We’re dedicated to
+                            giving you the very best audio experience, with a focus on innovation, quality, and
+                            customer satisfaction.</p>
+                        <!-- <p>
                 <ul class="colorlib-social-icons">
                     <li><a href="#"><i class="icon-twitter"></i></a></li>
                     <li><a href="#"><i class="icon-facebook"></i></a></li>
@@ -182,187 +271,194 @@
                     <li><a href="#"><i class="icon-dribbble"></i></a></li>
                 </ul>
                 </p> -->
-            </div>
-            <div class="col footer-col colorlib-widget" >
-                <h4 >Customer Care</h4>
-                <p>
-                <ul class="colorlib-footer-links" >
-                    <li><a href="/about">Contact</a></li>
-                    <li><a href="/myOrders">Returns/Exchange</a></li>
-                    <li><a href="/cart">Gift Voucher</a></li>
-                    <li><a href="/wishlist">Wishlist</a></li>
-                    <li><a href="#">Special</a></li>
-                    <li><a href="/about">Customer Services</a></li>
-                </ul>
-                </p>
-            </div>
-            <div class="col footer-col colorlib-widget">
-                <h4>Information</h4>
-                <p>
-                <ul class="colorlib-footer-links" >
-                    <li><a href="/about">About us</a></li>
-                    <li><a href="/myOrders">Delivery Information</a></li>
-                    <li><a href="/about">Privacy Policy</a></li>
-                    <li><a href="/about">Support</a></li>
-                    <li><a href="myOrders">Order Tracking</a></li>
-                </ul>
-                </p>
-            </div>
+                    </div>
+                    <div class="col footer-col colorlib-widget">
+                        <h4>Customer Care</h4>
+                        <p>
+                        <ul class="colorlib-footer-links">
+                            <li><a href="/about">Contact</a></li>
+                            <li><a href="/myOrders">Returns/Exchange</a></li>
+                            <li><a href="/cart">Gift Voucher</a></li>
+                            <li><a href="/wishlist">Wishlist</a></li>
+                            <li><a href="#">Special</a></li>
+                            <li><a href="/about">Customer Services</a></li>
+                        </ul>
+                        </p>
+                    </div>
+                    <div class="col footer-col colorlib-widget">
+                        <h4>Information</h4>
+                        <p>
+                        <ul class="colorlib-footer-links">
+                            <li><a href="/about">About us</a></li>
+                            <li><a href="/myOrders">Delivery Information</a></li>
+                            <li><a href="/about">Privacy Policy</a></li>
+                            <li><a href="/about">Support</a></li>
+                            <li><a href="myOrders">Order Tracking</a></li>
+                        </ul>
+                        </p>
+                    </div>
 
-            <div class="col footer-col">
-                <h4>News</h4>
-                <ul class="colorlib-footer-links">
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="#">Press</a></li>
-                    <li><a href="#">Exhibitions</a></li>
-                </ul>
-            </div>
+                    <div class="col footer-col">
+                        <h4>News</h4>
+                        <ul class="colorlib-footer-links">
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="#">Press</a></li>
+                            <li><a href="#">Exhibitions</a></li>
+                        </ul>
+                    </div>
 
-            <div class="col footer-col">
-                <h4>Contact Information</h4>
-                <ul class="colorlib-footer-links">
-                    <li>291 South 21th Street, <br>Koramangala,Banglore</li>
-                    <li><a href="zoaudi866@gmail.com">zoaudi866@gmail.com</a></li>
-                    
-                </ul>
+                    <div class="col footer-col">
+                        <h4>Contact Information</h4>
+                        <ul class="colorlib-footer-links">
+                            <li>291 South 21th Street, <br>Koramangala,Banglore</li>
+                            <li><a href="zoaudi866@gmail.com">zoaudi866@gmail.com</a></li>
+
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
+            <div class="copy">
+                <div class="row">
+                    <div class="col-sm-12 text-center">
+                        <p>
+                            <span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                Copyright &copy;
+                                <script>document.write(new Date().getFullYear());</script> AUDIZO
+                            </span>
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
-    <div class="copy">
-        <div class="row">
-            <div class="col-sm-12 text-center">
-                <p>
-                    <span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        Copyright &copy;
-                        <script>document.write(new Date().getFullYear());</script> AUDIZO
-                    </span>
-                    
-                </p>
-            </div>
-        </div>
+
+    <div class="gototop js-top">
+        <a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
     </div>
-</footer>
-</div>
+    <div id="snackbar"></div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let countdownElement = document.getElementById("countdown");
+            let resendText = document.getElementById("resendText");
+            let timer = document.getElementById("timer");
+            let errorMessage = document.getElementById("errorMessage");
+            let countdown = 30;
+            let interval;
 
-<div class="gototop js-top">
-<a href="#" class="js-gotop"><i class="ion-ios-arrow-up"></i></a>
-</div>
+            function startCountdown() {
+                countdown = 30;
+                countdownElement.textContent = countdown;
+                interval = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        timer.style.display = "none";
+                        resendText.style.display = "block";
+                    }
+                }, 1000);
+            }
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-      let countdownElement = document.getElementById("countdown");
-      let resendText = document.getElementById("resendText");
-      let timer = document.getElementById("timer");
-      let errorMessage = document.getElementById("errorMessage");
-      let countdown = 30;
-      let interval;
+            startCountdown();
 
-      function startCountdown() {
-          countdown = 30;
-          countdownElement.textContent = countdown;
-          interval = setInterval(() => {
-              countdown--;
-              countdownElement.textContent = countdown;
-              if (countdown <= 0) {
-                  clearInterval(interval);
-                  timer.style.display = "none";
-                  resendText.style.display = "block";
-              }
-          }, 1000);
-      }
+            document.getElementById("resendLink").addEventListener("click", (e) => {
+                e.preventDefault();
 
-      startCountdown();
+                // fetch request to resend OTP
+                fetch('/resendOtp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: '<%= locals.userId %>' })  // Include any data needed by your backend
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showSnackBar('New OTP sent!');
+                            timer.style.display = "block";
+                            resendText.style.display = "none";
+                            startCountdown();
+                        } else {
+                            showSnackBar('Failed to send OTP. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error resending OTP:', error);
+                        showSnackBar('Error resending OTP. Please try again.');
+                    });
+            });
 
-      document.getElementById("resendLink").addEventListener("click", (e) => {
-          e.preventDefault();
+            document.getElementById("otpForm").addEventListener("submit", (e) => {
+                e.preventDefault();
 
-          // fetch request to resend OTP
-          fetch('/resendOtp', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ userId: '<%= locals.userId %>' })  // Include any data needed by your backend
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  alert('New OTP sent!');
-                  timer.style.display = "block";
-                  resendText.style.display = "none";
-                  startCountdown();
-              } else {
-                  alert('Failed to send OTP. Please try again.');
-              }
-          })
-          .catch(error => {
-              console.error('Error resending OTP:', error);
-              alert('Error resending OTP. Please try again.');
-          });
-      });
+                // Clear previous error message
+                errorMessage.textContent = "";
 
-      document.getElementById("otpForm").addEventListener("submit", (e) => {
-          e.preventDefault();
+                // fetch request to verify OTP
+                fetch('/otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ otp: document.getElementById("otp").value })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Handle successful OTP verification (e.g., redirect to another page)
+                            window.location.href = "/";  // Adjust to your success page
+                        } else {
+                            // Show error message on the same page
+                            errorMessage.textContent = data.message || "Invalid OTP. Please try again.";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verifying OTP:', error);
+                        errorMessage.textContent = "An error occured. Please try again.";
+                    });
+            });
+        });
+        function showSnackBar(text) {
+            // Get the snackbar DIV
+            var x = document.getElementById("snackbar");
+            x.innerHTML = text
+            // Add the "show" class to DIV
+            x.className = "show";
 
-          // Clear previous error message
-          errorMessage.textContent = "";
-
-          // fetch request to verify OTP
-          fetch('/otp', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ otp: document.getElementById("otp").value })
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  // Handle successful OTP verification (e.g., redirect to another page)
-                  window.location.href = "/";  // Adjust to your success page
-              } else {
-                  // Show error message on the same page
-                  errorMessage.textContent = data.message || "Invalid OTP. Please try again.";
-              }
-          })
-          .catch(error => {
-              console.error('Error verifying OTP:', error);
-              errorMessage.textContent = "An error occured. Please try again.";
-          });
-      });
-  });
-</script>
-   <!-- jQuery -->
-	<script src="/static/userImages/js/jquery.min.js"></script>
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+        }
+    </script>
+    <!-- jQuery -->
+    <script src="/static/userImages/js/jquery.min.js"></script>
     <!-- popper -->
     <script src="/static/userImages/js/popper.min.js"></script>
     <!-- bootstrap 4.1 -->
     <script src="/static/userImages/js/bootstrap.min.js"></script>
     <!-- jQuery easing -->
     <script src="/static/userImages/js/jquery.easing.1.3.js"></script>
-     <!-- Waypoints -->
-     <script src="/static/userImages/js/jquery.waypoints.min.js"></script>
-     <!-- Flexslider -->
-     <script src="/static/userImages/js/jquery.flexslider-min.js"></script>
-     <!-- Owl carousel -->
-     <script src="/static/userImages/js/owl.carousel.min.js"></script>
-     <!-- Magnific Popup -->
-     <script src="/static/userImages/js/jquery.magnific-popup.min.js"></script>
-     <script src="/static/userImages/js/magnific-popup-options.js"></script>
-     <!-- Date Picker -->
-     <script src="/static/userImages/js/bootstrap-datepicker.js"></script>
-     <!-- Stellar Parallax -->
-     <script src="/static/userImages/js/jquery.stellar.min.js"></script>
-     <!-- Google Map -->
-     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCefOgb1ZWqYtj7raVSmN4PL2WkTrc-KyA&sensor=false"></script>
-     <script src="/static/userImages/js/google_map.js"></script>
-     <!-- Main -->
-     <script src="/static/userImages/js/main.js"></script>
- 
-     </body>
- </html>
- 
- 
+    <!-- Waypoints -->
+    <script src="/static/userImages/js/jquery.waypoints.min.js"></script>
+    <!-- Flexslider -->
+    <script src="/static/userImages/js/jquery.flexslider-min.js"></script>
+    <!-- Owl carousel -->
+    <script src="/static/userImages/js/owl.carousel.min.js"></script>
+    <!-- Magnific Popup -->
+    <script src="/static/userImages/js/jquery.magnific-popup.min.js"></script>
+    <script src="/static/userImages/js/magnific-popup-options.js"></script>
+    <!-- Date Picker -->
+    <script src="/static/userImages/js/bootstrap-datepicker.js"></script>
+    <!-- Stellar Parallax -->
+    <script src="/static/userImages/js/jquery.stellar.min.js"></script>
+    <!-- Google Map -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCefOgb1ZWqYtj7raVSmN4PL2WkTrc-KyA&sensor=false"></script>
+    <script src="/static/userImages/js/google_map.js"></script>
+    <!-- Main -->
+    <script src="/static/userImages/js/main.js"></script>
 
+</body>
 
-
+</html>
