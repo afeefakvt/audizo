@@ -38,7 +38,7 @@ const adminRoute = require('./routes/adminRoute');
 app.use('/admin', adminRoute);
 
 app.get("*", (req, res) => {
-    res.status(404).render("error");
+    res.status(404).render("404");
 });
 
 const PORT = process.env.PORT;

@@ -75,7 +75,8 @@ const loadEditCategory = async (req, res) => {
       res.render("editCategory", { category: category });
     }
   } catch (error) {
-    console.log(error.message);
+    console.error("Error :", error.message);
+    res.render('error')
   }
 };
 
@@ -123,8 +124,8 @@ const loadDeletedCategory = async (req, res) => {
     res.render('deletedCategory', { category: deletedCategories,totalPages:totalPages,currentPage:page })
 
   } catch (error) {
-    console.log(error.message)
-    res.status(500).send("Server Error")
+    console.error("Error:", error.message);
+    res.status(500).render('error')
   }
 }
 
@@ -139,8 +140,8 @@ const restoreCategory = async (req, res) => {
       res.status(404).json({ message: "Category not found" });
     }
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Server Error");
+    console.error("Error:", error.message);
+    res.status(500).render('error')
   }
 };
 

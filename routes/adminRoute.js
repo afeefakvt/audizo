@@ -94,6 +94,9 @@ admin_route.get("/filterSales",auth.isLogin,adminController.filterSalesReport)
 admin_route.get("/salesReport",auth.isLogin,adminController.loadSalesReport);
 
 
-
+admin_route.use((err,req,res,next)=>{
+    console.error('error:',err);
+    res.status(500).render("error",{error:err.message})
+  })
 
 module.exports=admin_route;

@@ -156,7 +156,8 @@ const loadEditProduct = async (req, res) => {
     }
 
   } catch (error) {
-    console.log(error.message)
+    console.error("Error :", error.message);
+    res.render('error')
   }
 }
 

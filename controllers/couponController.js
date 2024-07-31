@@ -45,7 +45,8 @@ const loadEditCoupon =async(req,res)=>{
         res.render("editCoupon",{coupon:coupon})
         
     } catch (error) {
-        console.log(error.message)
+        console.error("Error :", error.message);
+        res.render('error')
     }
 
 }

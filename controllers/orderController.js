@@ -317,8 +317,8 @@ const orderDetails = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error.message);
-        res.render("error")
+        console.error("Error :", error.message);
+        res.render('error')
     }
 }
 

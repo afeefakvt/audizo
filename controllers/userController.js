@@ -878,7 +878,8 @@ const loadEditAddress = async (req, res) => {
         res.render("editAddress", { user: userData, address: address, index: index })
 
     } catch (error) {
-        console.log(error.message)
+        console.error("Error :", error.message);
+        res.render('error')
     }
 }
 const editAddress = async (req, res) => {

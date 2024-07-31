@@ -270,36 +270,26 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% for(let item of orders){%>
-					<tr>
-						<td>
-							<%= item.productName %>
-						</td>
-						<td>
-							<%= item.price %>
-						</td>
-						<td>
-							<%= item.quantity %>
-						</td>
-						<td>
-							<%= item.quantity * item.price - item.quantity * item.finalPrice%>
-						</td>
-						<td>
-							<%= item.quantity * item.finalPrice %>
-						</td>
-					</tr>
-					<%}%>
+				<% for(let item of order.items){ %>
+					<% if (item.itemStatus === 'Delivered') { %>
 						<tr>
-							<td>Delivery Charge</td>
-							<td>0</td>
-							<td>-</td>
-							<td>-</td>
-							<td>0</td>
+							<td><%= item.productName %></td>
+							<td><%= item.price %></td>
+							<td><%= item.quantity %></td>
+							<td><%= item.quantity * item.price - item.quantity * item.finalPrice %></td>
+							<td><%= item.quantity * item.finalPrice %></td>
 						</tr>
+					<% } %>
+				<% } %>
+				<tr>
+					<td>Delivery Charge</td>
+					<td>0</td>
+					<td>-</td>
+					<td>-</td>
+					<td>0</td>
+				</tr>
 			</tbody>
 		</table>
-
-
 		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">

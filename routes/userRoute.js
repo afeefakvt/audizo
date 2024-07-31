@@ -107,4 +107,9 @@ user_route.get("/referralLink",auth.isLogin,userController.loadReferralLink);
 
 user_route.get("/about",auth.authMiddleware,auth.is_blocked,userController.loadAboutPage);
 
+user_route.use((err,req,res,next)=>{
+  console.error('error:',err);
+  res.status(500).render("error",{error:err.message})
+})
+
 module.exports=user_route
