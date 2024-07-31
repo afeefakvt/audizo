@@ -8,7 +8,7 @@ const loadAddCoupon = async(req,res)=>{
         const page = parseInt(req.query.page) || 1;
         const skip = (page - 1) * 5;
         
-        let coupon  =await Coupon.find().skip(skip).limit(5);
+        let coupon  =await Coupon.find().sort({createdAt:-1}).skip(skip).limit(5);
 
         const totalCoupons = await Coupon.countDocuments()
         const totalPages = Math.ceil(totalCoupons / 5);

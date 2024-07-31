@@ -236,18 +236,24 @@
 
                                 <select class="form-control text-dark" id="currentStatus<%=i%><%=j%>"
                                   onchange="changeStatus('<%=orders[i]._id%>', '<%=i%><%=j%>', '<%= orders[i].items[j]._id %>','<%=i%>')"
-                                  style="width: 150px;" <% if (orders[i].items[j].itemStatus==="Cancelled" ){ %>
+                                  style="width: 150px;" <% if (orders[i].items[j].itemStatus==="Cancelled" || orders[i].items[j].itemStatus === "Returned"){ %>
                                   disabled <% } %>>
 
                                     <option value="Ordered" disabled <% if (orders[i].items[j].itemStatus==="Ordered" )
                                       { %>
                                       selected <% } %>>Ordered</option>
-                                    <option value="Shipped" <% if (orders[i].items[j].itemStatus==="Shipped" ) { %>
-                                      selected <% } %>>Shipped</option>
+                                      
+                                    <option value="Shipped"
+                                    <% if (orders[i].items[j].itemStatus === "Delivered") { %> disabled <% } %>
+                                     <% if (orders[i].items[j].itemStatus==="Shipped" ) { %>selected <% } %>
+                                      >Shipped</option>
+
                                     <option value="Delivered"  <% if (orders[i].items[j].itemStatus==="Delivered" ) {%>
                                       selected <% } %>>Delivered</option>
+
                                     <option value="Cancelled" disabled <% if(orders[i].items[j].itemStatus==="Cancelled"
                                       ) { %> selected <% } %>>Cancelled</option>
+                                      
                                       <option value="Returned" <% if(orders[i].items[j].itemStatus==='Returned'){%> selected<%}%> disabled >Returned</option>
                                       <option value="Return Requested" <% if(orders[i].items[j].itemStatus==='Return Requested'){%> selected><%}%> Return Requested</option>
                                 </select>
@@ -270,7 +276,7 @@
                           <% } } else { %>
                             <tr>
                               <td colspan="8" class="text-center">
-                                No such order found
+                                No  order found
                               </td>
                             </tr>
                             <% } %>

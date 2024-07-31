@@ -86,7 +86,7 @@
 							<div id="colorlib-logo"><a href="/">AUDIZO.</a></div>
 						</div>
 						<div class="col-sm-5 col-md-3">
-							
+
 						</div>
 					</div>
 					<div class="row">
@@ -120,7 +120,7 @@
 						<div class="col-sm-8 offset-sm-2 text-center">
 							<div class="row">
 								<div class="owl-carousel2">
-									
+
 								</div>
 							</div>
 						</div>
@@ -197,12 +197,21 @@
 											<div class="col-md-12">
 												<div class="form-group">
 													<label for="confirm_password">Confirm Password</label>
-													<input type="password" id="confirm_password" name="confirm_password"
-														class="form-control" placeholder="Confirm your password"
-														required>
+													<div class="input-group">
+														<input type="password" id="confirm_password"
+															name="confirm_password" class="form-control"
+															placeholder="Confirm your password" required>
+														<div class="input-group-append">
+															<button class="btn btn-secondary" type="button"
+																id="toggleConfirmPassword" style="height: 38px;">
+																<i class="fas fa-eye-slash" id="confirmEyeIcon"></i>
+															</button>
+														</div>
+													</div>
 													<div id="confirm-password-error" class="text-danger"></div>
 												</div>
 											</div>
+
 											<div class="w-100"></div>
 											<div class="col-sm-12">
 												<div class="form-group">
@@ -226,11 +235,11 @@
 				</div>
 			</div>
 		</div>
-		<footer id="colorlib-footer" role="contentinfo" >
+		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
 				<div class="row row-pb-md">
 					<div class="col footer-col colorlib-widget">
-						<h4 >About audizo</h4>
+						<h4>About audizo</h4>
 						<p> We’re dedicated to
 							giving you the very best audio experience, with a focus on innovation, quality, and
 							customer satisfaction.</p>
@@ -243,10 +252,10 @@
 						</ul>
 						</p> -->
 					</div>
-					<div class="col footer-col colorlib-widget" >
-						<h4 >Customer Care</h4>
+					<div class="col footer-col colorlib-widget">
+						<h4>Customer Care</h4>
 						<p>
-						<ul class="colorlib-footer-links" >
+						<ul class="colorlib-footer-links">
 							<li><a href="/about">Contact</a></li>
 							<li><a href="/myOrders">Returns/Exchange</a></li>
 							<li><a href="/cart">Gift Voucher</a></li>
@@ -259,7 +268,7 @@
 					<div class="col footer-col colorlib-widget">
 						<h4>Information</h4>
 						<p>
-						<ul class="colorlib-footer-links" >
+						<ul class="colorlib-footer-links">
 							<li><a href="/about">About us</a></li>
 							<li><a href="/myOrders">Delivery Information</a></li>
 							<li><a href="/about">Privacy Policy</a></li>
@@ -283,7 +292,7 @@
 						<ul class="colorlib-footer-links">
 							<li>291 South 21th Street, <br>Koramangala,Banglore</li>
 							<li><a href="zoaudi866@gmail.com">zoaudi866@gmail.com</a></li>
-							
+
 						</ul>
 					</div>
 				</div>
@@ -296,7 +305,7 @@
 								Copyright &copy;
 								<script>document.write(new Date().getFullYear());</script> AUDIZO
 							</span>
-							
+
 						</p>
 					</div>
 				</div>
@@ -316,7 +325,7 @@
 				let message = [];
 				let name = document.getElementById("name").value.trim();
 				let email = document.getElementById("email").value.trim();
-				let password = document.getElementById("password").value.trim();
+				let password = document.getElementById("register-password").value.trim();
 				let confirmPassword = document.getElementById("confirm_password").value.trim();
 				let mobile = document.getElementById("mobile").value.trim();
 
@@ -346,16 +355,19 @@
 					mobileError.innerText = "Invalid Mobile Number";
 					message.push("Invalid Mobile Number");
 				}
+				console.log("mobile",mobileError);
 
 				if (!passwordValidate(password)) {
 					passwordError.innerText = "Password should be at least 5 characters,should not start with dots or spaces and include any one special character";
 					message.push("Invalid Password");
 				}
+				console.log("passs",passwordError);
 
 				if (!confirmPasswordValidate(password, confirmPassword)) {
 					confirmPasswordError.innerText = "Passwords do not match";
 					message.push("Passwords do not match");
 				}
+				console.log("confirm",confirmPasswordError);
 
 				if (message.length > 0) {
 					e.preventDefault();
@@ -391,20 +403,34 @@
 			}
 		});
 
-		document.getElementById('toggleRegisterPassword').addEventListener('click', function (e) {
-			// Toggle the type attribute
-			const passwordField = document.getElementById('register-password');
-			const eyeIcon = document.getElementById('registerEyeIcon');
-			const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-			passwordField.setAttribute('type', type);
 
-			// Toggle the eye icon
-			if (type === 'password') {
-				eyeIcon.classList.remove('fa-eye');
-				eyeIcon.classList.add('fa-eye-slash');
+		document.getElementById('toggleRegisterPassword').addEventListener('click', function () {
+			const newPasswordInput = document.getElementById('register-password');
+			const eyeIconNewPassword = document.getElementById('registerEyeIcon');
+
+			if (newPasswordInput.type === 'password') {
+				newPasswordInput.type = 'text';
+				eyeIconNewPassword.classList.remove('fa-eye-slash');
+				eyeIconNewPassword.classList.add('fa-eye');
 			} else {
-				eyeIcon.classList.remove('fa-eye-slash');
-				eyeIcon.classList.add('fa-eye');
+				newPasswordInput.type = 'password';
+				eyeIconNewPassword.classList.remove('fa-eye');
+				eyeIconNewPassword.classList.add('fa-eye-slash');
+			}
+		});
+
+		document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+			const confirmPasswordInput = document.getElementById('confirm_password');
+			const eyeIconConfirmPassword = document.getElementById('confirmEyeIcon');
+
+			if (confirmPasswordInput.type === 'password') {
+				confirmPasswordInput.type = 'text';
+				eyeIconConfirmPassword.classList.remove('fa-eye-slash');
+				eyeIconConfirmPassword.classList.add('fa-eye');
+			} else {
+				confirmPasswordInput.type = 'password';
+				eyeIconConfirmPassword.classList.remove('fa-eye');
+				eyeIconConfirmPassword.classList.add('fa-eye-slash');
 			}
 		});
 	</script>

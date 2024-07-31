@@ -299,12 +299,13 @@ const loadUser = async (req, res) => {
                 { name: { $regex: ".*" + search + ".*", $options: "i" } },
                 { email: { $regex: ".*" + search + ".*", $options: "i" } }
             ],
+            is_verified: true,
         });
 
 
         const totalPages = Math.ceil(totalUsers / 5);
         console.log(users)
-        res.render('userList', { users:users,totalPages:totalPages,currentPage:page })
+        res.render('userList', { users:users,totalPages:totalPages,currentPage:page,search:search })
 
 
     } catch (error) {

@@ -46,7 +46,7 @@ const loadProduct = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / 5);
 
 
-    res.render("product", { product: productData,currentPage:page,totalPages:totalPages })
+    res.render("product", { product: productData,currentPage:page,totalPages:totalPages,search:search })
 
   } catch (error) {
     console.log(error.message)

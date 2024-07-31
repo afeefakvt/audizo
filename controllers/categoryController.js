@@ -5,18 +5,31 @@ const { loadAddProduct } = require('./productController');
 
 const loadCategory = async (req, res) => {
   try {
+    let search = "";
+    if(req.query.search){
+      search= req.query.search;
+    }
 
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * 5;
 
-
-    const categoryData = await Category.find({ isBlocked: false }).skip(skip).limit(5);
+    const categoryData = await Category.find({
+      name: { $regex: ".*" + search + ".*", $options: "i" },
+       isBlocked: false,
+       })
+       .sort({createdAt:-1})
+       .skip(skip)
+       .limit(5);
     
-    const totalCategory = await Category.countDocuments()
+    const totalCategory = await Category.countDocuments({
+      name: { $regex: ".*" + search + ".*", $options: "i" },
+      isBlocked: false,
+    });
+    
     const totalPages = Math.ceil(totalCategory / 5);
 
     console.log("ssss")
-    res.render('category', { categoryData,totalPages:totalPages,currentPage:page })
+    res.render('category', { categoryData,totalPages:totalPages,currentPage:page,search:search });
   } catch (error) {
     res.send(error)
 
@@ -101,8 +114,13 @@ const deleteCategory = async (req, res, next) => {
 
 const loadDeletedCategory = async (req, res) => {
   try {
-    const deletedCategories = await Category.find({ isBlocked: true });
-    res.render('deletedCategory', { category: deletedCategories })
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * 5;
+
+    const deletedCategories = await Category.find({ isBlocked: true }).skip(skip).limit(5);
+    const totalCategory = await Category.countDocuments({isBlocked:true});
+    const totalPages = Math.ceil(totalCategory/5)
+    res.render('deletedCategory', { category: deletedCategories,totalPages:totalPages,currentPage:page })
 
   } catch (error) {
     console.log(error.message)

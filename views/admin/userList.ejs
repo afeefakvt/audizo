@@ -146,6 +146,18 @@
                 </ol>
               </nav>
             </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <form action="/admin/userList" method="GET">
+                  <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search users" value="<%= search %>" style="max-width: 300px;margin-left: 850px;">
+                    <div class="input-group-append">
+                      <button class="btn btn-gradient-primary" type="submit">Search</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
 
             <div class="row">
                 <div class="col-12 grid-margin">

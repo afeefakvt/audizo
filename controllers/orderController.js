@@ -186,11 +186,14 @@ const orderFailed = async (req, res) => {
 const myOrders = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id });
+        const page = parseInt(req.query.page) || 1;
+        const skip = (page - 1) * 5;
 
-        const orderData = await Order.find({ userId: req.session.user_id }).sort({ date: -1 });
+        const orderData = await Order.find({ userId: req.session.user_id }).sort({ date: -1 }).skip(skip).limit(5);
 
-        // const totalOrders = await Order.countDocuments({ userId: req.session.user_id });
-        res.render("myOrders", { user: userData, orders: orderData })
+        const totalOrders = await Order.countDocuments({ userId: req.session.user_id });
+        const totalPages = Math.ceil(totalOrders / 5);
+        res.render("myOrders", { user: userData, orders: orderData,currentPage:page,totalPages:totalPages });
 
 
     } catch (error) {

@@ -8,6 +8,7 @@ const categorySchema=new Schema({
     isBlocked:{
         type:Boolean,
         default:false
-    }
-})
+    },
+
+},{timestamps:true})
 module.exports=mongoose.model("Category",categorySchema)

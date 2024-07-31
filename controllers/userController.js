@@ -116,8 +116,8 @@ const loadHome = async (req, res) => {
                     totalQuantity: { $sum: "$items.quantity" }
                 }
             },
-            { $sort: { totalQuantity: -1 } }, // Sort by total quantity in descending order
-            { $limit: 4 } // Limit to top 4 products
+            { $sort: { totalQuantity: -1 } }, 
+            { $limit: 4 } 
         ]);
         const bestSellingProductIds = orders.map(order => order._id);
         const bestSellingProducts = await Product.find({
@@ -291,8 +291,8 @@ const verifyOTP = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        const userId = req.session.user_id; // Assume the user ID is stored in session
-        const user = await User.findById(userId); // Find the user by ID
+        const userId = req.session.user_id; 
+        const user = await User.findById(userId); 
         if (user) {
             // Invalidate old OTPs
             await Otp.deleteMany({ userId });
@@ -444,19 +444,15 @@ const loadShop = async (req, res) => {
         console.log(error.message)
     }
 
-}
-const sortFilter = async (req, res) => {
+ }
+
+
+ const sortFilter = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 6; // Number of products per page
         const skip = (page - 1) * limit;
 
-
-        let products = await Product.find({ isListed: false })
-            .skip(skip)
-            .limit(limit);
-
-        const category = await Category.find({ isBlocked: false });
         const { sortOption, searchQuery, category: selectedCategory, priceRange: selectedPriceRange } = req.query;
 
         let filter = { isListed: false };
@@ -472,99 +468,148 @@ const sortFilter = async (req, res) => {
             ];
         }
 
+        if (searchQuery) {
+            const regex = new RegExp(searchQuery, "i");
+            // Ensure search query is applied before pagination
+            filter.name = { $regex: regex };
+        }
+
+        let productsQuery = Product.find(filter);
+
         switch (sortOption) {
             case "newArrival":
-                products = await Product.find(filter).sort({ date: -1 });
+                productsQuery = productsQuery.sort({ date: -1 });
                 break;
             case "priceLowToHigh":
-                products = await Product.aggregate([
+                productsQuery = Product.aggregate([
                     { $match: filter },
                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
                     { $sort: { sortPrice: 1 } },
                 ]);
                 break;
             case "priceHighToLow":
-                products = await Product.aggregate([
+                productsQuery = Product.aggregate([
                     { $match: filter },
                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
                     { $sort: { sortPrice: -1 } },
                 ]);
                 break;
             case "nameAZ":
-                products = await Product.find(filter).sort({ name: 1 });
+                productsQuery = productsQuery.sort({ name: 1 });
                 break;
             case "nameZA":
-                products = await Product.find(filter).sort({ name: -1 });
+                productsQuery = productsQuery.sort({ name: -1 });
                 break;
             default:
-                products = await Product.find(filter);
+                // No sorting
                 break;
         }
 
-
-
-        if (searchQuery) {
-            const regex = new RegExp(searchQuery, "i");
-            products = products.filter((item) => regex.test(item.name));
-        }
-
-
-
-        const totalProducts = await Product.countDocuments({ isListed: false });
+        // Paginate the filtered and sorted products
+        const totalProducts = await Product.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / limit);
+        
+        let products = await productsQuery.skip(skip).limit(limit);
         products = await offerPrice(products);
 
+        const category = await Category.find({ isBlocked: false });
 
-        res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange, totalPages: totalPages, currentPage: page });
+        res.render("shop", {
+            products,
+            sortOption,
+            search: searchQuery,
+            category,
+            selectedCategory,
+            selectedPriceRange,
+            totalPages: totalPages,
+            currentPage: page
+        });
 
     } catch (error) {
         console.log(error.message);
     }
 };
-
-
-
-
-// const loadShop = async (req, res) => {
+// const sortFilter = async (req, res) => {
 //     try {
-//         let search = "";
-//         if (req.query.search) {
-//             search = req.query.search;
-//         }
 //         const page = parseInt(req.query.page) || 1;
-//         const skip = (page - 1) * 3;
+//         const limit = 6;
+//         const skip = (page - 1) * limit;
 
-//         let products = await Product.find({ name: { $regex: ".*" + search + ".*", $options: "i" }, isListed: false })
+
+//         let products = await Product.find({ isListed: false })
 //             .skip(skip)
-//             .limit(6);
-//         const category = await Category.find({ isBlocked: false })
+//             .limit(limit);
 
-//         const totalProducts = await Product.countDocuments({
-//             name: { $regex: ".*" + search + ".*", $options: "i" },
-//             isListed: false,
-//         });
-//         const totalPages = Math.ceil(totalProducts / 3);
+//         const category = await Category.find({ isBlocked: false });
+//         const { sortOption, searchQuery, category: selectedCategory, priceRange: selectedPriceRange } = req.query;
 
+//         let filter = { isListed: false };
+//         if (selectedCategory) {
+//             filter.categoryId = selectedCategory;
+//         }
+
+//         if (selectedPriceRange) {
+//             const [minPrice, maxPrice] = selectedPriceRange.split('-').map(Number);
+//             filter.$or = [
+//                 { discountPrice: { $gte: minPrice, $lte: maxPrice } },
+//                 { price: { $gte: minPrice, $lte: maxPrice } }
+//             ];
+//         }
+
+//         switch (sortOption) {
+//             case "newArrival":
+//                 products = await Product.find(filter).sort({ date: -1 });
+//                 break;
+//             case "priceLowToHigh":
+//                 products = await Product.aggregate([
+//                     { $match: filter },
+//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
+//                     { $sort: { sortPrice: 1 } },
+//                 ]);
+//                 break;
+//             case "priceHighToLow":
+//                 products = await Product.aggregate([
+//                     { $match: filter },
+//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
+//                     { $sort: { sortPrice: -1 } },
+//                 ]);
+//                 break;
+//             case "nameAZ":
+//                 products = await Product.find(filter).sort({ name: 1 });
+//                 break;
+//             case "nameZA":
+//                 products = await Product.find(filter).sort({ name: -1 });
+//                 break;
+//             default:
+//                 products = await Product.find(filter);
+//                 break;
+//         }
+
+
+
+//         if (searchQuery) {
+//             const regex = new RegExp(searchQuery, "i");
+//             products = products.filter((item) => regex.test(item.name));
+//         }
+
+
+
+//         const totalProducts = await Product.countDocuments({ isListed: false });
+//         const totalPages = Math.ceil(totalProducts / limit);
 //         products = await offerPrice(products);
 
-//         return res.render('shop', {
-//             products: products,
-//             category: category,
-//             sortOption: "",
-//             search: "",
-//             selectedCategory: "",
-//             selectedPriceRange: "",
-//             totalPages: totalPages,
-//             currentPage: page
 
-//         });
-
+//         res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange, totalPages: totalPages, currentPage: page });
 
 //     } catch (error) {
-//         console.log(error.message)
+//         console.log(error.message);
 //     }
+// };
 
-// }
+
+
+
+
 // const sortFilter = async (req, res) => {
 //     try {
 //         const category = await Category.find({ isBlocked: false });
@@ -906,7 +951,7 @@ const resetPassword = async (req, res) => {
                     <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                         <h3>Reset Your Password</h3>
                         <p>Click the link below to reset your password:</p>
-                        <a href="http://localhost:1000/newPassword?token=${token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                        <a href="http://localhost:3000/newPassword?token=${token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
                         <p>Thanks for using our service!</p>
                         <p>Best regards,<br>The AUDIZO. Team</p>
                     </div>

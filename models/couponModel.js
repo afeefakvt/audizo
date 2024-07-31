@@ -25,6 +25,6 @@ const couponSchema = mongoose.Schema({
         type:Date,
         required:true,
         index:{expires:0}
-    }
-})
+    },
+},{timestamps:true})
 module.exports = mongoose.model("Coupon",couponSchema)
