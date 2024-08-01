@@ -952,7 +952,7 @@ const resetPassword = async (req, res) => {
                     <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                         <h3>Reset Your Password</h3>
                         <p>Click the link below to reset your password:</p>
-                        <a href="http://localhost:3000/newPassword?token=${token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                        <a href="https://audizo.shop/newPassword?token=${token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
                         <p>Thanks for using our service!</p>
                         <p>Best regards,<br>The AUDIZO. Team</p>
                     </div>
