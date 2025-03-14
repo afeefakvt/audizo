@@ -31,11 +31,5 @@ Payment Gateway: Razorpay (Test mode)
 Hosting: AWS, Hostinger
 
 
-📬 Contact
-
-LinkedIn: Your Name
-
-Email: your-email@example.com
-
 Audizo — Where sound meets style. 🎧
 
