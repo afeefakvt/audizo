@@ -1,8 +1,8 @@
-🎧 Audizo — Your One-Stop Shop for Premium Headphones
+🎧 Audizo 
 
 🌟 About Audizo
 
-Audizo is a modern ecommerce platform designed to provide a seamless shopping experience for audiophiles and music lovers.
+Audizo is a modern ecommerce platform designed to provide a seamless shopping experience for audiophiles and music lovers. This project is purely done for learning purpose.
 
 🚀 Features
 
