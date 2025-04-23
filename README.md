@@ -1,6 +1,6 @@
-🎧 Audizo 
+# 🎧 Audizo – Elevating the Audio Shopping Experience
 
-🌟 About Audizo
+## 🌟 About Audizo
 
 Audizo is a modern ecommerce platform designed to provide a seamless shopping experience for audiophiles and music lovers. This project is purely done for learning purpose.
 
