@@ -7,8 +7,6 @@ const { ObjectId } = require('mongodb');
 const addToCart = async (req, res) => {
     try {
         const id = req.query.id;
-        console.log(`Received product ID: ${id}`);
-
         // Find the user's cart
         let cart = await Cart.findOne({ userId: req.session.user_id });
 
@@ -19,8 +17,7 @@ const addToCart = async (req, res) => {
                 items: [{ productId: id }]
             });
             await cart.save();
-
-            console.log('New cart created and product added');
+            // console.log('New cart created and product added');
             return res.json({ success: true, message: 'Product added to cart successfully' });
         } else {
             // Check if the product is already in the cart
@@ -49,55 +46,11 @@ const addToCart = async (req, res) => {
     }
 };
 
-
-// const addToCart = async (req, res) => {
-//     try {
-//         const id = req.query.id;
-//         console.log(`Received product ID: ${id}`);
-//         let cart= await Cart.findOne({ userId: req.session.user_id });
-//         if (!cart) {
-//                 cart=  new Cart({
-//                 userId: req.session.user_id,
-//                 item: [{ productId: id }]
-//             })
-//             await cart.save();
-
-//             return res.json({ success: true });
-//         } else {
-//             let flag = 0;
-//             cart.items.forEach((item) => {
-//                 if (item.productId == id) {
-//                     flag = 1;
-//                 }
-//             });
-
-
-//             if (flag == 0) {
-//                 await Cart.updateOne(
-//                     { userId: req.session.user_id },
-//                     { $push: { items: { productId: id } } }
-//                 )
-//                 console.log("product pushed to cart");
-
-//                 res.json({ success: true, message: 'Product added to cart successfully' })
-//             } else {
-//                 console.log("Product is already in the cart");
-//                 res.json({ success: false, message: 'product is already in the cart' })
-//             }
-//         }
-
-//     } catch (error) {
-//         console.log(error.message)
-//     }
-// }
-
-
 const loadCart = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id });
         const cart = await Cart.findOne({ userId: req.session.user_id }).populate("items.productId");
         console.log(`Cart loaded for user ${req.session.user_id}: ${cart}`);
-
         res.render("cart", { cart: cart, user: userData })
     } catch (error) {
         console.log(error)
@@ -135,7 +88,6 @@ const removeFromCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.session.user_id });
         const index = req.query.index
-        console.log(index, "indddddexx")
         if (cart && cart.items.length > index) {
             cart.items.splice(index, 1);
             await cart.save()

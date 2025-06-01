@@ -44,7 +44,6 @@ const loadAddCategory = async (req, res) => {
 };
 
 const addCategory = async (req, res) => {
-  console.log("jkjkjkj");
   try {
     const { name } = req.body;
 
@@ -52,7 +51,6 @@ const addCategory = async (req, res) => {
       return res.status.json({ success: false, message: 'Category name cannot be empty' });
     }
     const existingCategory = await Category.findOne({ name });
-    console.log("llllllll");
     if (existingCategory) {
       return res.json({ success: false, message: 'Category already exists' });
     }
@@ -98,13 +96,11 @@ const editCategory = async (req, res) => {
 };
 
 const deleteCategory = async (req, res, next) => {
-  console.log("hhhh")
   try {
     let updated = await Category.findByIdAndUpdate(
       { _id: req.query.id },
       { $set: { isBlocked: true } }
     );
-    console.log(updated, "ytytyt")
     if (updated) {
       res.json({ success: true });
     }

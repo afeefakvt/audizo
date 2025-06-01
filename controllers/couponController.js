@@ -53,9 +53,7 @@ const loadEditCoupon =async(req,res)=>{
 const editCoupon = async(req,res)=>{
     try {
         const id = req.query.id;
-        console.log('kkkkk',id)
         const {couponCode,percentage,minPrice,maxRedeemAmount,expiryDate} = req.body;
-        console.log("lklklk");
         const coupon= await Coupon.updateOne(
             {_id:req.query.id},
             {$set:{
@@ -90,12 +88,10 @@ const checkCoupon = async(req,res)=>{
     try {
         const couponCode  =req.query.couponCode;
         const coupon =await Coupon.findOne({couponCode:req.query.couponCode});
-        console.log("codeeeeeeeeee",couponCode);
 
         if(!coupon){
             return res.json({success:false,message:"Not A valid Coupon "})
         }else if(coupon.minPrice>req.query.totalPrice){
-            console.log("totlaaal",req.query.totalPrice);
             return res.json({
                 success:false,
                 message:"Not eligible for this coupon"

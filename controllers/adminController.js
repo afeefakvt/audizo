@@ -15,7 +15,6 @@ const securePassword = async (password) => {
 
 const loadLogin = async (req, res) => {
     try {
-        console.log("iiii");
         res.render('login');
 
     } catch (error) {
@@ -24,11 +23,8 @@ const loadLogin = async (req, res) => {
 }
 const verifyLogin = async (req, res) => {
     try {
-        console.log("iiiii");
         const email = req.body.email;
         const password = req.body.password;
-        console.log("hhhhhhhhhhhhh");
-        console.log(email, password);
 
         const adminData = await Admin.findOne({ email: email });
         if (adminData) {
@@ -522,7 +518,6 @@ const filterSalesReport = async (req, res) => {
                 }
             },
         ])
-        console.log('Filtered Orders:', orderData);
         let totalSales = orderData.length;
 
         let totalPrice = orderData.reduce((acc, order) => {

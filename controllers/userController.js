@@ -18,8 +18,6 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 require('dotenv').config();
 
 
-
-
 const offerPrice = async (products) => {
     try {
         let updatedProducts = []
@@ -159,7 +157,6 @@ const insertUser = async (req, res) => {
 
     try {
         const referralId = req.query.referralId || ""
-        console.log("Query Parameters:", referralId);
         const { email, password, name, mobile } = req.body;
 
         // Check if email already exists in the database
@@ -225,13 +222,10 @@ const verifyOTP = async (req, res) => {
             await Otp.deleteOne({ _id: otpp._id });
             req.session.isLogin = true;
 
-            console.log("referrrraaal", req.session.referral);
             if (req.session.referral) {
                 const referral = req.session.referral
                 const user = await User.findOne({ referralId: referral })
-                console.log(user, "userrrr find");
                 if (user) {
-                    console.log("user ind");
                     // wallet of user having the referral code
                     let wallet = await Wallet.findOne({ userId: user._id })
                     if (wallet) {
@@ -245,8 +239,6 @@ const verifyOTP = async (req, res) => {
                         await wallet.save();
 
                     } else {
-                        console.log("wwwwaallettt");
-
                         wallet = new Wallet({
                             userId: user._id,
                             history: [{
@@ -261,7 +253,6 @@ const verifyOTP = async (req, res) => {
                 }
 
                 // wallet for new user
-
                 const wallet = new Wallet({
                     userId: userId,
                     history: [{
@@ -316,7 +307,6 @@ const resendOtp = async (req, res) => {
     }
 }
 
-//login
 const loginLoad = async (req, res) => {
     try {
         const user = req.session.user_id
@@ -529,163 +519,10 @@ const loadShop = async (req, res) => {
         console.log(error.message);
     }
 };
-// const sortFilter = async (req, res) => {
-//     try {
-//         const page = parseInt(req.query.page) || 1;
-//         const limit = 6;
-//         const skip = (page - 1) * limit;
-
-
-//         let products = await Product.find({ isListed: false })
-//             .skip(skip)
-//             .limit(limit);
-
-//         const category = await Category.find({ isBlocked: false });
-//         const { sortOption, searchQuery, category: selectedCategory, priceRange: selectedPriceRange } = req.query;
-
-//         let filter = { isListed: false };
-//         if (selectedCategory) {
-//             filter.categoryId = selectedCategory;
-//         }
-
-//         if (selectedPriceRange) {
-//             const [minPrice, maxPrice] = selectedPriceRange.split('-').map(Number);
-//             filter.$or = [
-//                 { discountPrice: { $gte: minPrice, $lte: maxPrice } },
-//                 { price: { $gte: minPrice, $lte: maxPrice } }
-//             ];
-//         }
-
-//         switch (sortOption) {
-//             case "newArrival":
-//                 products = await Product.find(filter).sort({ date: -1 });
-//                 break;
-//             case "priceLowToHigh":
-//                 products = await Product.aggregate([
-//                     { $match: filter },
-//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
-//                     { $sort: { sortPrice: 1 } },
-//                 ]);
-//                 break;
-//             case "priceHighToLow":
-//                 products = await Product.aggregate([
-//                     { $match: filter },
-//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
-//                     { $sort: { sortPrice: -1 } },
-//                 ]);
-//                 break;
-//             case "nameAZ":
-//                 products = await Product.find(filter).sort({ name: 1 });
-//                 break;
-//             case "nameZA":
-//                 products = await Product.find(filter).sort({ name: -1 });
-//                 break;
-//             default:
-//                 products = await Product.find(filter);
-//                 break;
-//         }
-
-
-
-//         if (searchQuery) {
-//             const regex = new RegExp(searchQuery, "i");
-//             products = products.filter((item) => regex.test(item.name));
-//         }
-
-
-
-//         const totalProducts = await Product.countDocuments({ isListed: false });
-//         const totalPages = Math.ceil(totalProducts / limit);
-//         products = await offerPrice(products);
-
-
-//         res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange, totalPages: totalPages, currentPage: page });
-
-//     } catch (error) {
-//         console.log(error.message);
-//     }
-// };
-
-
-
-
-
-// const sortFilter = async (req, res) => {
-//     try {
-//         const category = await Category.find({ isBlocked: false });
-//         const { sortOption, searchQuery, category: selectedCategory, priceRange: selectedPriceRange } = req.query;
-
-//         const page = parseInt(req.query.page) || 1;
-//         const skip = (page - 1) * 3;
-
-//         let filter = { isListed: false };
-//         if (selectedCategory) {
-//             filter.categoryId = selectedCategory;
-//         }
-
-//         if (selectedPriceRange) {
-//             const [minPrice, maxPrice] = selectedPriceRange.split('-').map(Number);
-//             filter.$or = [
-//                 { discountPrice: { $gte: minPrice, $lte: maxPrice } },
-//                 // { price: { $gte: minPrice, $lte: maxPrice } }
-//             ];
-//         }
-
-//         let products;
-//         switch (sortOption) {
-//             case "newArrival":
-//                 products = await Product.find(filter).sort({ date: -1 });
-//                 break;
-//             case "priceLowToHigh":
-//                 products = await Product.aggregate([
-//                     { $match: filter },
-//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
-//                     { $sort: { sortPrice: 1 } },
-//                 ]);
-//                 break;
-//             case "priceHighToLow":
-//                 products = await Product.aggregate([
-//                     { $match: filter },
-//                     { $addFields: { sortPrice: { $ifNull: ["$discountPrice", "$price"] } } },
-//                     { $sort: { sortPrice: -1 } },
-//                 ]);
-//                 break;
-//             case "nameAZ":
-//                 products = await Product.find(filter).sort({ name: 1 });
-//                 break;
-//             case "nameZA":
-//                 products = await Product.find(filter).sort({ name: -1 });
-//                 break;
-//             default:
-//                 products = await Product.find(filter);
-//                 break;
-//         }
-//         products = await offerPrice(products);
-
-//         if (searchQuery) {
-//             const regex = new RegExp(searchQuery, "i");
-//             products = products.filter((item) => regex.test(item.name));
-//         }
-//         const totalProducts = products.length;
-//         const totalPages = Math.ceil(totalProducts / 3);
-
-//         products = products.slice(skip, skip + 3);
-
-//         res.render("shop", { products, sortOption, search: searchQuery, category, selectedCategory, selectedPriceRange,totalPages:totalPages,currentPage:page });
-
-//     } catch (error) {
-//         console.log(error.message);
-//     }
-// };
-
-
-
 
 const productDetail = async (req, res) => {
     try {
         const id = req.params.id;
-
-        // Fetch product details
         let details = await Product.findById(id);
         if (!details) {
             console.log("Product not found");
@@ -753,9 +590,7 @@ const productDetail = async (req, res) => {
 const loadProfile = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id })
-
         res.render("profile", { user: userData })
-
     } catch (error) {
         console.log(error.message)
     }
@@ -766,7 +601,6 @@ const editProfile = async (req, res) => {
         const { name, mobile } = req.body;
         // Fetch the user from the database using the session user ID
         const user = await User.findOne({ _id: req.session.user_id });
-        console.log('User before update:', user);
 
         // Update user details in the database
         user.name = name,
@@ -774,9 +608,6 @@ const editProfile = async (req, res) => {
 
             await user.save();
         res.redirect('/profile');
-
-        console.log('User after update:', user);
-
     } catch (error) {
         console.log(error.message)
     }
@@ -786,7 +617,6 @@ const editProfile = async (req, res) => {
 const loadChangePassword = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id })
-
         res.render("changePassword", { user: userData })
 
     } catch (error) {
@@ -822,8 +652,6 @@ const loadMyAddress = async (req, res) => {
         const address = await Address.findOne({ userId: userData._id });
 
         res.render("myAddress", { user: userData, addresses: address })
-        console.log(userData, "aaaaaaaaaaa")
-        console.log(address, "sssssss")
     } catch (error) {
         console.log(error.message)
     }
@@ -831,11 +659,7 @@ const loadMyAddress = async (req, res) => {
 const loadAddAddress = async (req, res) => {
     try {
         const userData = await User.findOne({ _id: req.session.user_id });
-
-
-
         res.render("addAddress", { user: userData })
-
 
     } catch (error) {
         console.log(error.message)
@@ -989,7 +813,6 @@ const resetPassword = async (req, res) => {
 const newPasswordForm = async (req, res) => {
     try {
         const token = req.query.token;
-        console.log("tooooooooooo", token);
 
         if (!token) {
             return res.redirect('/login');
@@ -1005,15 +828,9 @@ const newPasswordForm = async (req, res) => {
 
 const newPassword = async (req, res) => {
     try {
-        console.log("Entering newPassword function");
         const token = req.body.token;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
-
-        console.log("Body token:", token);
-        console.log("Session token:", req.session.token);
-        console.log("password:", password);
-        console.log("confirm:", confirmPassword);
 
         if (token !== req.session.token) {
             return res.status(400).json({ message: 'Invalid token' });
@@ -1022,19 +839,14 @@ const newPassword = async (req, res) => {
             return res.status(400).json({ message: 'Passwords do not match' });
         }
 
-        console.log("Passwords match and token is valid");
-
         const hashedPassword = await securePassword(password);
-        console.log("Password hashed successfully");
 
         const updateResult = await User.findOneAndUpdate(
             { email: req.session.email },
             { password: hashedPassword }
         );
-        console.log("User password updated:", updateResult);
 
         delete req.session.token;
-        console.log("Session token deleted");
 
         res.status(200).json({ message: 'Password reset successful' });
     } catch (error) {
@@ -1063,7 +875,7 @@ const loadAboutPage= async(req,res)=>{
         console.log(error.message)
     }
 }
-//logout
+
 const logoutLoad = async (req, res) => {
     try {
         delete req.session.user_id;

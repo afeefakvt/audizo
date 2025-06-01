@@ -14,8 +14,6 @@ const loadWallet = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user_id });
         const wallet = await Wallet.findOne({ userId: req.session.user_id })
-
-
         res.render("wallet", { user: user, wallet: wallet });
 
     } catch (error) {
@@ -24,7 +22,6 @@ const loadWallet = async (req, res) => {
 }
 const addMoney = async (req, res) => {
     try {
-        console.log("adddd");
         const amount = parseInt(req.query.amount, 10) * 100; // Convert to smallest currency unit
         const receipt = `receipt_${Date.now()}`;  // Generating a unique receipt using timestamp
 
@@ -33,8 +30,7 @@ const addMoney = async (req, res) => {
             currency: "INR",
             receipt: receipt,
         };
-        console.log(options,"plpllplplpl");
-        console.log("aaaaaaaaaaa");
+        
         const order = await razorpay.orders.create(options);
         return res.json({
           success: true,
@@ -52,7 +48,6 @@ const addMoney = async (req, res) => {
 
 const addingMoney = async(req,res)=>{
     try {
-        console.log("adddingg");
         let wallet = await Wallet.findOne({userId:req.session.user_id});
         if(!wallet){
             wallet = await new Wallet({
@@ -67,7 +62,6 @@ const addingMoney = async(req,res)=>{
             newBalance:wallet.balance+=Number(req.query.amount),
         });
         wallet.balance +=Number(req.query.amount);
-        console.log(wallet,"walleet");
         wallet.save();
         res.redirect('/wallet');
         

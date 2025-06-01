@@ -6,8 +6,6 @@ const Wishlist = require("../models/wishlistModel");
 const addToWishlist = async (req, res) => {
     try {
         const productId = req.query.productId;
-        console.log(`Received product ID: ${productId}`);
-
         // Find the user's wishlist
         let wishlist = await Wishlist.findOne({ userId: req.session.user_id });
 
@@ -19,7 +17,6 @@ const addToWishlist = async (req, res) => {
             });
             await wishlist.save();
 
-            console.log('New wishlist created and product added');
             return res.json({ success: true, message: 'Product added to wishlist successfully' });
         } else {
             // Check if the product is already in the wishlist
@@ -35,10 +32,8 @@ const addToWishlist = async (req, res) => {
                 wishlist.items.push({ productId: productId });
                 await wishlist.save();
 
-                console.log("Product added to existing wishlist");
                 return res.json({ success: true, message: 'Product added to wishlist successfully' });
             } else {
-                console.log("Product is already in the wishlist");
                 return res.json({ success: false, message: 'Product is already in the wishlist' });
             }
         }
@@ -64,8 +59,6 @@ const loadWishlist = async (req, res) => {
 
 const removeFromWishlist = async (req, res) => {
     try {
-        console.log("Request received for removing item from wishlist");
-
         const wishlist = await Wishlist.findOne({ userId: req.session.user_id });
         const index = req.query.index;
 

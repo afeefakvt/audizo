@@ -1,4 +1,3 @@
-const express = require('express');
 const Product = require("../models/productModel");
 const Category = require("../models/categoryModel");
 const sharp = require("sharp");
@@ -7,8 +6,6 @@ const { ObjectId } = mongoose.Types;
 const fs = require('fs');
 const path = require('path');
 
-// const fs = require('fs');
-// const session=require('session');
 
 const loadProduct = async (req, res) => {
   try {
@@ -108,7 +105,6 @@ const checkAlready = async (req, res, next) => {
 const addProduct = async (req, res, next) => {
   try {
     const { productName, category, price,  quantity, productDescription } = req.body;
-    console.log('Category:', category);
 
     const categoryId = category.trim();
     let ObjectId = new mongoose.Types.ObjectId(categoryId);
@@ -121,7 +117,6 @@ const addProduct = async (req, res, next) => {
       images: req.files.map(file => file.filename),
       date: new Date(),
     });
-    console.log("kkkk")
     await product.save();
     res.redirect("/admin/product");
   } catch (error) {
@@ -286,9 +281,6 @@ const restoreProduct = async (req, res) => {
     console.log(error.message)
   }
 }
-
-
-
 
 
 module.exports = {
