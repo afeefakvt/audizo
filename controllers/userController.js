@@ -146,7 +146,6 @@ const securePassword = async (password) => {
 const loadRegister = async (req, res) => {
     try {
         const referralId = req.query.referralId || ""
-        console.log(referralId, "referrraal");
         res.render('registration', { referralId: referralId ? referralId : "" });
     } catch (error) {
         console.log(error.message);
@@ -179,7 +178,6 @@ const insertUser = async (req, res) => {
             req.session.referral = referralId
         }
         const userData = await user.save();
-        console.log(userData);
         req.session.user_id = userData._id;
 
         // Send verification email
@@ -776,7 +774,7 @@ const resetPassword = async (req, res) => {
                     <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                         <h3>Reset Your Password</h3>
                         <p>Click the link below to reset your password:</p>
-                        <a href="https://audizo.shop/newPassword?token=${token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                        <a href="https://audizo.onrender.com/newPassword?token=${token}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
                         <p>Thanks for using our service!</p>
                         <p>Best regards,<br>The AUDIZO. Team</p>
                     </div>
