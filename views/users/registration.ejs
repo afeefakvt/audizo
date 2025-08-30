@@ -358,7 +358,7 @@
 				console.log("mobile",mobileError);
 
 				if (!passwordValidate(password)) {
-					passwordError.innerText = "Password should be at least 5 characters,should not start with dots or spaces and include any one special character";
+					passwordError.innerText = "Password should be at least 5 characters,should not start with dots or spaces.";
 					message.push("Invalid Password");
 				}
 				console.log("passs",passwordError);
@@ -391,11 +391,8 @@
 			}
 
 			function passwordValidate(password) {
-				// At least one special character
-				let reg = /^(?!\s|\.)[a-zA-Z0-9._%+-]{5,}[!@#$%^&*(),.?":{}|<>]+$/;
-				// Check if the password contains at least one special character
-				let specialCharReg = /[!@#$%^&*(),.?":{}|<>]/;
-				return reg.test(password) && specialCharReg.test(password);
+				let reg = /^(?![ .]).{5,}$/;
+				return reg.test(password);
 			}
 
 			function confirmPasswordValidate(password, confirmPassword) {
